@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>난초 NANCHO — THE MIDNIGHT LOG</title>
+<meta name="description" content="자정에만 잡히는 주파수 — 난초(NANCHO) 공식 팬페이지.">
+<meta property="og:title" content="난초 NANCHO — THE MIDNIGHT LOG">
+<meta property="og:description" content="자정에만 잡히는 주파수 — 난초(NANCHO) 공식 팬페이지.">
+<meta property="og:image" content="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<link rel="stylesheet" href="style.css">
+<style>
+html,body{height:100%}
+body{overflow:hidden}
+.stage{position:relative;width:100vw;height:100svh;overflow:hidden}
+.stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:67% 48%;
+  filter:saturate(.78) brightness(.66) contrast(1.08);transform:scale(1.02)}
+body.day .stage-bg{filter:saturate(1.02) brightness(1.02) contrast(1.02);object-position:52% 40%}
+.stage-shade{position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(6,4,9,.94) 0,rgba(6,4,9,.58) 36%,transparent 66%),
+  linear-gradient(0deg,rgba(6,4,9,.82),transparent 46%),
+  linear-gradient(135deg,rgba(142,69,177,.24),transparent 52%)}
+body.day .stage-shade{background:
+  linear-gradient(90deg,rgba(247,243,248,.92) 0,rgba(247,243,248,.55) 38%,transparent 68%),
+  linear-gradient(0deg,rgba(247,243,248,.82),transparent 46%),
+  linear-gradient(135deg,rgba(157,119,166,.20),transparent 52%)}
+
+/* 상단바를 사진 위에 얹기 (플로팅 아님 — 화면 상단에 붙은 헤어라인 바) */
+.stage .topbar{position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,rgba(6,4,9,.72),rgba(6,4,9,.12));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:20}
+body.day .stage .topbar{background:linear-gradient(180deg,rgba(251,248,252,.80),rgba(251,248,252,.16))}
+
+.hero{position:absolute;top:clamp(96px,15vh,168px);left:var(--pad);z-index:6}
+.hero .bio,.hero .meta{max-width:min(620px,54vw)}
+.hero .out{white-space:nowrap;font-family:var(--ff-disp);font-size:clamp(64px,12.4vw,232px);font-weight:900;line-height:.8;letter-spacing:-.085em;
+  color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px rgba(222,185,239,.72);
+  filter:drop-shadow(0 0 2px rgba(197,119,232,.42)) drop-shadow(0 0 8px rgba(164,77,207,.18))}
+body.day .hero .out{-webkit-text-stroke:1px rgba(80,49,93,.66);filter:none}
+.hero .line{display:flex;align-items:center;gap:12px;margin-top:20px;font-size:9px;font-weight:900;letter-spacing:.24em;color:var(--main)}
+.hero .line i{display:block;width:38px;height:1px;background:var(--main)}
+.hero .bio{margin:12px 0 0;font-family:var(--ff-serif);font-size:clamp(15px,1.5vw,24px);color:var(--ink);letter-spacing:-.01em}
+.hero .meta{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
+.hero .meta div{border-left:1px solid var(--line);padding-left:12px}
+.hero .meta span{display:block;font-size:8.5px;font-weight:900;letter-spacing:.2em;color:var(--main)}
+.hero .meta b{font-family:var(--ff-serif);font-weight:500;font-size:clamp(15px,1.5vw,23px);color:var(--ink)}
+
+.log{position:absolute;bottom:5%;left:var(--pad);z-index:8;width:min(56%,720px);
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));height:clamp(112px,15.5vh,168px);
+  border:1px solid var(--line);background:rgba(8,5,12,.44);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+body.day .log{background:rgba(255,255,255,.52)}
+.log > small{position:absolute;bottom:calc(100% + 11px);left:0;color:var(--main);font-size:9px;font-weight:900;letter-spacing:.2em}
+.log > div{position:relative;display:grid;grid-template-rows:auto 1fr auto auto;align-items:center;min-width:0;
+  padding:clamp(9px,1.1vw,20px);border-right:1px solid var(--line-soft);font-size:9px}
+.log > div:last-child{border-right:0}
+.log > div.on{background:linear-gradient(180deg,rgba(202,153,223,.20),transparent)}
+.log .n{color:var(--ink-dim);font-size:8.5px}
+.log b{align-self:end;font-size:clamp(9px,.62vw,12px);letter-spacing:.08em}
+.log strong{color:var(--main-light);font-size:clamp(9px,.78vw,14px);letter-spacing:.06em;overflow:hidden;text-overflow:ellipsis}
+body.day .log strong{color:var(--main-deep)}
+.log em{margin-top:3px;color:var(--ink-soft);font-family:var(--ff-serif);font-size:clamp(9px,.55vw,11px);font-style:normal}
+
+.bcast{position:absolute;right:var(--pad);bottom:6%;z-index:8;width:min(30%,360px);
+  border-top:1px solid var(--main-light);border-bottom:1px solid var(--line);
+  background:rgba(8,5,12,.34);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:15px 17px}
+body.day .bcast{background:rgba(255,255,255,.56)}
+.bcast .row{display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:start}
+.bcast .av{width:46px;height:46px;border:1px solid var(--line);background-size:cover;background-position:center;cursor:pointer;flex:0 0 auto}
+.bcast .k{color:var(--main);font-size:8.5px;font-weight:900;letter-spacing:.18em}
+.bcast .t{font-family:var(--ff-serif);font-size:clamp(14px,1.3vw,25px);font-weight:500;line-height:1.2;margin-top:2px}
+.bcast p{margin:9px 0 0;color:var(--ink-soft);font-size:11px;line-height:1.6}
+
+.rail{position:absolute;top:clamp(88px,13vh,150px);right:calc(var(--pad) - 14px);z-index:8;
+  display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.rail a,.rail span{font-size:8.5px;font-weight:800;letter-spacing:.16em;writing-mode:vertical-rl;color:var(--ink-soft);transition:color .18s}
+.rail a:hover{color:var(--main-light)}
+body.day .rail a:hover{color:var(--main-deep)}
+.rail span{margin-top:6px;color:var(--ink-dim)}
+
+@media (max-width:1080px){
+  .stage .topbar .col{height:58px}
+  .hero{top:clamp(84px,13vh,120px);right:var(--pad)}
+  .hero .bio,.hero .meta{max-width:none}
+  .hero .out{font-size:clamp(56px,17vw,120px)}
+  .log{left:var(--pad);right:var(--pad);width:auto;bottom:4%;height:clamp(112px,19vh,150px)}
+  .log > div{padding:8px 4px;text-align:center}
+  .bcast{right:var(--pad);left:var(--pad);width:auto;bottom:calc(4% + clamp(112px,19vh,150px) + 22px)}
+  .rail{display:none}
+}
+@media (max-width:560px){
+  .hero .meta{gap:14px}
+  .log strong{font-size:8px}
+}
+</style>
+</head>
+<body>
+<script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
+<div class="grain" aria-hidden="true"></div>
+<div class="stage">
+  <img class="stage-bg" id="stageBg" src="assets/nancho-purple-night.webp" alt="">
+  <div class="stage-shade" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="col">
+    <a class="brand" href="index.html" aria-label="난초 메인">
+      <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
+    </a>
+    <nav class="menu" id="menu">
+        <a href="index.html" class="on">메인</a>
+        <a href="profile/">프로필</a>
+        <a href="notice/">공지</a>
+        <a href="schedule/">일정</a>
+        <a href="work/">업보</a>
+        <a href="diary/">일기</a>
+        <a href="song/">노래책</a>
+        <a href="dress/">옷장</a>
+        <a href="game/">미니게임</a>
+    </nav>
+    <div class="tools">
+      <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
+      <button class="tbtn" data-mode>DAY</button>
+      <button class="tbtn solid" data-ask>문의</button>
+    </div>
+  </div>
+</header>
+  <div class="wrap">
+    <div class="hero">
+      <div class="out" aria-hidden="true">NANCHO</div>
+      <h1 class="sr">난초 NANCHO — THE MIDNIGHT LOG</h1>
+      <div class="line"><i></i><span data-tagline>THE MIDNIGHT LOG · 자정의 기록실</span></div>
+      <p class="bio" id="bio">밤하늘 속에 피어난</p>
+      <div class="meta">
+        <div><span>BIRTH SIGNAL</span><b id="dday">—</b></div>
+        <div><span>ON AIR SINCE</span><b id="since">—</b></div>
+        <div><span>FREQUENCY</span><b id="freq">게임 · 저챗 · 노래</b></div>
+      </div>
+    </div>
+
+    <div class="log" id="logGrid" aria-label="주간 방송 전파"></div>
+
+    <div class="bcast">
+      <div class="row">
+        <div class="av" id="avTile" data-avatar title="눌러보세요"></div>
+        <div>
+          <div class="k"><span class="dot"></span> NEXT TRANSMISSION</div>
+          <div class="t" id="nextD">—</div>
+        </div>
+      </div>
+      <p id="nextN">게임과 이야기 사이, 밤의 주파수를 맞춰요.</p>
+      <p id="logCap" style="color:var(--ink-dim);font-size:10.5px;letter-spacing:.06em"></p>
+    </div>
+
+    <div class="rail">
+      <a id="lk-soop" href="https://www.sooplive.com/station/blackchu" target="_blank" rel="noopener">SOOP ↗</a>
+      <a id="lk-youtube" href="https://www.youtube.com/@blackchu" target="_blank" rel="noopener">YOUTUBE ↗</a>
+      <a id="lk-melo" href="https://meloming.com/channel/nancho" target="_blank" rel="noopener">MELOMING ↗</a>
+      <a id="lk-cafe" href="https://cafe.naver.com/magicpanty" target="_blank" rel="noopener">CAFE ↗</a>
+      <span>© 2026 NANCHO</span>
+    </div>
+  </div>
+</div>
+<div class="mask" id="askMask" role="dialog" aria-modal="true" aria-label="문의">
+  <div class="modal">
+    <div class="modal-h">
+      <div><small>TRANSMIT</small><b>난초에게 전파 보내기</b></div>
+      <button class="x" data-close aria-label="닫기">×</button>
+    </div>
+    <div class="modal-b">
+      <label class="field"><span>닉네임 (선택)</span>
+        <input class="input" id="askNick" type="text" placeholder="초단 아무개" maxlength="30">
+      </label>
+      <label class="field"><span>내용</span>
+        <textarea class="input" id="askMsg" placeholder="문의·제보·응원 무엇이든 좋아요." maxlength="1200"></textarea>
+        <em class="hint">보낸 내용은 난초만 볼 수 있어요. 답이 필요하면 연락 수단도 함께 적어주세요.</em>
+      </label>
+      <button class="btn solid" id="askSend" style="width:100%">전파 전송</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<script src="site.js"></script>
+<script>
+
+var DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+var DAYKO = ['월','화','수','목','금','토','일'];
+
+function renderLog(p){
+  var set = String(txt(p.days) || '').split(',').map(function(s){return s.trim();}).filter(function(s){return s!=='';});
+  var time = txt(p['main-time']) || '17:00';
+  var free = set.length === 0;
+  var host = document.getElementById('logGrid');
+  var html = '<small>WEEKLY TRANSMISSION</small>';
+  for (var i=0;i<7;i++){
+    var on = free || set.indexOf(String(i)) >= 0;
+    html += '<div class="' + (on ? 'on' : '') + '">'
+      + '<span class="n">' + ('0'+(i+1)) + '</span>'
+      + '<b>' + DAYS[i] + '</b>'
+      + '<strong>' + (on ? 'ON AIR' : 'REST') + '</strong>'
+      + '<em>' + (on ? time : '—') + '</em>'
+      + '</div>';
+  }
+  host.innerHTML = html;
+  var cap = document.getElementById('logCap');
+  if (cap) cap.textContent = free ? '요일 고정 없음 · 보통 오후 ' + (parseInt(time,10)>12? (parseInt(time,10)-12):5) + '시 전후 점등'
+                                  : '점등 요일 ' + set.map(function(d){return DAYKO[+d];}).join('·');
+}
+
+function nextTransmission(p){
+  var set = String(txt(p.days) || '').split(',').map(function(s){return s.trim();}).filter(function(s){return s!=='';});
+  var time = txt(p['main-time']) || '17:00';
+  var now = new Date();
+  var todayIdx = (now.getDay() + 6) % 7; // 0=월
+  if (set.length === 0) return { d: DAYKO[todayIdx], t: time, note: '요일 고정 없이 열려요' };
+  for (var i=0;i<8;i++){
+    var idx = (todayIdx + i) % 7;
+    if (set.indexOf(String(idx)) >= 0) return { d: DAYKO[idx], t: time, note: i===0 ? '오늘 밤' : (i===1 ? '내일' : i + '일 뒤') };
+  }
+  return { d: '—', t: '—', note: '' };
+}
+
+function boot(){
+  bootSite();
+  getProfile().then(function(raw){
+    var p = mergeP(raw);
+    document.getElementById('bio').textContent = txt(p['info-catchphrase']);
+    var fq = txt(p['info-content']);
+    if (fq) document.getElementById('freq').textContent = fq.replace(/\s*[\/,]\s*/g, ' · ');
+    /* 메인 히어로 사진 — 없으면 밤 배경, 그것도 없으면 기본 파일 유지 */
+    var photo = txt(p['main-photo']) || txt(p['bg-night']);
+    if (photo){
+      var sb = document.getElementById('stageBg');
+      sb.referrerPolicy = 'no-referrer';
+      sb.onerror = function(){ this.src = 'assets/nancho-purple-night.webp'; this.onerror = null; };
+      sb.src = photo;
+    }
+    document.getElementById('avTile').style.backgroundImage = 'url("' + avatarUrl(p) + '")';
+
+    var dd = fxDday(txt(p['info-birth']));
+    document.getElementById('dday').textContent = dd === null ? '—' : (dd === 0 ? 'TODAY' : 'D-' + dd);
+    var since = fxDsince(txt(p['info-debut']));
+    document.getElementById('since').textContent = since === null ? '—' : 'D+' + since.toLocaleString();
+
+    renderLog(p);
+    var nt = nextTransmission(p);
+    document.getElementById('nextD').textContent = nt.d + '요일 · ' + nt.t + ' KST';
+    var story = txt(p['main-story']) || '게임과 이야기 사이, 밤의 주파수를 맞춰요.';
+    document.getElementById('nextN').textContent = nt.note ? (nt.note + ' — ' + story) : story;
+
+    ['soop','youtube','cafe','melo'].forEach(function(k){
+      var a = document.getElementById('lk-' + k);
+      var v = txt(p['link-' + k]) || '';
+      if (!a) return;
+      if (v) a.href = v; else a.style.display = 'none';
+    });
+    ready();
+  });
+}
+boot();
+
+</script>
+<script src="fx.js"></script>
+</body>
+</html>

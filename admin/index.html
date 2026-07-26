@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>관리자 — 난초 NANCHO</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<link rel="stylesheet" href="../style.css">
+<style>
+body{background-image:none;background-color:var(--bg)}
+.adwrap{max-width:1280px;margin:0 auto;padding:0 clamp(14px,3vw,34px) 80px}
+.adtop{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;height:62px;margin-bottom:22px}
+.adtop .b{font-family:var(--ff-serif);font-size:20px;letter-spacing:-.05em}
+.adtop .b small{font-size:8px;font-weight:900;letter-spacing:.26em;color:var(--main);margin-left:8px;font-family:var(--ff-body)}
+.adtop .sp{margin-left:auto;display:flex;gap:8px}
+
+.tabs{display:flex;flex-wrap:wrap;border:1px solid var(--line);margin-bottom:24px}
+.tabs button{flex:1 1 auto;min-width:104px;height:44px;border:0;border-right:1px solid var(--line);border-bottom:1px solid transparent;
+  background:transparent;color:var(--ink-soft);font-size:11px;font-weight:900;letter-spacing:.1em;cursor:pointer;transition:.16s}
+.tabs button:hover{background:rgba(199,155,216,.09);color:var(--ink)}
+.tabs button.on{background:var(--main-deep);color:#fff}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.card{border:1px solid var(--line);padding:clamp(16px,2vw,24px);margin-bottom:20px;background:rgba(255,255,255,.02)}
+body.day .card{background:rgba(255,255,255,.5)}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:14px;font-weight:900;letter-spacing:.02em}
+.card-title small{display:block;font-size:9px;font-weight:900;letter-spacing:.22em;color:var(--main);margin-bottom:5px}
+.row{display:grid;gap:14px}
+.r2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.r3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.r4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:820px){.r3,.r4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.r2,.r3,.r4{grid-template-columns:minmax(0,1fr)}}
+
+.table-wrap{overflow:auto;border:1px solid var(--line);margin-top:16px}
+.table-wrap table{width:100%;border-collapse:collapse;font-size:13px}
+.table-wrap th,.table-wrap td{padding:9px 11px;border-bottom:1px solid var(--line-soft);text-align:left;white-space:nowrap;vertical-align:middle}
+.table-wrap th{background:rgba(255,255,255,.05);font-size:9.5px;font-weight:900;letter-spacing:.14em;color:var(--main)}
+body.day .table-wrap th{background:rgba(38,20,54,.06)}
+.table-wrap th:last-child,.table-wrap td:last-child{width:64px;text-align:center;padding-left:6px;padding-right:6px}
+.table-wrap td .thumb{width:42px;height:42px;object-fit:cover;border:1px solid var(--line)}
+.del{border:1px solid var(--line);background:transparent;color:#E08585;width:30px;height:28px;cursor:pointer;font-size:13px;line-height:1}
+.del:hover{border-color:#E08585}
+
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days label{border:1px solid var(--line);padding:8px 12px;cursor:pointer;font-size:12px;user-select:none}
+.days input{display:none}
+.days input:checked + span{color:var(--main-light);font-weight:700}
+.days label:has(input:checked){border-color:var(--main);background:rgba(199,155,216,.14)}
+
+/* 팔레트 */
+.pal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.pal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.pal{grid-template-columns:minmax(0,1fr)}}
+.pal .p{border:1px solid var(--line);padding:14px}
+.pal .p .n{font-size:9.5px;font-weight:900;letter-spacing:.18em;color:var(--main)}
+.pal .p .u{font-size:11px;color:var(--ink-dim);margin:4px 0 10px;white-space:normal;line-height:1.6}
+.pal .p .ctl{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px;align-items:center}
+.pal .p input[type=color]{width:46px;height:40px;padding:2px;border:1px solid var(--line);background:transparent;cursor:pointer}
+.pal .p input[type=text]{box-sizing:border-box}
+.prev{border:1px solid var(--line);padding:18px;margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+/* 팔레트 프리셋 */
+.presets{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.presets button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;
+  color:var(--ink-soft);padding:8px 12px;cursor:pointer;font:inherit;font-size:11.5px;letter-spacing:.02em}
+.presets button:hover{border-color:var(--main);color:var(--ink)}
+.presets .chips{display:flex}
+.presets .chips i{width:13px;height:13px;display:block;border:1px solid rgba(0,0,0,.25)}
+/* 대비 진단 */
+.contrast{margin-top:14px;border:1px solid var(--line);padding:14px}
+.contrast .row2{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12px}
+.contrast .row2:last-child{border-bottom:0}
+.contrast b.ok{color:#7FD6A6}.contrast b.warn{color:#E8C46A}.contrast b.bad{color:#E88A9A}
+/* 이미지 미리보기 */
+.thumb{margin-top:10px;border:1px solid var(--line);height:104px;display:none;
+  background:rgba(0,0,0,.25) center/contain no-repeat}
+.thumb.on{display:block}
+.thumb.err{display:flex;align-items:center;justify-content:center;color:#E88A9A;font-size:11.5px;background-image:none}
+/* 상단 액션 */
+.topact{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.topact a,.topact button{border:1px solid var(--line);background:transparent;color:var(--ink-soft);
+  padding:8px 13px;font:inherit;font-size:11.5px;text-decoration:none;cursor:pointer}
+.topact a:hover,.topact button:hover{border-color:var(--main);color:var(--ink)}
+.dirty{color:#E8C46A}
+/* 왜 링크 방식인지 · 규격 안내 */
+details.why{border:1px solid var(--line);margin:14px 0 0;background:rgba(199,155,216,.04)}
+details.why summary{cursor:pointer;padding:11px 14px;font-size:12px;color:var(--main);font-weight:700;list-style:none}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary::before{content:'▸ ';color:var(--main)}
+details.why[open] summary::before{content:'▾ '}
+details.why .in{padding:2px 16px 16px;font-size:12px;line-height:1.85;color:var(--ink-soft)}
+details.why .in b{color:var(--ink)}
+details.why .in ul{margin:8px 0 0;padding-left:18px}
+details.why .in li{margin:3px 0}
+details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E8C46A;color:#E8C46A;background:rgba(232,196,106,.06)}
+.specwrap{margin-top:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.spectable{width:100%;min-width:520px;border-collapse:collapse;font-size:11.5px}
+.spectable th,.spectable td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+.spectable th{background:rgba(255,255,255,.04);color:var(--main);font-size:10px;letter-spacing:.12em;font-weight:900}
+.prev .sw{width:44px;height:44px;border:1px solid var(--line)}
+
+.gate{max-width:380px;margin:16vh auto;border:1px solid var(--line);padding:34px}
+.gate h1{font-family:var(--ff-disp);font-size:34px;letter-spacing:-.05em;margin:0 0 6px}
+.gate p{color:var(--ink-dim);font-size:12px;margin:0 0 22px;letter-spacing:.08em}
+.hide{display:none!important}
+.note{font-size:11.5px;color:var(--ink-dim);line-height:1.7;margin-top:8px}
+.warn{border-left:2px solid #E0A87F;padding:10px 14px;font-size:12px;color:var(--ink-soft);background:rgba(224,168,127,.07);margin-bottom:16px}
+</style>
+</head>
+<body>
+<script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
+
+<!-- ══ 로그인 ══ -->
+<div class="gate" id="gate">
+  <h1>ADMIN</h1>
+  <p>THE MIDNIGHT LOG · 관리자</p>
+  <label class="field"><span>비밀번호</span>
+    <input class="input" id="pw" type="password" placeholder="••••">
+  </label>
+  <button class="btn solid" id="pwBtn" style="width:100%">들어가기</button>
+  <p class="note">⚠️ 임시 비밀번호는 <b>1234</b> 입니다. 배포 전에 이 파일의 <code>ADMIN_PW</code> 값을 꼭 바꿔주세요. (소스에 노출되니 다른 곳에서 쓰지 않는 비밀번호로)</p>
+</div>
+
+<!-- ══ 본체 ══ -->
+<div class="adwrap hide" id="app">
+  <div class="adtop">
+    <div class="b">난초<small>ADMIN</small></div>
+    <div class="sp">
+      <button class="tbtn" data-mode>DAY</button>
+      <a class="tbtn" href="../index.html" target="_blank">사이트 보기 ↗</a>
+    </div>
+  </div>
+
+  <div class="topact" id="topact">
+    <a id="act-view" href="../index.html" target="_blank">👁 이 탭 페이지 미리보기 ↗</a>
+    <button type="button" id="act-backup">💾 전체 내용 백업(.json)</button>
+    <button type="button" id="act-restore">📂 백업 불러오기</button>
+    <input type="file" id="act-file" accept="application/json" style="display:none">
+    <span id="act-dirty" class="dirty" style="align-self:center;font-size:11.5px"></span>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="on" data-t="main">🏠 메인</button>
+    <button data-t="profile">🎀 프로필</button>
+    <button data-t="notice">📢 공지</button>
+    <button data-t="schedule">📅 일정</button>
+    <button data-t="work">⚡ 업보</button>
+    <button data-t="diary">📓 일기</button>
+    <button data-t="song">🎵 노래·VOD</button>
+    <button data-t="dress">👗 옷장</button>
+    <button data-t="inquiry">✉️ 문의</button>
+    <button data-t="theme">🎨 테마</button>
+  </div>
+
+  <!-- ─────── 메인 ─────── -->
+  <div class="tab-panel active" id="tab-main">
+    <div class="warn">여기서 저장하면 <b>메인·프로필</b> 페이지가 함께 바뀝니다. 저장 후 사이트에서 <b>Ctrl+Shift+R</b>로 새로고침하세요.</div>
+
+    <div class="card">
+      <div class="card-title"><div><small>AVATAR</small>프로필 사진</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>SOOP 아이디</span>
+          <input class="input" id="f-soop-id" type="text" placeholder="blackchu">
+          <em class="hint">아이디만 넣으면 SOOP 프사를 자동으로 가져옵니다.</em>
+        </label>
+        <label class="field"><span>직접 이미지 주소 (선택)</span>
+          <input class="input" id="f-avatar" type="text" placeholder="https://... .jpg / .gif">
+          <em class="hint">넣으면 SOOP 프사보다 <b>우선</b> 적용. 움짤은 200px 안팎으로 줄여서 올리세요(로딩 무거워짐).</em>
+        </label>
+      </div>
+      <label class="field"><span>프로필 페이지 대표 일러스트 (선택)</span>
+        <input class="input" id="f-hero-art" type="text" placeholder="https://... (세로 4:5 권장)">
+        <em class="hint">비우면 프사가 대신 들어갑니다. 세로 4:5(예 900×1125) 이미지가 가장 예쁘게 잘립니다.</em>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>BACKGROUND</small>배경 이미지</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>🌙 밤(다크) 배경</span>
+          <input class="input" id="f-bg-night" type="text" placeholder="assets/nancho-purple-night.webp">
+          <em class="hint">모든 페이지의 배경. 가로 <b>16:9(1920×1080 권장)</b>. 비우면 기본 이미지. 레포에 올린 파일이면 <b>/assets/파일명.webp</b> 처럼 <b>/</b> 로 시작하게 적으세요.</em>
+        </label>
+        <label class="field"><span>☀️ 낮(라이트) 배경</span>
+          <input class="input" id="f-bg-day" type="text" placeholder="assets/nancho-day.webp">
+          <em class="hint">DAY 모드일 때 깔리는 배경. 같은 규격(16:9). 글자가 얹히니 <b>너무 쨍한 이미지는 피하세요</b>.</em>
+        </label>
+      </div>
+      <label class="field"><span>메인 히어로 사진</span>
+        <input class="input" id="f-main-photo" type="text" placeholder="비우면 밤 배경과 같은 이미지 사용">
+        <em class="hint">메인 첫 화면을 꽉 채우는 사진. 가로 16:9, 인물이 <b>오른쪽</b>에 오는 구도가 제일 잘 맞습니다(왼쪽에 이름·문구가 얹혀요).</em>
+      </label>
+
+    <details class="why">
+      <summary>이미지는 왜 "주소(링크)"로 넣나요? — 꼭 한 번 읽어주세요</summary>
+      <div class="in">
+        이 사이트는 <b>서버가 없는 정적 사이트</b>입니다. 파일을 받아 보관할 창고가 없어요.
+        그래서 그림은 <b>이미 인터넷 어딘가에 올라가 있는 것</b>을 주소로 불러옵니다.
+        <ul>
+          <li><b>용량 걱정이 없습니다.</b> 사진을 사이트에 쌓지 않으니 무료 DB 용량·전송량 한도에 걸려 사이트가 멈출 일이 없어요.</li>
+          <li><b>더 빠릅니다.</b> SOOP 서버가 이미지를 대신 배달해 주기 때문에 로딩이 가볍습니다.</li>
+          <li><b>바꾸기 쉽습니다.</b> 주소 한 줄만 갈아끼우면 끝, 다시 업로드할 필요가 없어요.</li>
+        </ul>
+        <b>어디에 올리면 되나요?</b>
+        <ul>
+          <li>SOOP <b>비공개 게시판</b>에 글을 하나 만들어 사진을 올리고 저장하세요(공개 안 해도 됩니다).</li>
+          <li>올라간 사진에 <b>마우스 우클릭 → "이미지 주소 복사"</b>.</li>
+          <li>복사한 주소를 아래 칸에 붙여넣으면 바로 <b>미리보기</b>가 뜹니다. 안 뜨면 주소가 잘못된 거예요.</li>
+        </ul>
+        <div class="warn2">
+          ⚠️ 주소는 <b>.jpg / .png / .webp / .gif 로 끝나는 이미지 주소</b>여야 합니다 — 글 주소(…/post/123)는 안 됩니다.<br>
+          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.
+        </div>
+      </div>
+    </details>
+
+    <details class="why">
+      <summary>이미지 규격 정리 — 어떤 크기로 올려야 하나요?</summary>
+      <div class="in">
+        아래 비율만 맞추면 잘리는 사고가 없습니다. 용량은 <b>한 장 1MB 아래</b>를 권장해요(무거우면 로딩이 느려집니다).
+        <div class="specwrap"><table class="spectable">
+          <tr><th>어디에 쓰이나</th><th>비율</th><th>권장 크기</th><th>참고</th></tr>
+          <tr><td>밤 배경 · 낮 배경</td><td>가로 16:9</td><td>1920 × 1080</td><td>글자가 얹히니 <b>너무 복잡한 그림은 피하기</b></td></tr>
+          <tr><td>메인 히어로 사진</td><td>가로 16:9</td><td>1920 × 1080</td><td>인물이 <b>오른쪽</b>에 오는 구도 (왼쪽에 이름·문구가 얹힘)</td></tr>
+          <tr><td>프로필 사진(프사)</td><td>정사각 1:1</td><td>400 × 400</td><td>움짤(.gif)은 <b>200px 안팎</b>으로 줄여서</td></tr>
+          <tr><td>프로필 대표 일러스트</td><td>세로 4:5</td><td>900 × 1125</td><td>비우면 프사가 대신 들어감</td></tr>
+          <tr><td>팬 캐릭터</td><td>세로 4:5</td><td>800 × 1000</td><td>배경 없는 <b>투명 PNG</b>가 제일 예쁨</td></tr>
+          <tr><td>옷장 컷</td><td>세로 3:4</td><td>900 × 1200</td><td>전신샷 기준. 비율이 다르면 위아래가 잘림</td></tr>
+          <tr><td>공지 · 일기 이미지</td><td>가로 3:2 안팎</td><td>1200 × 800</td><td>자유로운 편, 너무 긴 세로만 피하기</td></tr>
+        </table></div>
+      </div>
+    </details>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>IDENTITY</small>기본 정보</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r3">
+        <label class="field"><span>이름</span><input class="input" id="f-info-name" type="text" placeholder="난초">
+          <em class="hint">사이트 곳곳에 나오는 표시 이름. 상단 로고 글자도 이걸 따라갑니다.</em></label>
+        <label class="field"><span>영문 리딩</span><input class="input" id="f-info-reading" type="text" placeholder="NANCHO">
+          <em class="hint">영문 표기. 메인 큰 아웃라인 글자와 프로필 영문 이름에 쓰입니다. <b>대문자</b>로.</em></label>
+        <label class="field"><span>팬네임</span><input class="input" id="f-info-fandom" type="text" placeholder="초단">
+          <em class="hint">팬을 부르는 이름. 사이트 여러 문구에 들어갑니다.</em></label>
+        <label class="field"><span>팬네임 설명</span><input class="input" id="f-fandom-note" type="text" placeholder="난초를 듣는 사람들">
+          <em class="hint">팬네임 아래 작게 붙는 한 줄.</em></label>
+        <label class="field"><span>모티브</span><input class="input" id="f-info-motif" type="text" placeholder="별 · 달 · 밤하늘 / 팬캐릭터 토끼">
+          <em class="hint">프로필 "기본 기록" 표의 모티브 칸.</em></label>
+        <label class="field"><span>소속</span><input class="input" id="f-info-agency" type="text" placeholder="패러블">
+          <em class="hint">없으면 비워두세요 — 비우면 그 줄이 <b>—</b> 로 표시됩니다.</em></label>
+        <label class="field"><span>성별</span><input class="input" id="f-info-gender" type="text" placeholder="여">
+          <em class="hint">프로필 표에만 짧게 들어갑니다.</em></label>
+        <label class="field"><span>MBTI</span><input class="input" id="f-info-mbti" type="text" placeholder="예: INFP">
+          <em class="hint">영문 4글자. 비우면 <b>—</b> 로 표시됩니다.</em></label>
+        <label class="field"><span>데뷔일</span><input class="input" id="f-info-debut" type="text" placeholder="2018-11-22">
+          <em class="hint">YYYY-MM-DD 형식. 방송 D+ 일수를 자동 계산합니다.</em></label>
+        <label class="field"><span>생일</span><input class="input" id="f-info-birth" type="text" placeholder="12월 16일">
+          <em class="hint">"12월 16일" 또는 "12-16". 생일 D-Day 자동 계산.</em></label>
+        <label class="field"><span>한 줄 소개(캐치프레이즈)</span><input class="input" id="f-info-catchphrase" type="text" placeholder="밤하늘 속에 피어난">
+          <em class="hint">메인 첫 화면 큰 글씨 한 줄. <b>15자 안팎</b>이 제일 예쁩니다.</em></label>
+      </div>
+      <label class="field"><span>특징 태그</span>
+        <textarea class="input" id="f-info-tags" placeholder="개구쟁이, 밝음, 짱구, 별, 달, 밤하늘" style="min-height:70px"></textarea>
+        <em class="hint">쉼표 또는 줄바꿈으로 구분 — 프로필의 #해시태그로 표시됩니다.</em>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>BROADCAST</small>방송 정보 · 요일</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>컨텐츠</span><input class="input" id="f-info-content" type="text" placeholder="게임 / 저챗 / 노래 / 싱크룸">
+          <em class="hint"><b>/</b> 나 <b>,</b> 로 구분하면 메인에서 <b>게임 · 저챗 · 노래</b> 처럼 자동 정리됩니다.</em></label>
+        <label class="field"><span>방송 시간(문구)</span><input class="input" id="f-info-time" type="text" placeholder="오후 5시 전후">
+          <em class="hint">사람이 읽는 문구(예: 오후 5시 전후). 요일칸에 뜨는 숫자 시간은 아래 <b>기준 시각</b> 칸입니다.</em></label>
+        <label class="field"><span>주력 게임</span><input class="input" id="f-info-game" type="text" placeholder="마인크래프트, 배틀그라운드">
+          <em class="hint">쉼표로 나눠 적으세요.</em></label>
+        <label class="field"><span>노래</span><input class="input" id="f-info-song" type="text" placeholder="KPOP 위주 · 정기적으로 부름">
+          <em class="hint">주로 부르는 장르나 빈도.</em></label>
+      </div>
+      <label class="field"><span>주간 전파 요일</span></label>
+      <div class="days" id="daysBox"></div>
+      <input type="hidden" id="f-days">
+      <p class="note">체크한 요일만 메인·프로필의 주간 칸에 <b>ON AIR</b>로 켜집니다. <b>하나도 체크하지 않으면 "요일 고정 없음"</b>으로 7칸 모두 열려 보입니다(난초 기본값).</p>
+      <label class="field" style="margin-top:14px;max-width:220px"><span>표시 시간</span>
+        <input class="input" id="f-main-time" type="text" placeholder="17:00">
+        <em class="hint">주간 칸에 찍히는 시간. 24시간 표기(예 17:00).</em>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>CHANNELS</small>링크</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>SOOP 방송국</span><input class="input" id="f-link-soop" type="text" placeholder="https://www.sooplive.com/station/blackchu">
+          <em class="hint">방송국 주소를 통째로. <b>https://</b> 부터 넣으세요.</em></label>
+        <label class="field"><span>유튜브</span><input class="input" id="f-link-youtube" type="text" placeholder="https://www.youtube.com/@blackchu">
+          <em class="hint">채널 주소. 비우면 그 버튼이 사라집니다.</em></label>
+        <label class="field"><span>멜로밍</span><input class="input" id="f-link-melo" type="text" placeholder="https://meloming.com/channel/nancho">
+          <em class="hint">후원·굿즈 링크. 비우면 버튼이 사라집니다.</em></label>
+        <label class="field"><span>카페</span><input class="input" id="f-link-cafe" type="text" placeholder="https://cafe.naver.com/...">
+          <em class="hint">팬 카페 주소. 비우면 버튼이 사라집니다.</em></label>
+        <label class="field"><span>X (트위터)</span><input class="input" id="f-link-x" type="text" placeholder="비우면 프로필에 표시 안 됨">
+          <em class="hint">비우면 프로필에 아예 표시되지 않습니다.</em></label>
+        <label class="field"><span>팬 캐릭터 이미지 (선택)</span><input class="input" id="f-fan-char" type="text" placeholder="https://... (토끼)">
+          <em class="hint">넣으면 프로필에 MASCOT 섹션이 나타납니다. 비우면 섹션 자체가 숨어요.</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>MAIN COPY</small>메인 화면 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>사이트 태그라인</span>
+          <input class="input" id="f-site-tagline" type="text" placeholder="THE MIDNIGHT LOG · 자정의 기록실">
+          <em class="hint">메인 이름 위에 작게 붙는 한 줄. 사이트 전체의 부제입니다.</em>
+        </label>
+        <label class="field"><span>방송 안내 문구</span>
+          <input class="input" id="f-main-story" type="text" placeholder="게임과 이야기 사이, 밤의 주파수를 맞춰요.">
+          <em class="hint">메인 아래쪽 <b>NEXT TRANSMISSION</b> 칸에 붙는 설명. 한 문장이 깔끔합니다.</em>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>PAGE INTRO</small>페이지별 소개문</div><button class="btn sm" data-save="profile">저장</button></div>
+      <em class="hint">각 페이지 큰 제목 아래에 들어가는 설명 한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em>
+      <div class="row r2">
+        <label class="field"><span>프로필</span><input class="input" id="f-sub-profile" type="text" placeholder="밤하늘 속에 피어난 사람. …">
+          <em class="hint">페이지 큰 제목 아래 설명. <b>한두 줄(60자 안팎)</b>이 적당합니다.</em></label>
+        <label class="field"><span>공지</span><input class="input" id="f-sub-notice" type="text" placeholder="전파를 타기 전에 먼저 알려두는 것들. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>일정</span><input class="input" id="f-sub-schedule" type="text" placeholder="이번 달 전파 편성표. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>업보</span><input class="input" id="f-sub-work" type="text" placeholder="방송에서 쌓인 것들은 사라지지 않고 …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>일기</span><input class="input" id="f-sub-diary" type="text" placeholder="방송이 끝나고 남는 이야기들. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>노래책</span><input class="input" id="f-sub-song" type="text" placeholder="KPOP 위주로 쌓아둔 목록. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>옷장</span><input class="input" id="f-sub-dress" type="text" placeholder="난초가 걸쳤던 것들을 한 장의 컨택트 시트로. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+        <label class="field"><span>미니게임</span><input class="input" id="f-sub-game" type="text" placeholder="방송이 끝난 뒤에도 불이 꺼지지 않는 구역. …">
+          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────── 프로필 ─────── -->
+  <div class="tab-panel" id="tab-profile">
+    <div class="card">
+      <div class="card-title"><div><small>VOICE</small>한마디 · 소개 · 진행중</div><button class="btn sm" data-save="profile">저장</button></div>
+      <label class="field"><span>한마디(대표 대사)</span>
+        <input class="input" id="f-quote" type="text" placeholder="우우우~ 예쁜누나다 / 와따! / 웨우~!">
+          <em class="hint">프로필 위쪽에 큰 따옴표로 걸립니다. <b>/</b> 로 나누면 여러 대사로 보여요.</em></label>
+      <label class="field"><span>소개글 (About)</span>
+        <textarea class="input" id="f-msg" placeholder="여러 줄로 적어도 됩니다." style="min-height:150px"></textarea>
+        <em class="hint">줄바꿈이 그대로 반영됩니다.</em></label>
+      <label class="field"><span>지금 진행 중 (NOW)</span>
+        <textarea class="input" id="f-now" placeholder="비워두면 프로필에 표시되지 않습니다." style="min-height:80px"></textarea>
+        <em class="hint">이벤트·컨텐츠 진행 중일 때만 채우세요. 채우면 프로필 상단에 강조 카드로 뜹니다.</em></label>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>PREFERENCE</small>좋아 · 싫어 · TMI</div><button class="btn sm" data-save="profile">저장</button></div>
+      <div class="row r2">
+        <label class="field"><span>좋아하는 것</span>
+          <textarea class="input" id="f-like-list" placeholder="한 줄에 하나씩" style="min-height:120px"></textarea>
+          <em class="hint">줄바꿈 또는 쉼표로 구분. 번호가 자동으로 붙습니다.</em></label>
+        <label class="field"><span>싫어하는 것</span>
+          <textarea class="input" id="f-dislike-list" placeholder="한 줄에 하나씩" style="min-height:120px"></textarea>
+          <em class="hint"><b>한 줄에 하나씩</b>. 줄 수만큼 항목이 늘어납니다.</em></label>
+      </div>
+      <div class="row r4">
+        <label class="field"><span>TMI · 음식</span><input class="input" id="f-tmi-food" type="text">
+          <em class="hint">한 줄로 짧게. 비우면 <b>—</b> 로 표시됩니다.</em></label>
+        <label class="field"><span>TMI · 노래</span><input class="input" id="f-tmi-song" type="text">
+          <em class="hint">한 줄로 짧게. 비우면 <b>—</b> 로 표시됩니다.</em></label>
+        <label class="field"><span>TMI · 게임</span><input class="input" id="f-tmi-game" type="text">
+          <em class="hint">한 줄로 짧게. 비우면 <b>—</b> 로 표시됩니다.</em></label>
+        <label class="field"><span>TMI · 기타</span><input class="input" id="f-tmi-book" type="text">
+          <em class="hint">자유 항목. 비우면 <b>—</b> 로 표시됩니다.</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>LEVELS</small>능력치 · 마일스톤 · 채팅 규칙</div><button class="btn sm" data-save="profile">저장</button></div>
+      <label class="field"><span>능력치</span>
+        <textarea class="input" id="f-stats" placeholder="텐션:92&#10;개구쟁이:97&#10;노래:85" style="min-height:120px"></textarea>
+        <em class="hint">한 줄에 <b>이름:숫자</b> (0~100). 막대 그래프로 그려집니다.</em></label>
+      <label class="field"><span>마일스톤</span>
+        <textarea class="input" id="f-milestones" placeholder="2018.11.22|첫 송출 — 전파 개통&#10;진행중|초단들과 밤마다 주파수 맞추는 중" style="min-height:120px"></textarea>
+        <em class="hint">한 줄에 <b>시점|내용</b> (막대 기호 <b>|</b> 로 구분).</em></label>
+      <label class="field"><span>채팅 규칙</span>
+        <textarea class="input" id="f-rules" placeholder="한 줄에 하나씩" style="min-height:120px"></textarea>
+        <em class="hint">번호가 자동으로 붙습니다.</em></label>
+    </div>
+  </div>
+
+  <!-- ─────── 공지 ─────── -->
+  <div class="tab-panel" id="tab-notice">
+    <div class="card">
+      <div class="card-title"><div><small>NEW</small>공지 작성</div></div>
+      <div class="row r2">
+        <label class="field"><span>제목</span><input class="input" id="nt-title" type="text">
+          <em class="hint">목록에 굵게 뜨는 줄. <b>30자 안쪽</b>이 안 잘립니다.</em></label>
+        <label class="field"><span>대표 이미지 주소 (선택)</span><input class="input" id="nt-img" type="text" placeholder="https://stimg.sooplive.com/...">
+          <em class="hint">SOOP 비공개 게시판에 올린 뒤 <b>이미지 주소 복사</b>로 가져오세요.</em></label>
+      </div>
+      <label class="field"><span>내용</span><textarea class="input" id="nt-content" style="min-height:150px"></textarea>
+          <em class="hint">줄바꿈은 그대로 살아납니다. 길면 목록에서 접히고 눌러야 펼쳐져요.</em></label>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:14px">
+        <input type="checkbox" id="nt-pin" style="width:auto;height:auto"> 상단 고정(PINNED)</label>
+      <button class="btn solid" id="nt-add">공지 올리기</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>LIST</small>등록된 공지</div></div>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>고정</th><th>작성일</th><th>삭제</th></tr></thead><tbody id="nt-list"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 일정 ─────── -->
+  <div class="tab-panel" id="tab-schedule">
+    <div class="card">
+      <div class="card-title"><div><small>NEW</small>일정 추가</div></div>
+      <div class="row r4">
+        <label class="field"><span>날짜</span><input class="input" id="sc-date" type="date">
+          <em class="hint">달력에서 날짜를 고르세요. 형식은 자동(<b>2026-07-26</b>)입니다.</em></label>
+        <label class="field"><span>1부 시간</span><input class="input" id="sc-time" type="text" placeholder="17:00">
+          <em class="hint"><b>24시간</b> 형식으로 <b>17:00</b> 처럼. 미정이면 비워두세요.</em></label>
+        <label class="field"><span>1부 제목</span><input class="input" id="sc-title" type="text" placeholder="저챗">
+          <em class="hint">달력 칸에 뜨는 짧은 이름. <b>8자 안쪽</b>이 안 잘립니다.</em></label>
+        <label class="field"><span>종류</span>
+          <select class="input" id="sc-type"><option>일반</option><option>특별</option><option>콜라보</option><option>노래</option><option>게임</option><option>휴방</option></select>
+          <em class="hint">달력 아래 범례와 색 분류에 쓰입니다.</em></label>
+        <label class="field"><span>2부 시간</span><input class="input" id="sc-time2" type="text" placeholder="비우면 1부만">
+          <em class="hint">2부가 없으면 <b>비워두세요</b> — 비우면 1부만 표시됩니다.</em></label>
+        <label class="field"><span>2부 제목</span><input class="input" id="sc-title2" type="text">
+          <em class="hint">2부 이름. 1부와 같은 규칙(<b>8자 안쪽</b>).</em></label>
+        <label class="field"><span>2부 종류</span>
+          <select class="input" id="sc-type2"><option value="">—</option><option>일반</option><option>특별</option><option>콜라보</option><option>노래</option><option>게임</option><option>휴방</option></select>
+          <em class="hint">2부 종류. 1부와 달라도 됩니다.</em></label>
+        <label class="field"><span>색</span>
+          <select class="input" id="sc-color">
+            <option value="purple">보라</option><option value="pink">핑크</option><option value="blue">파랑</option>
+            <option value="teal">청록</option><option value="green">초록</option><option value="orange">주황</option>
+            <option value="red">빨강</option><option value="gray">회색(휴방)</option>
+          </select>
+          <em class="hint">달력 칸에 칠해지는 색. 종류별로 색을 정해두면 한눈에 구분됩니다.</em></label>
+      </div>
+      <label class="field"><span>설명 (달력에서 눌렀을 때 나오는 내용)</span><textarea class="input" id="sc-desc" style="min-height:90px"></textarea>
+          <em class="hint">달력에서 그 날을 눌렀을 때 뜨는 상세 내용. 비워도 됩니다.</em></label>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:14px">
+        <input type="checkbox" id="sc-hl" style="width:auto;height:auto"> 강조 표시(HIGHLIGHT)</label>
+      <button class="btn solid" id="sc-add">일정 추가</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>LIST</small>등록된 일정</div></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>1부</th><th>2부</th><th>종류</th><th>색</th><th>삭제</th></tr></thead><tbody id="sc-list"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 업보 ─────── -->
+  <div class="tab-panel" id="tab-work">
+    <div class="row r2">
+      <div class="card">
+        <div class="card-title"><div><small>VIEWER</small>시청자 등록</div></div>
+        <label class="field"><span>닉네임</span><input class="input" id="vw-nick" type="text">
+          <em class="hint">방송에서 부르는 닉네임 그대로. 장부 세로줄에 표시됩니다.</em></label>
+        <label class="field"><span>메모 (선택)</span><input class="input" id="vw-memo" type="text" placeholder="장부에 함께 표시됩니다">
+          <em class="hint">닉네임 아래 작게 붙는 한 줄. 비워도 됩니다.</em></label>
+        <button class="btn solid" id="vw-add">추가</button>
+        <div class="table-wrap"><table><thead><tr><th>닉네임</th><th>메모</th><th>삭제</th></tr></thead><tbody id="vw-list"></tbody></table></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div><small>TYPE</small>업보 종류</div></div>
+        <label class="field"><span>이름</span><input class="input" id="tp-name" type="text" placeholder="예: 지각">
+          <em class="hint">업보 항목 이름(예: 지각, 욕설, 삥뜯기). 장부 가로줄이 됩니다.</em></label>
+        <label class="field"><span>분류</span>
+          <select class="input" id="tp-cat"><option>일반</option><option>이벤트</option></select>
+          <em class="hint">같은 분류끼리 묶여 집계됩니다.</em></label>
+        <button class="btn solid" id="tp-add">추가</button>
+        <div class="table-wrap"><table><thead><tr><th>이름</th><th>분류</th><th>삭제</th></tr></thead><tbody id="tp-list"></tbody></table></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>MATRIX</small>업보 장부 입력</div><button class="btn sm solid" id="ct-save">전체 저장</button></div>
+      <p class="note" style="margin:0 0 12px">칸에 숫자를 넣고 <b>전체 저장</b>을 누르세요. 0인 시청자는 사이트 장부에 표시되지 않습니다.</p>
+      <div class="table-wrap"><table><thead id="ct-head"></thead><tbody id="ct-body"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 일기 ─────── -->
+  <div class="tab-panel" id="tab-diary">
+    <div class="card">
+      <div class="card-title"><div><small>NEW</small>일기 작성</div></div>
+      <div class="row r3">
+        <label class="field"><span>제목</span><input class="input" id="dy-title" type="text">
+          <em class="hint">목록 카드에 뜨는 제목. <b>25자 안쪽</b> 권장.</em></label>
+        <label class="field"><span>날짜</span><input class="input" id="dy-date" type="date">
+          <em class="hint">달력에서 고르세요. 최신 날짜가 맨 앞에 옵니다.</em></label>
+        <label class="field"><span>기분 (선택)</span><input class="input" id="dy-mood" type="text" placeholder="예: 잔잔함">
+          <em class="hint">짧은 단어일수록 예쁘게 붙습니다.</em></label>
+      </div>
+      <label class="field"><span>내용</span><textarea class="input" id="dy-content" style="min-height:170px"></textarea>
+          <em class="hint">줄바꿈 그대로 살아납니다. 길이 제한 없어요.</em></label>
+      <label class="field"><span>이미지 주소 (선택)</span><input class="input" id="dy-img" type="text" placeholder="https://...">
+        <em class="hint">가로 16:9 이미지가 목록 썸네일로 예쁘게 들어갑니다.</em></label>
+      <button class="btn solid" id="dy-add">일기 올리기</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>LIST</small>등록된 일기</div></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>제목</th><th>기분</th><th>삭제</th></tr></thead><tbody id="dy-list"></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>REPLIES</small>일기 댓글 관리</div><button class="btn sm" id="cm-load">불러오기</button></div>
+      <div class="table-wrap"><table><thead><tr><th>일기</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="cm-list"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 노래 · VOD ─────── -->
+  <div class="tab-panel" id="tab-song">
+    <div class="card">
+      <div class="card-title"><div><small>NEW</small>노래 추가</div></div>
+      <div class="row r4">
+        <label class="field"><span>곡 제목</span><input class="input" id="sg-title" type="text">
+          <em class="hint">목록에 뜨는 곡 이름. 누르면 신청용으로 복사됩니다.</em></label>
+        <label class="field"><span>아티스트</span><input class="input" id="sg-artist" type="text">
+          <em class="hint">가수/아티스트 이름.</em></label>
+        <label class="field"><span>장르</span><input class="input" id="sg-genre" type="text" placeholder="KPOP">
+          <em class="hint">같은 장르끼리 필터로 묶입니다. <b>표기를 통일</b>해야 필터가 깔끔해요(KPOP / K-POP 섞어 쓰지 않기).</em></label>
+        <label class="field"><span>난이도 1~5</span><input class="input" id="sg-diff" type="number" min="1" max="5" value="3">
+          <em class="hint">1(쉬움) ~ 5(어려움). 목록에 점으로 표시됩니다.</em></label>
+      </div>
+      <label class="field"><span>메모 (선택)</span><input class="input" id="sg-memo" type="text" placeholder="곡 제목 아래 작게 표시">
+          <em class="hint">곡 제목 아래 작게. 비워도 됩니다.</em></label>
+      <button class="btn solid" id="sg-add">곡 추가</button>
+      <div style="border-top:1px solid var(--line);margin-top:20px;padding-top:16px">
+        <label class="field"><span>여러 곡 한 번에 추가</span>
+          <textarea class="input" id="sg-bulk" style="min-height:120px" placeholder="한 줄에 한 곡: 제목 - 아티스트 - 장르"></textarea>
+          <em class="hint">예) 헤비 Be I - 아이유 - KPOP  /  장르를 빼면 "기타"로 들어갑니다.</em></label>
+        <button class="btn" id="sg-bulkadd">한 번에 추가</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>LIST</small>노래책</div><span class="note" id="sg-cnt"></span></div>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>아티스트</th><th>장르</th><th>난이도</th><th>삭제</th></tr></thead><tbody id="sg-list"></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>VOD</small>다시보기 (프로필·노래책에 임베드)</div></div>
+      <div class="row r2">
+        <label class="field"><span>영상 제목</span><input class="input" id="vd-title" type="text">
+          <em class="hint">다시보기 카드에 뜨는 제목.</em></label>
+        <label class="field"><span>SOOP VOD ID</span><input class="input" id="vd-id" type="text" placeholder="200283095">
+          <em class="hint">VOD 주소 <b>vod.sooplive.com/player/<u>200283095</u></b> 에서 숫자 부분만 넣으세요.</em></label>
+      </div>
+      <button class="btn solid" id="vd-add">VOD 추가</button>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>VOD ID</th><th>삭제</th></tr></thead><tbody id="vd-list"></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>OBS OVERLAY</small>지금 트는 노래</div>
+        <button class="btn sm solid" id="ov-save">적용</button></div>
+      <p class="note" style="margin:0 0 14px">OBS 브라우저 소스에 <b>배포주소/overlay/</b> 를 추가하세요(720×130 권장). 아래에서 켜면 방송 화면에 바가 나타납니다.</p>
+      <div class="row r2">
+        <label class="field"><span>곡 제목</span><input class="input" id="ov-title" type="text">
+          <em class="hint">OBS 오버레이에 뜨는 곡 이름. 바꾸고 저장하면 방송 화면이 <b>바로</b> 바뀝니다.</em></label>
+        <label class="field"><span>아티스트</span><input class="input" id="ov-artist" type="text">
+          <em class="hint">오버레이 곡 이름 아래 작게 뜹니다.</em></label>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px">
+        <input type="checkbox" id="ov-vis" style="width:auto;height:auto"> 방송에 표시하기 (끄면 바가 사라집니다)</label>
+    </div>
+  </div>
+
+  <!-- ─────── 옷장 ─────── -->
+  <div class="tab-panel" id="tab-dress">
+    <div class="card">
+      <div class="card-title"><div><small>NEW</small>옷장 등록</div></div>
+      <div class="row r3">
+        <label class="field"><span>이름</span><input class="input" id="dr-name" type="text" placeholder="예: 미드나잇 세일러">
+          <em class="hint">컷 아래 캡션으로 뜨는 이름.</em></label>
+        <label class="field"><span>분류</span>
+          <select class="input" id="dr-cat">
+            <option value="hair">헤어</option><option value="outfit">의상</option>
+            <option value="lens">렌즈</option><option value="event">이벤트</option>
+          </select>
+          <em class="hint">분류 탭으로 걸러집니다. <b>이벤트</b>는 별도 탭으로 모여요.</em></label>
+        <label class="field"><span>정렬 순서</span><input class="input" id="dr-sort" type="number" value="0">
+          <em class="hint">숫자가 클수록 앞에 옵니다. 같으면 최신순.</em></label>
+      </div>
+      <label class="field"><span>이미지 주소</span><input class="input" id="dr-img" type="text" placeholder="https://stimg.sooplive.com/...">
+        <em class="hint">세로 <b>3:4</b> (예 900×1200) 이미지를 권장합니다. SOOP 비공개 게시판 → 이미지 주소 복사.</em></label>
+    <details class="why">
+      <summary>이미지는 왜 "주소(링크)"로 넣나요? — 꼭 한 번 읽어주세요</summary>
+      <div class="in">
+        이 사이트는 <b>서버가 없는 정적 사이트</b>입니다. 파일을 받아 보관할 창고가 없어요.
+        그래서 그림은 <b>이미 인터넷 어딘가에 올라가 있는 것</b>을 주소로 불러옵니다.
+        <ul>
+          <li><b>용량 걱정이 없습니다.</b> 사진을 사이트에 쌓지 않으니 무료 DB 용량·전송량 한도에 걸려 사이트가 멈출 일이 없어요.</li>
+          <li><b>더 빠릅니다.</b> SOOP 서버가 이미지를 대신 배달해 주기 때문에 로딩이 가볍습니다.</li>
+          <li><b>바꾸기 쉽습니다.</b> 주소 한 줄만 갈아끼우면 끝, 다시 업로드할 필요가 없어요.</li>
+        </ul>
+        <b>어디에 올리면 되나요?</b>
+        <ul>
+          <li>SOOP <b>비공개 게시판</b>에 글을 하나 만들어 사진을 올리고 저장하세요(공개 안 해도 됩니다).</li>
+          <li>올라간 사진에 <b>마우스 우클릭 → "이미지 주소 복사"</b>.</li>
+          <li>복사한 주소를 아래 칸에 붙여넣으면 바로 <b>미리보기</b>가 뜹니다. 안 뜨면 주소가 잘못된 거예요.</li>
+        </ul>
+        <div class="warn2">
+          ⚠️ 주소는 <b>.jpg / .png / .webp / .gif 로 끝나는 이미지 주소</b>여야 합니다 — 글 주소(…/post/123)는 안 됩니다.<br>
+          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.
+        </div>
+      </div>
+    </details>
+
+      <label class="field"><span>설명 (선택)</span><textarea class="input" id="dr-desc" style="min-height:80px"></textarea>
+          <em class="hint">크게 봤을 때 아래에 붙는 설명. 비워도 됩니다.</em></label>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:14px">
+        <input type="checkbox" id="dr-new" style="width:auto;height:auto"> NEW 표시 붙이기</label>
+      <button class="btn solid" id="dr-add">옷장에 올리기</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><div><small>LIST</small>등록된 항목</div></div>
+      <div class="table-wrap"><table><thead><tr><th>미리보기</th><th>이름</th><th>분류</th><th>NEW</th><th>순서</th><th>삭제</th></tr></thead><tbody id="dr-list"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 문의 ─────── -->
+  <div class="tab-panel" id="tab-inquiry">
+    <div class="card">
+      <div class="card-title"><div><small>INBOX</small>받은 문의</div><button class="btn sm" id="iq-load">새로고침</button></div>
+      <div class="table-wrap"><table><thead><tr><th>받은 날짜</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="iq-list"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <!-- ─────── 테마 ─────── -->
+  <div class="tab-panel" id="tab-theme">
+    <div class="card">
+      <div class="card-title"><div><small>PALETTE</small>사이트 색 팔레트</div>
+        <div style="display:flex;gap:8px"><button class="btn sm" id="th-reset">기본값으로</button><button class="btn sm solid" data-save="profile">저장</button></div></div>
+      <p class="note" style="margin:0 0 14px">저장하면 <b>모든 페이지</b>에 즉시 반영됩니다(다크 기준 색). 아래 <b>프리셋</b>을 누르면 6색이 한 번에 채워지고, 거기서 원하는 색만 손보면 됩니다.</p>
+      <div class="presets" id="presets"></div>
+      <div class="pal" id="pal"></div>
+      <div class="contrast" id="contrast"></div>
+      <div class="prev">
+        <div class="sw" id="pv1"></div><div class="sw" id="pv2"></div><div class="sw" id="pv3"></div>
+        <button class="btn solid">버튼 미리보기</button>
+        <span class="tag on">태그</span>
+        <span style="font-family:var(--ff-serif);font-size:22px;color:var(--main)">난초 NANCHO</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script src="../site.js"></script>
+<script>
+/* ══════════ 로그인 ══════════ */
+var ADMIN_PW = '1234';   /* ⚠️ 배포 전에 반드시 바꾸세요 */
+function enter(){
+  if (document.getElementById('pw').value !== ADMIN_PW){ toast('비밀번호가 달라요'); return; }
+  document.getElementById('gate').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  boot();
+}
+document.getElementById('pwBtn').addEventListener('click', enter);
+document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
+document.querySelectorAll('[data-mode]').forEach(function(b){ b.addEventListener('click', toggleMode); });
+applyMode(document.body.classList.contains('day') ? 'light' : 'dark');
+document.body.classList.add('ready');
+
+/* ══════════ DB 연결 가드 ══════════ */
+/* supabase.js 의 URL/KEY 가 아직 자리표시자면 db 는 null 이다.
+   이 경우에도 관리자 화면이 죽지 않게 안내만 띄우고 넘어간다. */
+function needDb(){
+  if (typeof db !== 'undefined' && db) return true;
+  toast('Supabase 주소·키가 아직 설정되지 않았어요 (supabase.js 상단 2줄)');
+  return false;
+}
+
+/* ══════════ 탭 ══════════ */
+var TAB_PAGE = { main:'../index.html', profile:'../profile/', notice:'../notice/', schedule:'../schedule/',
+                 work:'../work/', diary:'../diary/', song:'../song/', dress:'../dress/',
+                 inquiry:'../index.html', theme:'../index.html' };
+document.getElementById('tabs').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-t]'); if (!b) return;
+  this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+  document.querySelectorAll('.tab-panel').forEach(function(x){ x.classList.remove('active'); });
+  b.classList.add('on');
+  document.getElementById('tab-' + b.dataset.t).classList.add('active');
+  document.getElementById('act-view').href = TAB_PAGE[b.dataset.t] || '../index.html';
+});
+
+/* ══════════ 미저장 표시 ══════════ */
+var DIRTY = false;
+function markDirty(){
+  DIRTY = true;
+  document.getElementById('act-dirty').textContent = '● 저장하지 않은 변경이 있어요';
+}
+function clearDirty(){
+  DIRTY = false;
+  document.getElementById('act-dirty').textContent = '';
+}
+window.addEventListener('beforeunload', function(e){
+  if (!DIRTY) return;
+  e.preventDefault(); e.returnValue = '';
+});
+
+/* ══════════ 이미지 미리보기 ══════════ */
+/* 이미지 주소 칸 아래에 실제 그림을 띄워 준다 — 주소를 잘못 넣으면 바로 알 수 있게. */
+var IMG_FIELDS = ['avatar','hero-art','fan-char','main-photo','bg-night','bg-day'];
+function setupThumbs(){
+  IMG_FIELDS.forEach(function(k){
+    var input = document.getElementById('f-' + k); if (!input) return;
+    var box = document.createElement('div');
+    box.className = 'thumb'; box.id = 'th-' + k;
+    input.parentElement.appendChild(box);
+    var probe = new Image();
+    function paint(){
+      var v = String(input.value || '').trim();
+      if (!v){ box.className = 'thumb'; box.textContent = ''; return; }
+      probe.onload = function(){
+        box.className = 'thumb on'; box.textContent = '';
+        box.style.backgroundImage = 'url("' + v.replace(/"/g,'%22') + '")';
+      };
+      probe.onerror = function(){
+        box.className = 'thumb on err'; box.style.backgroundImage = '';
+        box.textContent = '이 주소로는 이미지가 안 열려요 — 글 주소 말고 이미지 주소인지 확인하세요';
+      };
+      probe.referrerPolicy = 'no-referrer';
+      probe.src = v;
+    }
+    input.addEventListener('input', paint);
+    input.addEventListener('change', paint);
+    input._paintThumb = paint;
+  });
+}
+function refreshThumbs(){
+  IMG_FIELDS.forEach(function(k){
+    var i = document.getElementById('f-' + k);
+    if (i && i._paintThumb) i._paintThumb();
+  });
+}
+
+/* ══════════ 백업 / 복원 ══════════ */
+function doBackup(){
+  var data = {};
+  profileKeys.forEach(function(k){
+    var el = document.getElementById('f-' + k);
+    data[k] = el ? el.value : '';
+  });
+  var blob = new Blob([JSON.stringify({ saved_at:new Date().toISOString(), profile:data }, null, 2)],
+                      { type:'application/json' });
+  var a2 = document.createElement('a');
+  a2.href = URL.createObjectURL(blob);
+  a2.download = 'nancho-profile-' + new Date().toISOString().slice(0,10) + '.json';
+  a2.click();
+  setTimeout(function(){ URL.revokeObjectURL(a2.href); }, 2000);
+  toast('현재 입력값을 파일로 내려받았어요');
+}
+document.getElementById('act-backup').addEventListener('click', doBackup);
+document.getElementById('act-restore').addEventListener('click', function(){
+  document.getElementById('act-file').click();
+});
+document.getElementById('act-file').addEventListener('change', function(){
+  var f = this.files && this.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try{
+      var j = JSON.parse(rd.result);
+      var d = j.profile || j;
+      var n = 0;
+      profileKeys.forEach(function(k){
+        if (d[k] == null) return;
+        var el = document.getElementById('f-' + k); if (!el) return;
+        el.value = d[k]; n++;
+      });
+      inputToDays(document.getElementById('f-days').value);
+      livePreview(); refreshThumbs(); markDirty();
+      toast(n + '개 항목을 불러왔어요 — 확인 후 저장을 누르세요');
+    }catch(e){ toast('파일을 읽지 못했어요 (백업 .json 이 맞는지 확인)'); }
+  };
+  rd.readAsText(f);
+  this.value = '';
+});
+
+/* ══════════ 프로필 키 (⚠️ 페이지가 읽는 키와 반드시 일치) ══════════ */
+var profileKeys = [
+  'avatar','soop-id','hero-art','fan-char','main-photo','bg-night','bg-day',
+  'site-tagline','main-story','info-motif','fandom-note',
+  'sub-profile','sub-notice','sub-schedule','sub-work','sub-diary','sub-song','sub-dress','sub-game',
+  'info-name','info-reading','info-catchphrase','info-debut','info-birth','info-fandom',
+  'info-agency','info-gender','info-mbti','info-content','info-time','info-game','info-song','info-tags',
+  'quote','msg','now','like-list','dislike-list','stats','milestones','rules',
+  'tmi-food','tmi-song','tmi-game','tmi-book',
+  'days','main-time',
+  'link-soop','link-youtube','link-cafe','link-melo','link-x',
+  'theme-main','theme-main-dark','theme-main-deep','theme-main-light','theme-bg','theme-logo'
+];
+
+/* 요일 체크박스 (0=월 … 6=일) */
+var DAYKO = ['월','화','수','목','금','토','일'];
+document.getElementById('daysBox').innerHTML = DAYKO.map(function(d,i){
+  return '<label><input type="checkbox" class="dchk" value="' + i + '"><span>' + d + '</span></label>';
+}).join('');
+function daysToInput(){
+  var v = [];
+  document.querySelectorAll('.dchk').forEach(function(c){ if (c.checked) v.push(c.value); });
+  document.getElementById('f-days').value = v.join(',');
+}
+function inputToDays(v){
+  var set = String(v||'').split(',').map(function(s){ return s.trim(); });
+  document.querySelectorAll('.dchk').forEach(function(c){ c.checked = set.indexOf(c.value) >= 0; });
+}
+document.getElementById('daysBox').addEventListener('change', daysToInput);
+
+/* ══════════ 팔레트 ══════════ */
+var PAL = [
+  ['theme-main','MAIN','#C79BD8','포인트 색 — 라벨·강조·버튼 테두리'],
+  ['theme-main-light','MAIN LIGHT','#E4CDF0','밝은 강조 — 제목 아웃라인·활성 글자'],
+  ['theme-main-dark','MAIN DARK','#9D77A6','중간 톤 — 보조 강조'],
+  ['theme-main-deep','MAIN DEEP','#50315D','진한 톤 — 채워진 버튼 배경'],
+  ['theme-bg','BACKGROUND','#09070D','전체 배경색(사진 뒤에 깔리는 색)'],
+  ['theme-logo','LOGO','#F3EAFA','상단 로고 글자색']
+];
+document.getElementById('pal').innerHTML = PAL.map(function(p){
+  return '<div class="p"><div class="n">' + p[1] + '</div><div class="u">' + p[3] + '</div>'
+    + '<div class="ctl"><input type="color" id="c-' + p[0] + '" value="' + p[2] + '">'
+    + '<input class="input" type="text" id="f-' + p[0] + '" value="' + p[2] + '" placeholder="' + p[2] + '"></div></div>';
+}).join('');
+PAL.forEach(function(p){
+  var c = document.getElementById('c-' + p[0]), t = document.getElementById('f-' + p[0]);
+  c.addEventListener('input', function(){ t.value = c.value; livePreview(); });
+  t.addEventListener('input', function(){ if (/^#[0-9a-fA-F]{6}$/.test(t.value)) { c.value = t.value; livePreview(); } });
+});
+function livePreview(){
+  var map = { 'theme-main':'--main','theme-main-dark':'--main-dark','theme-main-deep':'--main-deep',
+              'theme-main-light':'--main-light','theme-bg':'--bg','theme-logo':'--logo' };
+  Object.keys(map).forEach(function(k){
+    var v = document.getElementById('f-' + k).value;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) document.documentElement.style.setProperty(map[k], v);
+  });
+  document.getElementById('pv1').style.background = document.getElementById('f-theme-main').value;
+  document.getElementById('pv2').style.background = document.getElementById('f-theme-main-deep').value;
+  document.getElementById('pv3').style.background = document.getElementById('f-theme-bg').value;
+  drawContrast();
+}
+/* ── 팔레트 프리셋 ── */
+var PRESETS = [
+  ['미드나잇 (기본)', ['#C79BD8','#E4CDF0','#9D77A6','#50315D','#09070D','#F3EAFA']],
+  ['체리 나이트',     ['#E8A8BE','#F6D6E1','#B87A93','#5C2F42','#0C0709','#FBEDF2']],
+  ['피치 워터',       ['#F0B48C','#F9DCC6','#C08761','#5E3A26','#0D0806','#FCEFE6']],
+  ['딥 오션',         ['#8FC7E8','#CFE6F5','#6A97B8','#20415C','#05080D','#EAF3FA']],
+  ['모노 실버',       ['#C9C6D2','#E8E6EE','#96929F','#3A3742','#0A090C','#F2F1F5']]
+];
+document.getElementById('presets').innerHTML = PRESETS.map(function(ps, i){
+  return '<button type="button" data-ps="' + i + '"><span class="chips">'
+    + ps[1].slice(0,5).map(function(c){ return '<i style="background:' + c + '"></i>'; }).join('')
+    + '</span>' + ps[0] + '</button>';
+}).join('');
+document.getElementById('presets').addEventListener('click', function(e){
+  var b = e.target.closest('[data-ps]'); if (!b) return;
+  var cols = PRESETS[+b.dataset.ps][1];
+  PAL.forEach(function(pp, i){
+    document.getElementById('f-' + pp[0]).value = cols[i];
+    var c = document.getElementById('c-' + pp[0]); if (c) c.value = cols[i];
+  });
+  livePreview(); markDirty();
+  toast(PRESETS[+b.dataset.ps][0] + ' 적용 — 저장을 눌러야 사이트에 반영됩니다');
+});
+
+/* ── 대비 진단 (WCAG) ── */
+function _lum(hex){
+  var m = /^#([0-9a-fA-F]{6})$/.exec(hex || ''); if (!m) return null;
+  var n = parseInt(m[1],16), f = [(n>>16)&255,(n>>8)&255,n&255].map(function(v){
+    v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*f[0] + 0.7152*f[1] + 0.0722*f[2];
+}
+function _ratio(a,b){
+  var l1 = _lum(a), l2 = _lum(b); if (l1 === null || l2 === null) return null;
+  return (Math.max(l1,l2)+0.05) / (Math.min(l1,l2)+0.05);
+}
+function drawContrast(){
+  function v(k){ return document.getElementById('f-' + k).value; }
+  var pairs = [
+    ['포인트 색 / 배경',       v('theme-main'),       v('theme-bg'), 4.5],
+    ['밝은 강조 / 배경',       v('theme-main-light'), v('theme-bg'), 4.5],
+    ['중간 톤 / 배경',         v('theme-main-dark'),  v('theme-bg'), 3.0],
+    ['로고 / 배경',            v('theme-logo'),       v('theme-bg'), 4.5],
+    ['흰 글자 / 채운 버튼',    '#FFFFFF',             v('theme-main-deep'), 4.5]
+  ];
+  document.getElementById('contrast').innerHTML =
+    '<div class="row2" style="border-bottom:1px solid var(--line)"><b style="color:var(--main);font-size:9.5px;letter-spacing:.18em">CONTRAST · 읽히는지 검사</b><span style="color:var(--ink-dim);font-size:11px">4.5:1 이상 권장</span></div>'
+    + pairs.map(function(p){
+        var r = _ratio(p[1], p[2]);
+        if (r === null) return '';
+        var cls = r >= p[3] ? 'ok' : (r >= p[3]*0.66 ? 'warn' : 'bad');
+        var word = cls === 'ok' ? '좋음' : (cls === 'warn' ? '아슬함' : '안 읽힘');
+        return '<div class="row2"><span>' + p[0] + '</span><b class="' + cls + '">'
+             + (Math.round(r*10)/10) + ':1 · ' + word + '</b></div>';
+      }).join('');
+}
+
+document.getElementById('th-reset').addEventListener('click', function(){
+  PAL.forEach(function(p){ document.getElementById('f-' + p[0]).value = p[2]; document.getElementById('c-' + p[0]).value = p[2]; });
+  livePreview(); toast('기본 팔레트로 되돌렸어요 — 저장을 눌러야 반영됩니다');
+});
+
+/* ══════════ 프로필 로드/저장 ══════════ */
+function fillDefaults(){
+  profileKeys.forEach(function(k){
+    var el = document.getElementById('f-' + k);
+    if (!el) return;
+    el.value = (typeof PF_DEFAULT !== 'undefined' && PF_DEFAULT[k] != null) ? txt(PF_DEFAULT[k]) : '';
+  });
+  PAL.forEach(function(pp){
+    var t = document.getElementById('f-' + pp[0]); if (!t) return;
+    if (!t.value) t.value = pp[2];
+    var c = document.getElementById('c-' + pp[0]);
+    if (c && /^#[0-9a-fA-F]{6}$/.test(t.value)) c.value = t.value;
+  });
+  inputToDays(document.getElementById('f-days').value);
+  livePreview();
+}
+function loadProfile(){
+  if (!(typeof db !== 'undefined' && db)) { fillDefaults(); return Promise.resolve(); }
+  return db.from('profile').select('data').eq('id',1).single().then(function(r){
+    var p = (r && r.data && r.data.data) || {};
+    profileKeys.forEach(function(k){
+      var el = document.getElementById('f-' + k);
+      if (!el) { console.warn('입력칸 없음: f-' + k); return; }
+      var v = p[k];
+      el.value = (v == null) ? (typeof PF_DEFAULT !== 'undefined' && PF_DEFAULT[k] != null ? PF_DEFAULT[k] : '') : txt(v);
+    });
+    PAL.forEach(function(pp){
+      var t = document.getElementById('f-' + pp[0]);
+      if (!t.value) t.value = pp[2];
+      var c = document.getElementById('c-' + pp[0]);
+      if (/^#[0-9a-fA-F]{6}$/.test(t.value)) c.value = t.value;
+    });
+    inputToDays(document.getElementById('f-days').value);
+    livePreview();
+  }).catch(function(e){ console.error(e); toast('프로필을 불러오지 못했어요'); });
+}
+function saveProfile(){
+  daysToInput();
+  var data = {};
+  profileKeys.forEach(function(k){
+    var el = document.getElementById('f-' + k);
+    data[k] = el ? el.value : '';
+  });
+  if (!needDb()) return Promise.resolve();
+  return db.from('profile').upsert({ id:1, data:data, updated_at:new Date().toISOString() })
+    .then(function(r){
+      if (r.error){ console.error(r.error); toast('저장 실패 — ' + r.error.message); return; }
+      clearDirty();
+      toast('저장했어요 · 사이트에서 Ctrl+Shift+R');
+    });
+}
+document.querySelectorAll('[data-save="profile"]').forEach(function(b){ b.addEventListener('click', saveProfile); });
+
+/* ══════════ 공용 CRUD 도우미 ══════════ */
+function val(id){ var e = document.getElementById(id); return e ? String(e.value||'').trim() : ''; }
+function chk(id){ var e = document.getElementById(id); return !!(e && e.checked); }
+function clr(ids){ ids.forEach(function(i){ var e = document.getElementById(i); if (!e) return; if (e.type === 'checkbox') e.checked = false; else e.value = ''; }); }
+function delBtn(table, id){ return '<button class="del" data-del="' + table + '" data-id="' + id + '">✕</button>'; }
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-del]'); if (!b) return;
+  if (!confirm('삭제할까요? 되돌릴 수 없어요.')) return;
+  deleteRow(b.dataset.del, b.dataset.id).then(function(ok){
+    if (!ok){ toast('삭제 실패'); return; }
+    toast('삭제했어요'); RELOAD[b.dataset.del] && RELOAD[b.dataset.del]();
+  });
+});
+var RELOAD = {};
+
+/* ── 공지 ── */
+RELOAD.notice = function(){
+  fetchAll('notice', { order:'created_at', asc:false }).then(function(rows){
+    document.getElementById('nt-list').innerHTML = (rows||[]).map(function(r){
+      return '<tr><td>' + esc(r.title) + '</td><td>' + (r.pinned ? '📌' : '') + '</td><td>' + fmtDate(r.created_at) + '</td><td>' + delBtn('notice', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="4" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('nt-add').addEventListener('click', function(){
+  if (!val('nt-title')){ toast('제목을 적어주세요'); return; }
+  insertRow('notice', { title:val('nt-title'), content:val('nt-content'), pinned:chk('nt-pin'), image_url:val('nt-img') || null })
+    .then(function(ok){ if (ok){ clr(['nt-title','nt-content','nt-img','nt-pin']); toast('올렸어요'); RELOAD.notice(); } else toast('실패'); });
+});
+
+/* ── 일정 ── */
+RELOAD.schedule = function(){
+  fetchAll('schedule', { order:'date', asc:false }).then(function(rows){
+    document.getElementById('sc-list').innerHTML = (rows||[]).map(function(r){
+      return '<tr><td>' + fmtDate(r.date) + '</td><td>' + esc([r.time, r.title].filter(Boolean).join(' ')) + '</td><td>'
+        + esc([r.time2, r.title2].filter(Boolean).join(' ')) + '</td><td>' + esc(r.type||'') + '</td><td>' + esc(r.color||'') + '</td><td>'
+        + delBtn('schedule', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('sc-add').addEventListener('click', function(){
+  if (!val('sc-date') || !val('sc-title')){ toast('날짜와 1부 제목은 필수예요'); return; }
+  insertRow('schedule', {
+    date:val('sc-date'), time:val('sc-time'), title:val('sc-title'), type:val('sc-type'),
+    time2:val('sc-time2') || null, title2:val('sc-title2') || null, type2:val('sc-type2') || null,
+    color:val('sc-color'), highlight:chk('sc-hl'), description:val('sc-desc')
+  }).then(function(ok){ if (ok){ clr(['sc-time','sc-title','sc-time2','sc-title2','sc-desc','sc-hl']); toast('추가했어요'); RELOAD.schedule(); } else toast('실패'); });
+});
+
+/* ── 업보 ── */
+var VW = [], TP = [], CT = {};
+RELOAD.viewers = function(){ return loadWork(); };
+RELOAD.upbo_types = function(){ return loadWork(); };
+function loadWork(){
+  return Promise.all([
+    fetchAll('viewers', { order:'sort_order', asc:true }),
+    fetchAll('upbo_types', { order:'sort_order', asc:true }),
+    fetchAll('upbo_counts', { order:'id', asc:true })
+  ]).then(function(r){
+    VW = r[0]||[]; TP = r[1]||[]; CT = {};
+    (r[2]||[]).forEach(function(c){ CT[c.viewer_id + ':' + c.type_id] = c.count || 0; });
+    document.getElementById('vw-list').innerHTML = VW.map(function(v){
+      return '<tr><td>' + esc(v.nickname) + '</td><td>' + esc(v.memo||'') + '</td><td>' + delBtn('viewers', v.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="3" style="color:var(--ink-dim)">없음</td></tr>';
+    document.getElementById('tp-list').innerHTML = TP.map(function(t){
+      return '<tr><td>' + esc(t.name) + '</td><td>' + esc(t.category||'') + '</td><td>' + delBtn('upbo_types', t.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="3" style="color:var(--ink-dim)">없음</td></tr>';
+    document.getElementById('ct-head').innerHTML = '<tr><th>시청자</th>' + TP.map(function(t){ return '<th>' + esc(t.name) + '</th>'; }).join('') + '</tr>';
+    document.getElementById('ct-body').innerHTML = VW.map(function(v){
+      return '<tr><td>' + esc(v.nickname) + '</td>' + TP.map(function(t){
+        return '<td><input class="input" style="width:66px;height:32px;text-align:center" type="number" min="0" data-v="' + v.id + '" data-t="' + t.id + '" value="' + (CT[v.id+':'+t.id]||0) + '"></td>';
+      }).join('') + '</tr>';
+    }).join('') || '<tr><td style="color:var(--ink-dim)">시청자와 업보 종류를 먼저 등록하세요</td></tr>';
+  });
+}
+document.getElementById('vw-add').addEventListener('click', function(){
+  if (!val('vw-nick')){ toast('닉네임을 적어주세요'); return; }
+  insertRow('viewers', { nickname:val('vw-nick'), memo:val('vw-memo') || null })
+    .then(function(ok){ if (ok){ clr(['vw-nick','vw-memo']); toast('추가했어요'); loadWork(); } else toast('실패'); });
+});
+document.getElementById('tp-add').addEventListener('click', function(){
+  if (!val('tp-name')){ toast('이름을 적어주세요'); return; }
+  insertRow('upbo_types', { name:val('tp-name'), category:val('tp-cat') })
+    .then(function(ok){ if (ok){ clr(['tp-name']); toast('추가했어요'); loadWork(); } else toast('실패'); });
+});
+document.getElementById('ct-save').addEventListener('click', function(){
+  var rows = [];
+  document.querySelectorAll('#ct-body input[data-v]').forEach(function(i){
+    rows.push({ viewer_id:+i.dataset.v, type_id:+i.dataset.t, count:parseInt(i.value,10) || 0, updated_at:new Date().toISOString() });
+  });
+  if (!rows.length){ toast('저장할 내용이 없어요'); return; }
+  if (!needDb()) return;
+  db.from('upbo_counts').upsert(rows, { onConflict:'viewer_id,type_id' }).then(function(r){
+    if (r.error){ console.error(r.error); toast('저장 실패 — ' + r.error.message); return; }
+    toast('장부를 저장했어요');
+  });
+});
+
+/* ── 일기 ── */
+RELOAD.diary = function(){
+  fetchAll('diary', { order:'created_at', asc:false }).then(function(rows){
+    document.getElementById('dy-list').innerHTML = (rows||[]).map(function(r){
+      return '<tr><td>' + fmtDate(r.diary_date || r.created_at) + '</td><td>' + esc(r.title) + '</td><td>' + esc(r.mood||'') + '</td><td>' + delBtn('diary', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="4" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('dy-add').addEventListener('click', function(){
+  if (!val('dy-title')){ toast('제목을 적어주세요'); return; }
+  insertRow('diary', { title:val('dy-title'), content:val('dy-content'), mood:val('dy-mood') || null,
+    diary_date:val('dy-date') || null, image_url:val('dy-img') || null })
+    .then(function(ok){ if (ok){ clr(['dy-title','dy-content','dy-mood','dy-img']); toast('올렸어요'); RELOAD.diary(); } else toast('실패'); });
+});
+RELOAD.comments = function(){
+  Promise.all([fetchAll('comments', { order:'created_at', asc:false }), fetchAll('diary', { order:'id', asc:true })])
+    .then(function(r){
+      var map = {}; (r[1]||[]).forEach(function(d){ map[d.id] = d.title; });
+      document.getElementById('cm-list').innerHTML = (r[0]||[]).map(function(c){
+        return '<tr><td>' + esc(map[c.diary_id] || ('#' + c.diary_id)) + '</td><td>' + esc(c.nickname||'초단') + '</td><td style="white-space:normal;max-width:420px">'
+          + esc(c.message) + '</td><td>' + delBtn('comments', c.id) + '</td></tr>';
+      }).join('') || '<tr><td colspan="4" style="color:var(--ink-dim)">없음</td></tr>';
+    });
+};
+document.getElementById('cm-load').addEventListener('click', RELOAD.comments);
+
+/* ── 노래 · VOD ── */
+RELOAD.songs = function(){
+  fetchAll('songs', { order:'title', asc:true }).then(function(rows){
+    rows = rows || [];
+    document.getElementById('sg-cnt').textContent = '총 ' + rows.length + '곡';
+    document.getElementById('sg-list').innerHTML = rows.map(function(r){
+      return '<tr><td>' + esc(r.title) + '</td><td>' + esc(r.artist||'') + '</td><td>' + esc(r.genre||'') + '</td><td>' + (r.difficulty||3) + '</td><td>' + delBtn('songs', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="5" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('sg-add').addEventListener('click', function(){
+  if (!val('sg-title')){ toast('곡 제목을 적어주세요'); return; }
+  insertRow('songs', { title:val('sg-title'), artist:val('sg-artist'), genre:val('sg-genre') || '기타',
+    difficulty:parseInt(val('sg-diff'),10) || 3, memo:val('sg-memo') })
+    .then(function(ok){ if (ok){ clr(['sg-title','sg-artist','sg-memo']); toast('추가했어요'); RELOAD.songs(); } else toast('실패'); });
+});
+document.getElementById('sg-bulkadd').addEventListener('click', function(){
+  var ls = val('sg-bulk').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+  if (!ls.length){ toast('내용이 비어있어요'); return; }
+  var rows = ls.map(function(l){
+    var p = l.split('-').map(function(s){ return s.trim(); });
+    return { title:p[0], artist:p[1] || '', genre:p[2] || '기타', difficulty:3 };
+  }).filter(function(r){ return r.title; });
+  if (!needDb()) return;
+  db.from('songs').insert(rows).then(function(r){
+    if (r.error){ toast('실패 — ' + r.error.message); return; }
+    document.getElementById('sg-bulk').value = ''; toast(rows.length + '곡 추가했어요'); RELOAD.songs();
+  });
+});
+RELOAD.original_songs = function(){
+  fetchAll('original_songs', { order:'created_at', asc:false }).then(function(rows){
+    document.getElementById('vd-list').innerHTML = (rows||[]).map(function(r){
+      return '<tr><td>' + esc(r.title) + '</td><td>' + esc(r.vod_id||'') + '</td><td>' + delBtn('original_songs', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="3" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('vd-add').addEventListener('click', function(){
+  if (!val('vd-title') || !val('vd-id')){ toast('제목과 VOD ID가 필요해요'); return; }
+  insertRow('original_songs', { title:val('vd-title'), vod_id:val('vd-id').replace(/\D/g,'') })
+    .then(function(ok){ if (ok){ clr(['vd-title','vd-id']); toast('추가했어요'); RELOAD.original_songs(); } else toast('실패'); });
+});
+
+/* ── 옷장 ── */
+RELOAD.dress_items = function(){
+  fetchAll('dress_items', { order:'created_at', asc:false }).then(function(rows){
+    var L = { hair:'헤어', outfit:'의상', lens:'렌즈', event:'이벤트' };
+    document.getElementById('dr-list').innerHTML = (rows||[]).map(function(r){
+      var b = r.badges; if (typeof b === 'string'){ try{ b = JSON.parse(b); }catch(e){ b = []; } }
+      var isNew = Array.isArray(b) && b.some(function(x){ return String(txt(x)).toUpperCase().indexOf('NEW') >= 0; });
+      return '<tr><td>' + (r.image_url ? '<img class="thumb" src="' + esc(r.image_url) + '" referrerpolicy="no-referrer">' : '') + '</td>'
+        + '<td>' + esc(r.name) + '</td><td>' + (L[r.category] || r.category || '') + '</td><td>' + (isNew ? 'NEW' : '') + '</td>'
+        + '<td>' + (r.sort_order||0) + '</td><td>' + delBtn('dress_items', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="color:var(--ink-dim)">없음</td></tr>';
+  });
+};
+document.getElementById('dr-add').addEventListener('click', function(){
+  if (!val('dr-name') || !val('dr-img')){ toast('이름과 이미지 주소가 필요해요'); return; }
+  insertRow('dress_items', {
+    name:val('dr-name'), category:val('dr-cat'), image_url:val('dr-img'), description:val('dr-desc'),
+    sort_order:parseInt(val('dr-sort'),10) || 0,
+    is_event: val('dr-cat') === 'event',
+    badges: chk('dr-new') ? [{ label:'NEW' }] : []
+  }).then(function(ok){ if (ok){ clr(['dr-name','dr-img','dr-desc','dr-new']); toast('올렸어요'); RELOAD.dress_items(); } else toast('실패'); });
+});
+
+/* ── OBS 오버레이 ── */
+function loadOverlay(){
+  if (!(typeof db !== 'undefined' && db)) return;
+  db.from('overlay_state').select('*').eq('id',1).single().then(function(r){
+    var d = (r && r.data) || {};
+    document.getElementById('ov-title').value = d.song_title || '';
+    document.getElementById('ov-artist').value = d.song_artist || '';
+    document.getElementById('ov-vis').checked = !!d.is_visible;
+  }).catch(function(){});
+}
+document.getElementById('ov-save').addEventListener('click', function(){
+  if (!needDb()) return;
+  db.from('overlay_state').upsert({ id:1, song_title:val('ov-title'), song_artist:val('ov-artist'),
+    is_visible:chk('ov-vis'), updated_at:new Date().toISOString() }).then(function(r){
+    if (r.error){ toast('실패 — ' + r.error.message); return; }
+    toast(chk('ov-vis') ? '방송에 표시했어요' : '방송에서 숨겼어요');
+  });
+});
+
+/* ── 문의 ── */
+RELOAD.inquiries = function(){
+  fetchAll('inquiries', { order:'created_at', asc:false }).then(function(rows){
+    document.getElementById('iq-list').innerHTML = (rows||[]).map(function(r){
+      return '<tr><td>' + fmtDate(r.created_at) + '</td><td>' + esc(r.nickname||'—') + '</td><td style="white-space:normal;max-width:520px">'
+        + esc(r.message) + '</td><td>' + delBtn('inquiries', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="4" style="color:var(--ink-dim)">아직 받은 문의가 없어요</td></tr>';
+  });
+};
+document.getElementById('iq-load').addEventListener('click', RELOAD.inquiries);
+
+/* ══════════ 부팅 ══════════ */
+function boot(){
+  setupThumbs();
+  document.getElementById('app').addEventListener('input', function(e){
+    if (e.target.closest('#tab-main, #tab-profile, #tab-theme')) markDirty();
+  });
+  loadProfile().then(function(){ refreshThumbs(); clearDirty(); });
+  RELOAD.notice(); RELOAD.schedule(); loadWork(); RELOAD.diary();
+  RELOAD.songs(); RELOAD.original_songs(); RELOAD.dress_items(); RELOAD.inquiries(); RELOAD.comments();
+  loadOverlay();
+}
+</script>
+</body>
+</html>

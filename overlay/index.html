@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>NANCHO — NOW PLAYING (OBS)</title>
+<!--
+  OBS 브라우저 소스 전용. 배경 투명.
+  · 권장 크기 720 x 130
+  · 관리자 → 🎵 노래·VOD 탭 맨 아래 "지금 트는 노래"에서 켜고 끕니다.
+  · 1.5초마다 overlay_state 를 확인해 자동 갱신됩니다.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ov-main:#C79BD8;
+  --ov-deep:#50315D;
+  --ov-ink:#F4EEF8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:transparent;overflow:hidden;width:720px;height:130px;
+  font-family:'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased}
+.bar{
+  display:inline-grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:0;
+  height:88px;margin:20px 0 0 14px;max-width:660px;
+  border-top:1px solid var(--ov-main);border-bottom:1px solid rgba(255,255,255,.34);
+  background:rgba(9,6,13,.78);backdrop-filter:blur(10px);
+  opacity:0;transform:translateX(-10px);transition:opacity .45s ease,transform .45s ease;
+}
+.bar.visible{opacity:1;transform:none}
+.av{width:66px;height:66px;margin:0 0 0 11px;border:1px solid rgba(255,255,255,.3);
+  background-size:cover;background-position:center;flex:0 0 auto}
+.tick{width:1px;height:66px;background:rgba(255,255,255,.2);margin:0 16px}
+.info{padding-right:22px;min-width:0}
+.k{display:flex;align-items:center;gap:7px;color:var(--ov-main);font-size:9px;font-weight:900;letter-spacing:.24em}
+.k i{width:6px;height:6px;border-radius:50%;background:var(--ov-main);box-shadow:0 0 10px var(--ov-main);
+  animation:pulse 1.9s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.t{color:var(--ov-ink);font-size:21px;font-weight:700;letter-spacing:-.02em;margin-top:5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+.a{color:rgba(244,238,248,.66);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="av" id="av"></div>
+  <div class="tick"></div>
+  <div class="info">
+    <div class="k"><i></i>NOW PLAYING · NANCHO</div>
+    <div class="t" id="t">—</div>
+    <div class="a" id="a"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script>
+document.getElementById('av').style.backgroundImage =
+  'url("https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg")';
+
+var last = null;
+function poll(){
+  if (typeof db === 'undefined' || !db) return;
+  db.from('overlay_state').select('*').eq('id',1).single().then(function(r){
+    var d = r && r.data;
+    var bar = document.getElementById('bar');
+    if (!d || !d.is_visible || !d.song_title){ bar.classList.remove('visible'); last = null; return; }
+    var key = d.song_title + '|' + (d.song_artist || '');
+    if (key !== last){
+      last = key;
+      document.getElementById('t').textContent = d.song_title;
+      document.getElementById('a').textContent = d.song_artist || '';
+    }
+    bar.classList.add('visible');
+  }).catch(function(){});
+}
+poll();
+setInterval(poll, 1500);
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>업보 — 난초 NANCHO</title>
+<meta name="description" content="난초(NANCHO) 업보 장부 — 초단들의 누적 기록.">
+<meta property="og:title" content="업보 — 난초 NANCHO">
+<meta property="og:description" content="난초(NANCHO) 업보 장부 — 초단들의 누적 기록.">
+<meta property="og:image" content="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<link rel="stylesheet" href="../style.css">
+<style>
+.rank{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.rank > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 18px;position:relative}
+.rank .p{font-family:var(--ff-disp);font-size:clamp(30px,4vw,54px);line-height:.9;letter-spacing:-.06em;
+  color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px var(--main-light)}
+body.day .rank .p{-webkit-text-stroke:1px var(--main-deep)}
+.rank .nm{font-size:16px;font-weight:700;margin-top:10px}
+.rank .ct{font-family:var(--ff-serif);font-size:13px;color:var(--main);margin-top:4px}
+.rank .mm{font-size:11.5px;color:var(--ink-dim);margin-top:6px}
+@media (max-width:760px){.rank{grid-template-columns:minmax(0,1fr)}}
+
+.tools2{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.tools2 input{max-width:260px}
+.ledger td.v{font-family:var(--ff-serif);text-align:center;color:var(--ink-soft)}
+.ledger td.v.hot{color:var(--main-light);font-weight:700}
+body.day .ledger td.v.hot{color:var(--main-deep)}
+.ledger td.v.zero{color:var(--ink-dim);opacity:.4}
+.ledger td.nm{font-weight:700;position:sticky;left:0;background:var(--panel-solid);z-index:1}
+.ledger th.nm{position:sticky;left:0;z-index:3}
+.ledger td.tot{font-family:var(--ff-serif);text-align:center;color:var(--main);border-left:1px solid var(--line)}
+.ledger th.tot{border-left:1px solid var(--line);text-align:center}
+.ledger .memo{font-size:11px;color:var(--ink-dim);font-weight:400;display:block;white-space:normal;max-width:220px}
+</style>
+</head>
+<body>
+<script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
+<div class="grain" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="col">
+    <a class="brand" href="../" aria-label="난초 메인">
+      <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
+    </a>
+    <nav class="menu" id="menu">
+        <a href="../index.html">메인</a>
+        <a href="../profile/">프로필</a>
+        <a href="../notice/">공지</a>
+        <a href="../schedule/">일정</a>
+        <a href="../work/" class="on">업보</a>
+        <a href="../diary/">일기</a>
+        <a href="../song/">노래책</a>
+        <a href="../dress/">옷장</a>
+        <a href="../game/">미니게임</a>
+    </nav>
+    <div class="tools">
+      <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
+      <button class="tbtn" data-mode>DAY</button>
+      <button class="tbtn solid" data-ask>문의</button>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<section class="filehead">
+  <div class="fh-ghost" aria-hidden="true">LEDGER</div>
+  <div class="col">
+    <div class="fh-kicker"><i></i><span>FILE 04 · LEDGER</span></div>
+    <h1 class="fh-title">업보 <em>LEDGER</em></h1>
+    <p class="fh-sub" data-sub="work">방송에서 쌓인 것들은 사라지지 않고 장부에 남습니다. 오늘도 성실히 적립 중.</p>
+  </div>
+</section>
+<section class="panel tight">
+  <div class="col">
+    <div class="grid g3">
+      <div class="box flat" style="padding:20px"><div class="lbl">기록된 초단</div>
+        <div style="font-family:var(--ff-serif);font-size:32px;margin-top:6px" id="sumV">0</div></div>
+      <div class="box flat" style="padding:20px"><div class="lbl">업보 종류</div>
+        <div style="font-family:var(--ff-serif);font-size:32px;margin-top:6px" id="sumT">0</div></div>
+      <div class="box flat" style="padding:20px"><div class="lbl">누적 총합</div>
+        <div style="font-family:var(--ff-serif);font-size:32px;margin-top:6px;color:var(--main)" id="sumC">0</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="col">
+    <div class="sec-head">
+      <div><div class="sec-no">TOP</div><h2 class="sec-title"><small>MOST WANTED</small>업보 상위 3인</h2></div>
+      <div class="sec-note">누적 횟수 기준</div>
+    </div>
+    <div class="rank" id="rank"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="col">
+    <div class="sec-head">
+      <div><div class="sec-no">LEDGER</div><h2 class="sec-title"><small>FULL RECORD</small>업보 장부</h2></div>
+      <div class="sec-note">0회인 초단은 표시되지 않아요</div>
+    </div>
+    <div class="tools2">
+      <input class="input" id="q" type="text" placeholder="닉네임 검색">
+    </div>
+    <div class="tablewrap" id="ledWrap"><table class="ledger"><tbody id="ledger"></tbody></table></div>
+    <div class="empty" id="ledEmpty" style="display:none"><b>NO MATCH</b>검색 결과가 없어요</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="col">
+    <div class="sec-head">
+      <div><div class="sec-no">TYPES</div><h2 class="sec-title"><small>BY CATEGORY</small>업보 종류별 집계</h2></div>
+    </div>
+    <div class="grid g4" id="types"></div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="col">
+    <div class="f-l">NANCHO</div>
+    <div class="f-r">
+      THE MIDNIGHT LOG · 자정의 기록실<br>
+      © 2026 난초 (NANCHO) · 비즈니스 문의 — 상단 문의 버튼을 이용해 주세요
+    </div>
+  </div>
+</footer>
+<div class="mask" id="askMask" role="dialog" aria-modal="true" aria-label="문의">
+  <div class="modal">
+    <div class="modal-h">
+      <div><small>TRANSMIT</small><b>난초에게 전파 보내기</b></div>
+      <button class="x" data-close aria-label="닫기">×</button>
+    </div>
+    <div class="modal-b">
+      <label class="field"><span>닉네임 (선택)</span>
+        <input class="input" id="askNick" type="text" placeholder="초단 아무개" maxlength="30">
+      </label>
+      <label class="field"><span>내용</span>
+        <textarea class="input" id="askMsg" placeholder="문의·제보·응원 무엇이든 좋아요." maxlength="1200"></textarea>
+        <em class="hint">보낸 내용은 난초만 볼 수 있어요. 답이 필요하면 연락 수단도 함께 적어주세요.</em>
+      </label>
+      <button class="btn solid" id="askSend" style="width:100%">전파 전송</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script src="../site.js"></script>
+<script>
+
+var V = [], T = [], C = {}, Q = '';
+
+function total(vid){
+  var s = 0;
+  T.forEach(function(t){ s += (C[vid + ':' + t.id] || 0); });
+  return s;
+}
+
+function render(){
+  var rows = V.map(function(v){ return { v: v, t: total(v.id) }; })
+              .filter(function(x){ return x.t > 0; })
+              .sort(function(a,b){ return b.t - a.t; });
+
+  /* 랭킹 TOP3 */
+  var host = document.getElementById('rank');
+  if (!rows.length){
+    host.innerHTML = '<div class="empty" style="grid-column:1/-1"><b>NO LEDGER</b>아직 쌓인 업보가 없어요</div>';
+  } else {
+    host.innerHTML = rows.slice(0,3).map(function(x, i){
+      return '<div><div class="p">' + ('0'+(i+1)) + '</div>'
+        + '<div class="nm">' + esc(x.v.nickname) + '</div>'
+        + '<div class="ct">누적 ' + x.t + '회</div>'
+        + (x.v.memo ? '<div class="mm">' + esc(x.v.memo) + '</div>' : '')
+        + '</div>';
+    }).join('');
+  }
+
+  /* 장부 */
+  var q = Q.trim().toLowerCase();
+  var shown = rows.filter(function(x){ return !q || String(x.v.nickname).toLowerCase().indexOf(q) >= 0; });
+  var th = '<tr><th class="nm">시청자</th>' + T.map(function(t){ return '<th>' + esc(t.name) + '</th>'; }).join('')
+         + '<th class="tot">합계</th></tr>';
+  var tb = shown.map(function(x){
+    return '<tr><td class="nm">' + esc(x.v.nickname)
+      + (x.v.memo ? '<span class="memo">' + esc(x.v.memo) + '</span>' : '') + '</td>'
+      + T.map(function(t){
+          var n = C[x.v.id + ':' + t.id] || 0;
+          return '<td class="v ' + (n === 0 ? 'zero' : (n >= 5 ? 'hot' : '')) + '">' + (n || '·') + '</td>';
+        }).join('')
+      + '<td class="tot">' + x.t + '</td></tr>';
+  }).join('');
+  document.getElementById('ledger').innerHTML = th + tb;
+  document.getElementById('ledWrap').style.display = shown.length ? '' : 'none';
+  document.getElementById('ledEmpty').style.display = shown.length ? 'none' : '';
+
+  /* 종류별 합계 */
+  var byT = T.map(function(t){
+    var s = 0; V.forEach(function(v){ s += (C[v.id + ':' + t.id] || 0); });
+    return { n: t.name, s: s, cat: t.category };
+  }).sort(function(a,b){ return b.s - a.s; });
+  document.getElementById('types').innerHTML = byT.length ? byT.map(function(t){
+    return '<div class="box flat" style="padding:16px 18px">'
+      + '<div class="lbl">' + esc(t.cat || '일반') + '</div>'
+      + '<div style="font-size:15px;font-weight:700;margin-top:7px">' + esc(t.n) + '</div>'
+      + '<div style="font-family:var(--ff-serif);color:var(--main);font-size:20px;margin-top:4px">' + t.s + '</div></div>';
+  }).join('') : '<div class="empty" style="grid-column:1/-1">등록된 업보 종류가 없어요</div>';
+
+  document.getElementById('sumV').textContent = rows.length;
+  document.getElementById('sumT').textContent = T.length;
+  document.getElementById('sumC').textContent = rows.reduce(function(a,b){ return a + b.t; }, 0);
+}
+
+document.getElementById('q').addEventListener('input', function(){ Q = this.value; render(); });
+
+bootSite();
+if (typeof fetchAll === 'function'){
+  Promise.all([
+    fetchAll('viewers', { order:'sort_order', asc:true }),
+    fetchAll('upbo_types', { order:'sort_order', asc:true }),
+    fetchAll('upbo_counts', { order:'id', asc:true })
+  ]).then(function(r){
+    V = r[0] || []; T = r[1] || [];
+    (r[2] || []).forEach(function(c){ C[c.viewer_id + ':' + c.type_id] = c.count || 0; });
+    render(); ready();
+  }).catch(function(){ render(); ready(); });
+} else { render(); ready(); }
+
+</script>
+<script src="../fx.js"></script>
+</body>
+</html>

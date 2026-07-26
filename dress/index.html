@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>옷장 — 난초 NANCHO</title>
+<meta name="description" content="난초(NANCHO) 옷장 — 의상·헤어·렌즈 기록.">
+<meta property="og:title" content="옷장 — 난초 NANCHO">
+<meta property="og:description" content="난초(NANCHO) 옷장 — 의상·헤어·렌즈 기록.">
+<meta property="og:image" content="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<link rel="stylesheet" href="../style.css">
+<style>
+/* 컨택트 시트 — 각진 헤어라인 격자 (기존 포스터/토글 프레임 폐기) */
+.sheet{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;cursor:pointer;
+  background:rgba(0,0,0,.28);transition:background .18s}
+body.day .cell{background:rgba(255,255,255,.4)}
+.cell:hover{background:rgba(199,155,216,.12)}
+.cell .fr{position:relative;aspect-ratio:3/4;overflow:hidden}
+.cell .fr img{width:100%;height:100%;object-fit:cover;transition:transform .55s cubic-bezier(.2,.8,.3,1),filter .35s}
+.cell:hover .fr img{transform:scale(1.045)}
+.cell .fr::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(6,4,9,.82));pointer-events:none}
+body.day .cell .fr::after{background:linear-gradient(180deg,transparent 55%,rgba(247,243,248,.86))}
+.cell .idx{position:absolute;top:9px;left:10px;z-index:2;font-family:var(--ff-serif);font-size:11px;
+  letter-spacing:.14em;color:#fff;mix-blend-mode:difference}
+.cell .new{position:absolute;top:0;right:0;z-index:2;background:var(--main-deep);color:#fff;
+  font-size:8.5px;font-weight:900;letter-spacing:.2em;padding:4px 8px}
+.cell .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:11px 12px}
+.cell .cap .k{font-size:8.5px;font-weight:900;letter-spacing:.2em;color:var(--main-light)}
+body.day .cell .cap .k{color:var(--main-deep)}
+.cell .cap .n{font-size:13px;font-weight:700;margin-top:3px;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink)}
+.cell .cap .d{font-family:var(--ff-serif);font-size:10.5px;color:var(--ink-dim);margin-top:2px}
+@media (max-width:1000px){.sheet{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.sheet{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.filt{display:flex;gap:0;border:1px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.filt button{flex:1 1 auto;min-width:96px;height:44px;border:0;border-right:1px solid var(--line);background:transparent;
+  color:var(--ink-soft);font-size:10.5px;font-weight:900;letter-spacing:.18em;cursor:pointer;transition:.18s}
+.filt button:last-child{border-right:0}
+.filt button:hover{color:var(--ink);background:rgba(199,155,216,.08)}
+.filt button.on{background:var(--main-deep);color:#fff}
+
+/* 라이트박스 */
+.lb{position:fixed;inset:0;z-index:300;background:rgba(4,2,7,.94);display:none;
+  grid-template-columns:minmax(0,1fr) 320px}
+body.day .lb{background:rgba(240,235,243,.96)}
+.lb.on{display:grid}
+.lb .view{position:relative;display:flex;align-items:center;justify-content:center;padding:34px;min-width:0}
+.lb .view img{max-width:100%;max-height:88vh;object-fit:contain;border:1px solid var(--line)}
+.lb .side{border-left:1px solid var(--line);padding:34px 28px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.lb .side .k{font-size:9px;font-weight:900;letter-spacing:.22em;color:var(--main)}
+.lb .side h3{margin:0;font-size:clamp(20px,2.4vw,30px);font-weight:900;letter-spacing:-.02em;line-height:1.25}
+.lb .side p{margin:0;color:var(--ink-soft);font-size:13.5px;line-height:1.85;white-space:pre-wrap}
+.lb .side .meta{font-family:var(--ff-serif);font-size:12px;color:var(--ink-dim);letter-spacing:.08em}
+.lb .navs{display:flex;gap:8px;margin-top:auto;padding-top:18px}
+.lb .close{position:absolute;top:18px;right:18px;z-index:5;width:36px;height:36px;border:1px solid var(--line);
+  background:transparent;color:var(--ink);font-size:17px;cursor:pointer}
+.lb .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:1px solid var(--line);
+  background:rgba(0,0,0,.3);color:var(--ink);cursor:pointer;font-size:16px}
+body.day .lb .arrow{background:rgba(255,255,255,.5)}
+.lb .arrow.l{left:12px}.lb .arrow.r{right:12px}
+@media (max-width:900px){
+  .lb{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;overflow:auto}
+  .lb .side{border-left:0;border-top:1px solid var(--line);padding:22px 20px}
+  .lb .view{padding:16px}
+  .lb .view img{max-height:56vh}
+}
+</style>
+</head>
+<body>
+<script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
+<div class="grain" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="col">
+    <a class="brand" href="../" aria-label="난초 메인">
+      <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
+    </a>
+    <nav class="menu" id="menu">
+        <a href="../index.html">메인</a>
+        <a href="../profile/">프로필</a>
+        <a href="../notice/">공지</a>
+        <a href="../schedule/">일정</a>
+        <a href="../work/">업보</a>
+        <a href="../diary/">일기</a>
+        <a href="../song/">노래책</a>
+        <a href="../dress/" class="on">옷장</a>
+        <a href="../game/">미니게임</a>
+    </nav>
+    <div class="tools">
+      <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
+      <button class="tbtn" data-mode>DAY</button>
+      <button class="tbtn solid" data-ask>문의</button>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<section class="filehead">
+  <div class="fh-ghost" aria-hidden="true">WARDROBE</div>
+  <div class="col">
+    <div class="fh-kicker"><i></i><span>FILE 07 · WARDROBE</span></div>
+    <h1 class="fh-title">옷장 <em>WARDROBE</em></h1>
+    <p class="fh-sub" data-sub="dress">난초가 걸쳤던 것들을 한 장의 컨택트 시트로. 분류를 눌러 걸러 보고, 컷을 눌러 크게 봅니다.</p>
+  </div>
+</section>
+<section class="panel">
+  <div class="col">
+    <div class="sec-head">
+      <div><div class="sec-no">CONTACT SHEET</div><h2 class="sec-title"><small>WARDROBE</small>의상 · 헤어 · 렌즈 기록</h2></div>
+      <div class="sec-note">표시 <span id="cnt">000</span>컷 · 눌러서 크게 보기 (← → 로 넘김)</div>
+    </div>
+    <div class="filt" id="filt"></div>
+    <div class="sheet" id="sheet"><div class="loading" style="grid-column:1/-1">RECEIVING…</div></div>
+  </div>
+</section>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true">
+  <div class="view">
+    <button class="close" id="lbX" aria-label="닫기">×</button>
+    <button class="arrow l" id="lbL" aria-label="이전">‹</button>
+    <img id="lbImg" src="" alt="" referrerpolicy="no-referrer">
+    <button class="arrow r" id="lbR" aria-label="다음">›</button>
+  </div>
+  <div class="side">
+    <div class="k" id="lbCat">—</div>
+    <h3 id="lbName">—</h3>
+    <div class="meta" id="lbMeta">—</div>
+    <p id="lbDesc"></p>
+    <div class="navs">
+      <button class="btn sm" onclick="document.getElementById('lbL').click()">← 이전</button>
+      <button class="btn sm" onclick="document.getElementById('lbR').click()">다음 →</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer>
+  <div class="col">
+    <div class="f-l">NANCHO</div>
+    <div class="f-r">
+      THE MIDNIGHT LOG · 자정의 기록실<br>
+      © 2026 난초 (NANCHO) · 비즈니스 문의 — 상단 문의 버튼을 이용해 주세요
+    </div>
+  </div>
+</footer>
+<div class="mask" id="askMask" role="dialog" aria-modal="true" aria-label="문의">
+  <div class="modal">
+    <div class="modal-h">
+      <div><small>TRANSMIT</small><b>난초에게 전파 보내기</b></div>
+      <button class="x" data-close aria-label="닫기">×</button>
+    </div>
+    <div class="modal-b">
+      <label class="field"><span>닉네임 (선택)</span>
+        <input class="input" id="askNick" type="text" placeholder="초단 아무개" maxlength="30">
+      </label>
+      <label class="field"><span>내용</span>
+        <textarea class="input" id="askMsg" placeholder="문의·제보·응원 무엇이든 좋아요." maxlength="1200"></textarea>
+        <em class="hint">보낸 내용은 난초만 볼 수 있어요. 답이 필요하면 연락 수단도 함께 적어주세요.</em>
+      </label>
+      <button class="btn solid" id="askSend" style="width:100%">전파 전송</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script src="../site.js"></script>
+<script>
+
+var CATS = [
+  ['ALL','전체'], ['hair','헤어'], ['outfit','의상'], ['lens','렌즈'], ['event','이벤트']
+];
+var LABEL = { hair:'HAIR', outfit:'OUTFIT', lens:'LENS', event:'EVENT' };
+var ITEMS = [], CAT = 'ALL', SHOW = [], CUR = 0;
+
+function isNew(r){
+  var b = r.badges;
+  if (typeof b === 'string'){ try{ b = JSON.parse(b); }catch(e){ b = []; } }
+  if (Array.isArray(b)) return b.some(function(x){ return String(txt(x)).toUpperCase().indexOf('NEW') >= 0; });
+  return false;
+}
+
+function render(){
+  SHOW = ITEMS.filter(function(r){ return CAT === 'ALL' || (r.category || 'hair') === CAT; });
+  var host = document.getElementById('sheet');
+  if (!SHOW.length){
+    host.innerHTML = '<div class="empty" style="grid-column:1/-1"><b>NO COSTUME</b>이 분류에는 아직 기록이 없어요</div>';
+  } else {
+    host.innerHTML = SHOW.map(function(r, i){
+      var cat = r.category || 'hair';
+      return '<article class="cell" data-i="' + i + '">'
+        + '<div class="fr">'
+        + (r.image_url ? '<img src="' + esc(r.image_url) + '" alt="' + esc(r.name) + '" referrerpolicy="no-referrer" loading="lazy">' : '')
+        + '<div class="idx">' + ('00'+(i+1)).slice(-3) + '</div>'
+        + (isNew(r) ? '<div class="new">NEW</div>' : '')
+        + '<div class="cap"><div class="k">' + (LABEL[cat] || cat) + '</div>'
+        + '<div class="n">' + esc(r.name || '') + '</div>'
+        + '<div class="d">' + fmtDate(r.created_at) + '</div></div>'
+        + '</div></article>';
+    }).join('');
+  }
+  document.getElementById('cnt').textContent = String(SHOW.length).padStart(3,'0');
+  var f = document.getElementById('filt');
+  f.innerHTML = CATS.map(function(c){
+    var n = c[0] === 'ALL' ? ITEMS.length : ITEMS.filter(function(r){ return (r.category||'hair') === c[0]; }).length;
+    return '<button class="' + (CAT===c[0]?'on':'') + '" data-c="' + c[0] + '">' + c[1] + ' ' + n + '</button>';
+  }).join('');
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-c]');
+  if (b){ CAT = b.dataset.c; render(); return; }
+  var c = e.target.closest && e.target.closest('.cell');
+  if (c){ openLb(+c.dataset.i); return; }
+});
+
+function openLb(i){
+  CUR = i;
+  var r = SHOW[i]; if (!r) return;
+  document.getElementById('lbImg').src = r.image_url || '';
+  document.getElementById('lbCat').textContent = (LABEL[r.category || 'hair'] || '') + ' · FILE ' + ('00'+(i+1)).slice(-3);
+  document.getElementById('lbName').textContent = r.name || '';
+  document.getElementById('lbDesc').textContent = r.description || '';
+  document.getElementById('lbMeta').textContent = fmtDate(r.created_at) + (isNew(r) ? ' · NEW' : '');
+  document.getElementById('lb').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeLb(){ document.getElementById('lb').classList.remove('on'); document.body.style.overflow = ''; }
+function move(d){ if (!SHOW.length) return; CUR = (CUR + d + SHOW.length) % SHOW.length; openLb(CUR); }
+
+document.getElementById('lbX').addEventListener('click', closeLb);
+document.getElementById('lbL').addEventListener('click', function(){ move(-1); });
+document.getElementById('lbR').addEventListener('click', function(){ move(1); });
+document.getElementById('lb').addEventListener('click', function(e){ if (e.target === this) closeLb(); });
+document.addEventListener('keydown', function(e){
+  if (!document.getElementById('lb').classList.contains('on')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') move(-1);
+  if (e.key === 'ArrowRight') move(1);
+});
+
+bootSite();
+if (typeof fetchAll === 'function'){
+  fetchAll('dress_items', { order:'created_at', asc:false }).then(function(rows){
+    ITEMS = (rows||[]).sort(function(a,b){
+      var s = (b.sort_order||0) - (a.sort_order||0);
+      if (s) return s;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+    render(); ready();
+  }).catch(function(){ render(); ready(); });
+} else { render(); ready(); }
+
+</script>
+<script src="../fx.js"></script>
+</body>
+</html>

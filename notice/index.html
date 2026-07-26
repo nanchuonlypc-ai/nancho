@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공지 — 난초 NANCHO</title>
+<meta name="description" content="난초(NANCHO) 공지 게시 — 방송 안내와 소식.">
+<meta property="og:title" content="공지 — 난초 NANCHO">
+<meta property="og:description" content="난초(NANCHO) 공지 게시 — 방송 안내와 소식.">
+<meta property="og:image" content="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
+<link rel="stylesheet" href="../style.css">
+<style>
+.nlist{border-top:1px solid var(--line)}
+.nitem{display:grid;grid-template-columns:74px minmax(0,1fr) auto;gap:20px;align-items:start;
+  padding:22px 4px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s,padding .18s}
+.nitem:hover{background:rgba(199,155,216,.08);padding-left:12px}
+body.day .nitem:hover{background:rgba(110,74,130,.07)}
+.nitem .no{font-family:var(--ff-disp);font-size:20px;letter-spacing:-.04em;color:transparent;
+  -webkit-text-fill-color:transparent;-webkit-text-stroke:1px var(--line);padding-top:2px}
+.nitem.pin .no{-webkit-text-stroke:1px var(--main);color:transparent}
+.nitem .t{font-size:16px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.nitem .x{font-size:9px;font-weight:900;letter-spacing:.16em;border:1px solid var(--main);color:var(--main);padding:2px 7px}
+.nitem .p{margin:7px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.7;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nitem .d{font-family:var(--ff-serif);font-size:12px;color:var(--ink-dim);white-space:nowrap;padding-top:4px}
+.nitem .thumb{width:74px;height:74px;border:1px solid var(--line);object-fit:cover;background:rgba(0,0,0,.3)}
+@media (max-width:640px){
+  .nitem{grid-template-columns:minmax(0,1fr);gap:9px}
+  .nitem .no{display:none}
+  .nitem .d{padding-top:0}
+}
+.viewer .body{white-space:pre-wrap;font-size:14.5px;line-height:1.95;color:var(--ink-soft)}
+.viewer img{width:100%;border:1px solid var(--line);margin-top:16px}
+</style>
+</head>
+<body>
+<script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
+<div class="grain" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="col">
+    <a class="brand" href="../" aria-label="난초 메인">
+      <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
+    </a>
+    <nav class="menu" id="menu">
+        <a href="../index.html">메인</a>
+        <a href="../profile/">프로필</a>
+        <a href="../notice/" class="on">공지</a>
+        <a href="../schedule/">일정</a>
+        <a href="../work/">업보</a>
+        <a href="../diary/">일기</a>
+        <a href="../song/">노래책</a>
+        <a href="../dress/">옷장</a>
+        <a href="../game/">미니게임</a>
+    </nav>
+    <div class="tools">
+      <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
+      <button class="tbtn" data-mode>DAY</button>
+      <button class="tbtn solid" data-ask>문의</button>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<section class="filehead">
+  <div class="fh-ghost" aria-hidden="true">BULLETIN</div>
+  <div class="col">
+    <div class="fh-kicker"><i></i><span>FILE 02 · BULLETIN</span></div>
+    <h1 class="fh-title">공지 <em>BULLETIN</em></h1>
+    <p class="fh-sub" data-sub="notice">전파를 타기 전에 먼저 알려두는 것들. 고정 공지가 맨 위에 걸립니다.</p>
+  </div>
+</section>
+<section class="panel">
+  <div class="col">
+    <div class="sec-head">
+      <div><div class="sec-no">BULLETIN</div><h2 class="sec-title"><small>ALL ENTRIES</small>전체 공지</h2></div>
+      <div class="sec-note">기록 <span id="cnt">000</span>건 · 고정 공지가 맨 위</div>
+    </div>
+    <div class="nlist" id="nlist"><div class="loading">RECEIVING…</div></div>
+    <div class="pager" id="pager"></div>
+  </div>
+</section>
+
+<div class="mask viewer" id="vMask" role="dialog" aria-modal="true">
+  <div class="modal wide">
+    <div class="modal-h">
+      <div><small id="vDate">—</small><b id="vTitle">—</b></div>
+      <button class="x" data-close aria-label="닫기">×</button>
+    </div>
+    <div class="modal-b">
+      <div class="body" id="vBody"></div>
+      <div id="vImgs"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer>
+  <div class="col">
+    <div class="f-l">NANCHO</div>
+    <div class="f-r">
+      THE MIDNIGHT LOG · 자정의 기록실<br>
+      © 2026 난초 (NANCHO) · 비즈니스 문의 — 상단 문의 버튼을 이용해 주세요
+    </div>
+  </div>
+</footer>
+<div class="mask" id="askMask" role="dialog" aria-modal="true" aria-label="문의">
+  <div class="modal">
+    <div class="modal-h">
+      <div><small>TRANSMIT</small><b>난초에게 전파 보내기</b></div>
+      <button class="x" data-close aria-label="닫기">×</button>
+    </div>
+    <div class="modal-b">
+      <label class="field"><span>닉네임 (선택)</span>
+        <input class="input" id="askNick" type="text" placeholder="초단 아무개" maxlength="30">
+      </label>
+      <label class="field"><span>내용</span>
+        <textarea class="input" id="askMsg" placeholder="문의·제보·응원 무엇이든 좋아요." maxlength="1200"></textarea>
+        <em class="hint">보낸 내용은 난초만 볼 수 있어요. 답이 필요하면 연락 수단도 함께 적어주세요.</em>
+      </label>
+      <button class="btn solid" id="askSend" style="width:100%">전파 전송</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script src="../site.js"></script>
+<script>
+
+var ROWS = [], PAGE = 1, PER = 8;
+
+function pageOf(arr, n){ return arr.slice((n-1)*PER, n*PER); }
+
+function imgsOf(r){
+  var out = [];
+  if (r.image_url) out.push(r.image_url);
+  var ex = r.images;
+  if (typeof ex === 'string'){ try{ ex = JSON.parse(ex); }catch(e){ ex = []; } }
+  if (Array.isArray(ex)) ex.forEach(function(u){ var s = txt(u); if (s && out.indexOf(s)<0) out.push(s); });
+  return out;
+}
+
+function render(){
+  var host = document.getElementById('nlist');
+  if (!ROWS.length){
+    host.innerHTML = '<div class="empty"><b>NO BULLETIN</b>아직 게시된 공지가 없어요</div>';
+    document.getElementById('pager').innerHTML = '';
+    return;
+  }
+  host.innerHTML = pageOf(ROWS, PAGE).map(function(r, i){
+    var im = imgsOf(r)[0];
+    var idx = ROWS.indexOf(r);
+    return '<article class="nitem ' + (r.pinned ? 'pin' : '') + '" data-i="' + idx + '">'
+      + '<div class="no">' + ('0' + (ROWS.length - idx)).slice(-2) + '</div>'
+      + '<div><div class="t">' + (r.pinned ? '<span class="x">PINNED</span>' : '') + esc(r.title || '(제목 없음)') + '</div>'
+      + '<p class="p">' + esc(String(r.content || '').slice(0, 160)) + '</p></div>'
+      + (im ? '<img class="thumb" src="' + esc(im) + '" alt="" referrerpolicy="no-referrer" loading="lazy">'
+            : '<div class="d">' + fmtDate(r.created_at) + '</div>')
+      + '</article>';
+  }).join('');
+
+  var pages = Math.ceil(ROWS.length / PER);
+  document.getElementById('pager').innerHTML = pages > 1
+    ? Array.from({length: pages}, function(_, i){
+        return '<button class="' + (i+1===PAGE?'on':'') + '" data-p="' + (i+1) + '">' + (i+1) + '</button>';
+      }).join('') : '';
+  document.getElementById('cnt').textContent = String(ROWS.length).padStart(3,'0');
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('#pager button');
+  if (b){ PAGE = +b.dataset.p; render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  var it = e.target.closest && e.target.closest('.nitem');
+  if (it) open(+it.dataset.i);
+});
+
+function open(i){
+  var r = ROWS[i]; if (!r) return;
+  document.getElementById('vTitle').textContent = r.title || '(제목 없음)';
+  document.getElementById('vDate').textContent = fmtDate(r.created_at) + (r.pinned ? ' · 고정 공지' : '');
+  document.getElementById('vBody').textContent = r.content || '';
+  document.getElementById('vImgs').innerHTML = imgsOf(r).map(function(u){
+    return '<img src="' + esc(u) + '" alt="" referrerpolicy="no-referrer" loading="lazy">';
+  }).join('');
+  document.getElementById('vMask').classList.add('on');
+}
+document.getElementById('vMask').addEventListener('click', function(e){
+  if (e.target === this || (e.target.closest && e.target.closest('[data-close]'))) this.classList.remove('on');
+});
+
+bootSite();
+if (typeof fetchAll === 'function'){
+  fetchAll('notice', { order:'created_at', asc:false }).then(function(rows){
+    ROWS = (rows||[]).sort(function(a,b){
+      if (!!b.pinned - !!a.pinned) return !!b.pinned - !!a.pinned;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+    render(); ready();
+  }).catch(function(){ ROWS=[]; render(); ready(); });
+} else { render(); ready(); }
+
+</script>
+<script src="../fx.js"></script>
+</body>
+</html>
