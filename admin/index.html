@@ -9,12 +9,12 @@
 <link rel="stylesheet" href="../style.css">
 <style>
 body{background-image:none;background-color:var(--bg)}
-.adwrap{max-width:1280px;margin:0 auto;padding:0 clamp(14px,3vw,34px) 80px}
-.adtop{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--line);
+.nc-shell{max-width:1280px;margin:0 auto;padding:0 clamp(14px,3vw,34px) 80px}
+.nc-bar{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:14px;height:62px;margin-bottom:22px}
-.adtop .b{font-family:var(--ff-serif);font-size:20px;letter-spacing:-.05em}
-.adtop .b small{font-size:8px;font-weight:900;letter-spacing:.26em;color:var(--main);margin-left:8px;font-family:var(--ff-body)}
-.adtop .sp{margin-left:auto;display:flex;gap:8px}
+.nc-bar .b{font-family:var(--ff-serif);font-size:20px;letter-spacing:-.05em}
+.nc-bar .b small{font-size:8px;font-weight:900;letter-spacing:.26em;color:var(--main);margin-left:8px;font-family:var(--ff-body)}
+.nc-bar .sp{margin-left:auto;display:flex;gap:8px}
 
 .tabs{display:flex;flex-wrap:wrap;border:1px solid var(--line);margin-bottom:24px}
 .tabs button{flex:1 1 auto;min-width:104px;height:44px;border:0;border-right:1px solid var(--line);border-bottom:1px solid transparent;
@@ -234,8 +234,8 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 </div>
 
 <!-- ══ 본체 ══ -->
-<div class="adwrap nc-off" id="ncApp">
-  <div class="adtop">
+<div class="nc-shell nc-off" id="ncApp">
+  <div class="nc-bar">
     <div class="b">난초<small>ADMIN</small></div>
     <div class="sp">
       <button class="tbtn" data-mode>DAY</button>
@@ -802,6 +802,16 @@ function enter(){
   forceHide(document.getElementById('ncGate'));
   forceShow(document.getElementById('ncApp'));
   try { boot(); } catch (e) { console.error('[admin] boot 오류:', e); runSelfCheck(); }
+
+  /* 확장 프로그램이 뒤늦게 숨기는 경우가 있어 몇 초간 표시를 재확인한다.
+     (광고차단 필터가 클래스 이름을 보고 display:none 을 걸어버리는 사례) */
+  var recheck = 0;
+  var iv = setInterval(function(){
+    var app = document.getElementById('ncApp');
+    if (!app) return;
+    if (getComputedStyle(app).display === 'none') forceShow(app);
+    if (++recheck > 20) clearInterval(iv);
+  }, 400);
 }
 /* ⚠️ 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어
    여기서 ReferenceError 가 나고, 그 뒤 줄이 통째로 안 돌아 화면이 캄캄해진다.
