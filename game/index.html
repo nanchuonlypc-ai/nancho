@@ -26,25 +26,7 @@
 .lgtop .num{width:88px}
 .lgstage{border:1px solid var(--line);background:rgba(8,5,12,.4);padding:16px 12px;position:relative;overflow:hidden}
 body.day .lgstage{background:rgba(255,255,255,.5)}
-.lgrow{display:grid;gap:6px}
-.lgname input{height:34px;font-size:12px;text-align:center;padding:0 4px}
-.lgav{width:100%;aspect-ratio:1/1;max-width:46px;margin:8px auto 0;border:1px solid var(--c,var(--main));
-  display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;transition:transform .18s,background .18s;
-  background:rgba(199,155,216,.10)}
-.lgav:hover{transform:translateY(-2px);background:rgba(199,155,216,.22)}
-.lgav.done{opacity:.4;cursor:default;transform:none}
-.lgcv{display:block;width:100%;height:440px;margin:8px 0}
-.lgres input{height:34px;font-size:12px;text-align:center;padding:0 4px}
-.lgres .mask{position:static;display:flex;align-items:center;justify-content:center;height:34px;border:1px solid var(--line);
-  background:rgba(255,255,255,.05);font-family:var(--ff-serif);font-size:15px;color:var(--main);padding:0}
-.lgres .mask.open{border-color:var(--main);color:var(--ink);font-size:12px;font-family:var(--ff-body);font-weight:700;
-  background:rgba(199,155,216,.16);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.lgrunner{position:absolute;width:26px;height:26px;border:1px solid var(--main-light);background:var(--panel-solid);
-  display:flex;align-items:center;justify-content:center;font-size:13px;pointer-events:none;z-index:5;transition:none}
-.lglog{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
-.lglog div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:13px}
-.lglog div b{color:var(--main-light)}
-body.day .lglog div b{color:var(--main-deep)}
+/* (옛 그리드형 사다리 CSS 제거 — 아래 절대배치 버전이 유효) */
 
 /* ── 룰렛 ── */
 @media (max-width:820px){}
@@ -423,45 +405,27 @@ var LG = (function(){
   function start(){
     if (phase !== 'setup') return;
 
-    /* ── 사다리 만들기 ──────────────────────────────────────────────
-       가로줄을 무작위로 뿌리면 두 가지 문제가 생긴다:
-         ① 같은 행에 가로줄이 붙어 두 사람이 같은 칸에 도착(사다리가 깨짐)
-         ② 가로줄이 적으면 왼쪽 사람이 왼쪽 결과를 가져갈 확률이 압도적
-            (6명 기준 1번이 6번보다 6배 유리했다)
-       그래서 "균등한 순열을 먼저 뽑고, 그걸 만들어 내는 가로줄을 역산"한다.
-       각 행에 가로줄을 하나씩만 놓으므로 겹칠 수 없고, 결과는 수학적으로 균등하다. */
-    var target = [];
-    for (var i0=0;i0<N;i0++) target.push(i0);
-    for (var i1=N-1;i1>0;i1--){
-      var j1 = (Math.random()*(i1+1))|0;
-      var t1 = target[i1]; target[i1] = target[j1]; target[j1] = t1;
-    }
-    var pos = [];
-    for (var k0=0;k0<N;k0++) pos[target[k0]] = k0;
-    var arr = [];
-    for (var k1=0;k1<N;k1++) arr.push(k1);
-    var swaps = [];
-    for (var a0=0;a0<N;a0++) for (var b0=0;b0<N-1-a0;b0++){
-      if (pos[arr[b0]] > pos[arr[b0+1]]){
-        var tm = arr[b0]; arr[b0] = arr[b0+1]; arr[b0+1] = tm;
-        swaps.push(b0);
+    /* 가로줄 생성 — 모요 원본 방식 그대로.
+       칸마다 45% 확률로 뿌리고, 바로 왼쪽 칸의 같은 줄과 겹치는 것만 막는다.
+       (목표 순열을 정해두고 역산하는 방식이 아니다 — 그러면 가로줄이 성기고 느낌이 달라진다) */
+    var rows = 9 + ((Math.random()*3)|0);
+    var rung = [], g0, r2;
+    for (g0=0; g0<N-1; g0++){
+      rung[g0] = [];
+      for (r2=0; r2<rows; r2++){
+        rung[g0][r2] = Math.random() < 0.45 && !(g0 > 0 && rung[g0-1][r2]);
       }
     }
-    var pad  = 3 + ((Math.random()*5)|0);
-    var rows = swaps.length + pad;
-    var slots = [];
-    for (var r0=0;r0<rows;r0++) slots.push(r0);
-    for (var r1=rows-1;r1>0;r1--){
-      var j2 = (Math.random()*(r1+1))|0;
-      var t2 = slots[r1]; slots[r1] = slots[j2]; slots[j2] = t2;
+    /* 가로줄이 하나도 없는 칸은 하나 만들어 준다 (인접은 피해서) */
+    for (g0=0; g0<N-1; g0++){
+      var has = false;
+      for (r2=0; r2<rows; r2++) if (rung[g0][r2]) { has = true; break; }
+      if (!has){
+        var rr = (Math.random()*rows)|0;
+        while (g0 > 0 && rung[g0-1][rr]) rr = (rr+1) % rows;
+        rung[g0][rr] = true;
+      }
     }
-    var chosen = slots.slice(0, swaps.length).sort(function(x,y){ return x-y; });
-    var rung = [];
-    for (var g0=0;g0<N-1;g0++){
-      rung[g0] = [];
-      for (var r2=0;r2<rows;r2++) rung[g0][r2] = false;
-    }
-    for (var s0=0;s0<swaps.length;s0++) rung[swaps[s0]][chosen[s0]] = true;
 
     /* ⚠️ 결과는 섞지 않는다 — 적은 순서 그대로 (모요 원본) */
     var results  = [].map.call(document.querySelectorAll('#lgBots .lgres input'),
