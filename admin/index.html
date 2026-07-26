@@ -284,6 +284,21 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
       <div class="days" id="daysBox"></div>
       <input type="hidden" id="f-days">
       <p class="note">체크한 요일만 메인·프로필의 주간 칸에 <b>ON AIR</b>로 켜집니다. <b>하나도 체크하지 않으면 "요일 고정 없음"</b>으로 7칸 모두 열려 보입니다(난초 기본값).</p>
+
+      <div class="card" style="margin:18px 0 0;background:rgba(199,155,216,.04)">
+        <div class="card-title"><div><small>WEEKLY</small>요일별 편성 (선택)</div><button class="btn sm" data-save="profile">저장</button></div>
+        <em class="hint">한 칸이라도 채우면 <b>위의 체크박스 대신 이 표가 우선</b> 적용되어, 메인 주간 칸이 시안처럼 요일마다 다른 내용으로 채워집니다.
+          형식은 <b>내용|시간</b> — 예 <b>CHAT|21:00</b>. <b>비워두면 그 요일은 휴방(REST)</b>. 전부 비우면 위 체크박스 방식으로 돌아갑니다.</em>
+        <div class="row r4" style="margin-top:12px">
+        <label class="field"><span>월요일</span><input class="input" id="f-week-0" type="text" placeholder="CHAT|21:00"></label>
+        <label class="field"><span>화요일</span><input class="input" id="f-week-1" type="text" placeholder="GAME|22:00"></label>
+        <label class="field"><span>수요일</span><input class="input" id="f-week-2" type="text" placeholder="비우면 휴방"></label>
+        <label class="field"><span>목요일</span><input class="input" id="f-week-3" type="text" placeholder="TALK|21:00"></label>
+        <label class="field"><span>금요일</span><input class="input" id="f-week-4" type="text" placeholder="LIVE|22:00"></label>
+        <label class="field"><span>토요일</span><input class="input" id="f-week-5" type="text" placeholder="LONG|19:00"></label>
+        <label class="field"><span>일요일</span><input class="input" id="f-week-6" type="text" placeholder="비우면 휴방"></label>
+        </div>
+      </div>
       <label class="field" style="margin-top:14px;max-width:220px"><span>표시 시간</span>
         <input class="input" id="f-main-time" type="text" placeholder="17:00">
         <em class="hint">주간 칸에 찍히는 시간. 24시간 표기(예 17:00).</em>
@@ -415,7 +430,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 공지</div></div>
-      <div class="table-wrap"><table><thead><tr><th>제목</th><th>고정</th><th>작성일</th><th>삭제</th></tr></thead><tbody id="nt-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>고정</th><th>작성일</th><th>삭제</th></tr></thead><tbody id="nt-list"></tbody></table></div>
     </div>
   </div>
 
@@ -456,7 +471,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 일정</div></div>
-      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>1부</th><th>2부</th><th>종류</th><th>색</th><th>삭제</th></tr></thead><tbody id="sc-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>1부</th><th>2부</th><th>종류</th><th>색</th><th>삭제</th></tr></thead><tbody id="sc-list"></tbody></table></div>
     </div>
   </div>
 
@@ -470,7 +485,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         <label class="field"><span>메모 (선택)</span><input class="input" id="vw-memo" type="text" placeholder="장부에 함께 표시됩니다">
           <em class="hint">닉네임 아래 작게 붙는 한 줄. 비워도 됩니다.</em></label>
         <button class="btn solid" id="vw-add">추가</button>
-        <div class="table-wrap"><table><thead><tr><th>닉네임</th><th>메모</th><th>삭제</th></tr></thead><tbody id="vw-list"></tbody></table></div></div>
+        <div class="table-wrap"><table><thead><tr><th>닉네임</th><th>메모</th><th>삭제</th></tr></thead><tbody id="vw-list"></tbody></table></div>
       </div>
       <div class="card">
         <div class="card-title"><div><small>TYPE</small>업보 종류</div></div>
@@ -480,13 +495,13 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
           <select class="input" id="tp-cat"><option>일반</option><option>이벤트</option></select>
           <em class="hint">같은 분류끼리 묶여 집계됩니다.</em></label>
         <button class="btn solid" id="tp-add">추가</button>
-        <div class="table-wrap"><table><thead><tr><th>이름</th><th>분류</th><th>삭제</th></tr></thead><tbody id="tp-list"></tbody></table></div></div>
+        <div class="table-wrap"><table><thead><tr><th>이름</th><th>분류</th><th>삭제</th></tr></thead><tbody id="tp-list"></tbody></table></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title"><div><small>MATRIX</small>업보 장부 입력</div><button class="btn sm solid" id="ct-save">전체 저장</button></div>
       <p class="note" style="margin:0 0 12px">칸에 숫자를 넣고 <b>전체 저장</b>을 누르세요. 0인 시청자는 사이트 장부에 표시되지 않습니다.</p>
-      <div class="table-wrap"><table><thead id="ct-head"></thead><tbody id="ct-body"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead id="ct-head"></thead><tbody id="ct-body"></tbody></table></div>
     </div>
   </div>
 
@@ -510,11 +525,11 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 일기</div></div>
-      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>제목</th><th>기분</th><th>삭제</th></tr></thead><tbody id="dy-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>제목</th><th>기분</th><th>삭제</th></tr></thead><tbody id="dy-list"></tbody></table></div>
     </div>
     <div class="card">
       <div class="card-title"><div><small>REPLIES</small>일기 댓글 관리</div><button class="btn sm" id="cm-load">불러오기</button></div>
-      <div class="table-wrap"><table><thead><tr><th>일기</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="cm-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>일기</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="cm-list"></tbody></table></div>
     </div>
   </div>
 
@@ -544,7 +559,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>노래책</div><span class="note" id="sg-cnt"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>제목</th><th>아티스트</th><th>장르</th><th>난이도</th><th>삭제</th></tr></thead><tbody id="sg-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>아티스트</th><th>장르</th><th>난이도</th><th>삭제</th></tr></thead><tbody id="sg-list"></tbody></table></div>
     </div>
     <div class="card">
       <div class="card-title"><div><small>VOD</small>다시보기 (프로필·노래책에 임베드)</div></div>
@@ -555,7 +570,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
           <em class="hint">VOD 주소 <b>vod.sooplive.com/player/<u>200283095</u></b> 에서 숫자 부분만 넣으세요.</em></label>
       </div>
       <button class="btn solid" id="vd-add">VOD 추가</button>
-      <div class="table-wrap"><table><thead><tr><th>제목</th><th>VOD ID</th><th>삭제</th></tr></thead><tbody id="vd-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>제목</th><th>VOD ID</th><th>삭제</th></tr></thead><tbody id="vd-list"></tbody></table></div>
     </div>
     <div class="card">
       <div class="card-title"><div><small>OBS OVERLAY</small>지금 트는 노래</div>
@@ -621,7 +636,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 항목</div></div>
-      <div class="table-wrap"><table><thead><tr><th>미리보기</th><th>이름</th><th>분류</th><th>NEW</th><th>순서</th><th>삭제</th></tr></thead><tbody id="dr-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>미리보기</th><th>이름</th><th>분류</th><th>NEW</th><th>순서</th><th>삭제</th></tr></thead><tbody id="dr-list"></tbody></table></div>
     </div>
   </div>
 
@@ -629,7 +644,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
   <div class="tab-panel" id="tab-inquiry">
     <div class="card">
       <div class="card-title"><div><small>INBOX</small>받은 문의</div><button class="btn sm" id="iq-load">새로고침</button></div>
-      <div class="table-wrap"><table><thead><tr><th>받은 날짜</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="iq-list"></tbody></table></div></div>
+      <div class="table-wrap"><table><thead><tr><th>받은 날짜</th><th>닉네임</th><th>내용</th><th>삭제</th></tr></thead><tbody id="iq-list"></tbody></table></div>
     </div>
   </div>
 
@@ -795,6 +810,7 @@ var profileKeys = [
   'quote','msg','now','like-list','dislike-list','stats','milestones','rules',
   'tmi-food','tmi-song','tmi-game','tmi-book',
   'days','main-time',
+  'week-0','week-1','week-2','week-3','week-4','week-5','week-6',
   'link-soop','link-youtube','link-cafe','link-melo','link-x',
   'theme-main','theme-main-dark','theme-main-deep','theme-main-light','theme-bg','theme-logo'
 ];

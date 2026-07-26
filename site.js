@@ -131,6 +131,7 @@ var PF_DEFAULT = {
   'tmi-song':'헤비 Be I / 첫 키스에 내 심장은 120BPM',
   'tmi-game':'마인크래프트, 배틀그라운드',
   'tmi-book':'',
+  'week-0':'', 'week-1':'', 'week-2':'', 'week-3':'', 'week-4':'', 'week-5':'', 'week-6':'',
   'days':'', 'main-time':'17:00',
   'fan-char':'', 'hero-art':'',
   'rules':'욕설·과한 드립은 살짝만 접어두기\n타 방송·타 스트리머 이야기는 자제\n서로 초단끼리 예의는 지키기\n방송 내용 무단 편집·재업로드 금지',

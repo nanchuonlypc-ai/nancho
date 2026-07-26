@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>난초 NANCHO — THE MIDNIGHT LOG</title>
-<meta name="description" content="자정에만 잡히는 주파수 — 난초(NANCHO) 공식 팬페이지.">
-<meta property="og:title" content="난초 NANCHO — THE MIDNIGHT LOG">
-<meta property="og:description" content="자정에만 잡히는 주파수 — 난초(NANCHO) 공식 팬페이지.">
+<title>NANCHO official.</title>
+<meta name="description" content="NANCHO official.">
+<meta property="og:title" content="NANCHO official.">
+<meta property="og:description" content="NANCHO official.">
 <meta property="og:image" content="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
@@ -15,6 +15,10 @@
 html,body{height:100%}
 body{overflow:hidden}
 .stage{position:relative;width:100vw;height:100svh;overflow:hidden}
+/* ⚠️ fx.js 등장 애니가 .wrap 에 transform 을 남기면 .wrap 이 absolute 자식의 기준 박스가 된다.
+   .wrap 은 높이 0이라 bottom:% 가 0으로 계산돼 하단 요소가 화면 위로 사라진다.
+   → .wrap 자체를 스테이지 크기로 고정해 기준 박스를 명확히 한다. */
+.stage > .wrap{position:absolute;inset:0;z-index:5}
 .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:67% 48%;
   filter:saturate(.78) brightness(.66) contrast(1.08);transform:scale(1.02)}
 body.day .stage-bg{filter:saturate(1.02) brightness(1.02) contrast(1.02);object-position:52% 40%}
@@ -127,13 +131,6 @@ body.day .rail a:hover{color:var(--main-deep)}
     <div class="hero">
       <div class="out" aria-hidden="true">NANCHO</div>
       <h1 class="sr">난초 NANCHO — THE MIDNIGHT LOG</h1>
-      <div class="line"><i></i><span data-tagline>THE MIDNIGHT LOG · 자정의 기록실</span></div>
-      <p class="bio" id="bio">밤하늘 속에 피어난</p>
-      <div class="meta">
-        <div><span>BIRTH SIGNAL</span><b id="dday">—</b></div>
-        <div><span>ON AIR SINCE</span><b id="since">—</b></div>
-        <div><span>FREQUENCY</span><b id="freq">게임 · 저챗 · 노래</b></div>
-      </div>
     </div>
 
     <div class="log" id="logGrid" aria-label="주간 방송 전파"></div>
@@ -185,25 +182,53 @@ body.day .rail a:hover{color:var(--main-deep)}
 var DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
 var DAYKO = ['월','화','수','목','금','토','일'];
 
+/* 요일 한 칸 = "라벨|시간" (예: CHAT|21:00). 비우면 휴방(REST).
+   week-0~6 이 하나도 없으면 예전 방식(days 체크 + 공통 시간)으로 자동 폴백한다. */
+function dayCell(p, i){
+  var raw = txt(p['week-' + i] || '');
+  if (raw){
+    var q = raw.split('|');
+    var label = (q[0] || '').trim();
+    var when  = (q[1] || '').trim();
+    if (!label) return { on:false, label:'REST', time:'—' };
+    return { on:true, label:label.toUpperCase(), time: when || '—' };
+  }
+  return null;
+}
 function renderLog(p){
   var set = String(txt(p.days) || '').split(',').map(function(s){return s.trim();}).filter(function(s){return s!=='';});
   var time = txt(p['main-time']) || '17:00';
   var free = set.length === 0;
+  var useWeek = false;
+  for (var w=0;w<7;w++){ if (txt(p['week-' + w] || '')) { useWeek = true; break; } }
+
   var host = document.getElementById('logGrid');
   var html = '<small>WEEKLY TRANSMISSION</small>';
+  var onCount = 0;
   for (var i=0;i<7;i++){
-    var on = free || set.indexOf(String(i)) >= 0;
-    html += '<div class="' + (on ? 'on' : '') + '">'
+    /* 요일별 편성을 쓰는 중이면 빈 칸 = 휴방. 체크박스 방식으로 되돌아가면 안 된다. */
+    var c = useWeek ? (dayCell(p, i) || { on:false, label:'REST', time:'—' }) : null;
+    if (!c){
+      var on = free || set.indexOf(String(i)) >= 0;
+      c = { on:on, label: on ? 'ON AIR' : 'REST', time: on ? time : '—' };
+    }
+    if (c.on) onCount++;
+    html += '<div class="' + (c.on ? 'on' : '') + '">'
       + '<span class="n">' + ('0'+(i+1)) + '</span>'
       + '<b>' + DAYS[i] + '</b>'
-      + '<strong>' + (on ? 'ON AIR' : 'REST') + '</strong>'
-      + '<em>' + (on ? time : '—') + '</em>'
+      + '<strong>' + esc(c.label) + '</strong>'
+      + '<em>' + esc(c.time) + '</em>'
       + '</div>';
   }
   host.innerHTML = html;
   var cap = document.getElementById('logCap');
-  if (cap) cap.textContent = free ? '요일 고정 없음 · 보통 오후 ' + (parseInt(time,10)>12? (parseInt(time,10)-12):5) + '시 전후 점등'
-                                  : '점등 요일 ' + set.map(function(d){return DAYKO[+d];}).join('·');
+  if (!cap) return;
+  if (useWeek){
+    cap.textContent = onCount === 7 ? '매일 점등' : ('주 ' + onCount + '회 점등');
+  } else {
+    cap.textContent = free ? '요일 고정 없음 · 보통 오후 ' + (parseInt(time,10)>12? (parseInt(time,10)-12):5) + '시 전후 점등'
+                           : '점등 요일 ' + set.map(function(d){return DAYKO[+d];}).join('·');
+  }
 }
 
 function nextTransmission(p){
@@ -211,6 +236,19 @@ function nextTransmission(p){
   var time = txt(p['main-time']) || '17:00';
   var now = new Date();
   var todayIdx = (now.getDay() + 6) % 7; // 0=월
+
+  /* 요일별 편성(week-0~6)이 있으면 그걸 우선해서 다음 방송을 찾는다 */
+  var hasWeek = false;
+  for (var w=0;w<7;w++){ if (txt(p['week-' + w] || '')) { hasWeek = true; break; } }
+  if (hasWeek){
+    for (var k=0;k<8;k++){
+      var ix = (todayIdx + k) % 7;
+      var c = dayCell(p, ix);
+      if (c && c.on) return { d: DAYKO[ix], t: c.time, note: k===0 ? '오늘 밤' : (k===1 ? '내일' : k + '일 뒤') };
+    }
+    return { d: '—', t: '—', note: '' };
+  }
+
   if (set.length === 0) return { d: DAYKO[todayIdx], t: time, note: '요일 고정 없이 열려요' };
   for (var i=0;i<8;i++){
     var idx = (todayIdx + i) % 7;
@@ -223,9 +261,6 @@ function boot(){
   bootSite();
   getProfile().then(function(raw){
     var p = mergeP(raw);
-    document.getElementById('bio').textContent = txt(p['info-catchphrase']);
-    var fq = txt(p['info-content']);
-    if (fq) document.getElementById('freq').textContent = fq.replace(/\s*[\/,]\s*/g, ' · ');
     /* 메인 히어로 사진 — 없으면 밤 배경, 그것도 없으면 기본 파일 유지 */
     var photo = txt(p['main-photo']) || txt(p['bg-night']);
     if (photo){
@@ -235,11 +270,6 @@ function boot(){
       sb.src = photo;
     }
     document.getElementById('avTile').style.backgroundImage = 'url("' + avatarUrl(p) + '")';
-
-    var dd = fxDday(txt(p['info-birth']));
-    document.getElementById('dday').textContent = dd === null ? '—' : (dd === 0 ? 'TODAY' : 'D-' + dd);
-    var since = fxDsince(txt(p['info-debut']));
-    document.getElementById('since').textContent = since === null ? '—' : 'D+' + since.toLocaleString();
 
     renderLog(p);
     var nt = nextTransmission(p);
