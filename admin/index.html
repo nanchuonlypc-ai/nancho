@@ -164,37 +164,61 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     add('처리되지 않은 오류: ' + ((e.reason && (e.reason.message || e.reason)) || e));
   });
 
-  /* 감시견 — 3초 뒤에도 로그인 상자와 본문이 둘 다 안 보이면 강제로 살려낸다. */
+  /* 감시견 — 로그인 상자가 안 그려지면 "왜 안 그려졌는지"를 숫자로 보여주고,
+     같은 상자 안에 비상 로그인을 넣는다(다른 요소가 덮지 못하도록). */
+  function measure(el){
+    if (!el) return 'element 없음';
+    var r = el.getBoundingClientRect(), st = getComputedStyle(el);
+    return 'h=' + Math.round(r.height) + ' w=' + Math.round(r.width)
+         + ' display=' + st.display + ' opacity=' + st.opacity
+         + ' visibility=' + st.visibility
+         + ' class="' + (el.className || '') + '"'
+         + ' parent=' + (el.parentElement ? el.parentElement.tagName : '-');
+  }
   setTimeout(function(){
     var g = document.getElementById('gate'), a = document.getElementById('app');
     var gv = g && g.getBoundingClientRect().height > 20 && getComputedStyle(g).visibility !== 'hidden'
              && parseFloat(getComputedStyle(g).opacity) > 0.05;
     var av = a && !a.classList.contains('hide') && a.getBoundingClientRect().height > 20;
     if (gv || av) return;
-    add('로그인 화면이 그려지지 않았습니다 — 아래 상자로 대신 들어가세요.');
-    if (g) g.setAttribute('style','max-width:380px;margin:60px auto;padding:28px;border:1px solid #888;'+
-      'background:#15101c;color:#fff;opacity:1;visibility:visible;display:block');
-    var b = document.createElement('div');
-    b.setAttribute('style','max-width:380px;margin:24px auto;padding:20px;border:1px solid #E8506E;'+
-      'background:#15101c;color:#fff;font:14px/1.7 sans-serif;text-align:center');
-    b.innerHTML = '<div style="margin-bottom:10px">비상 로그인</div>'+
-      '<input id="sospw" type="password" placeholder="비밀번호" style="width:100%;padding:10px;'+
-      'background:#0b0810;color:#fff;border:1px solid #666;box-sizing:border-box;font:inherit">'+
-      '<button style="margin-top:10px;width:100%;padding:10px;background:#E8506E;color:#fff;border:0;'+
-      'cursor:pointer;font:inherit">들어가기</button>';
-    b.querySelector('button').onclick = function(){
+
+    add('로그인 화면이 그려지지 않았습니다.');
+    add('gate → ' + measure(g));
+    add('app → ' + measure(a));
+    add('style.css 적용됨: ' + (getComputedStyle(document.body).getPropertyValue('--main').trim() ? 'O' : 'X')
+        + ' / site.js: ' + (typeof PF_DEFAULT !== 'undefined' ? 'O' : 'X')
+        + ' / supabase.js: ' + (typeof fetchAll === 'function' ? 'O' : 'X')
+        + ' / 라이브러리: ' + (typeof supabase !== 'undefined' ? 'O' : 'X'));
+
+    /* 게이트를 강제로 되살려 본다 */
+    if (g){
+      g.className = 'gate';
+      g.setAttribute('style','display:block!important;opacity:1!important;visibility:visible!important;'
+        + 'max-width:380px;margin:40px auto;padding:28px;border:1px solid #888;background:#15101c;color:#fff');
+    }
+
+    /* 진단 상자 안에 비상 로그인을 넣는다 — 무엇도 덮을 수 없게 */
+    var d = panel();
+    var box = document.createElement('div');
+    box.setAttribute('style','margin-top:14px;padding:14px;border:1px solid #E8506E;background:#0e0810;max-width:380px');
+    box.innerHTML = '<div style="margin-bottom:9px;color:#fff">비상 로그인</div>'
+      + '<input id="sospw" type="password" placeholder="비밀번호" style="width:100%;padding:10px;'
+      + 'background:#0b0810;color:#fff;border:1px solid #666;box-sizing:border-box;font:inherit">'
+      + '<button style="margin-top:9px;width:100%;padding:10px;background:#E8506E;color:#fff;border:0;'
+      + 'cursor:pointer;font:inherit">들어가기</button>';
+    box.querySelector('button').onclick = function(){
       try{
         if (document.getElementById('sospw').value !== ADMIN_PW){ alert('비밀번호가 달라요'); return; }
-        document.getElementById('gate').style.display = 'none';
+        if (g) g.style.display = 'none';
         var app = document.getElementById('app');
         app.classList.remove('hide');
-        app.setAttribute('style','display:block;opacity:1;visibility:visible');
+        app.setAttribute('style','display:block!important;opacity:1!important;visibility:visible!important');
         if (typeof boot === 'function') boot();
-        b.remove();
+        d.remove();
       }catch(err){ add('비상 로그인 실패: ' + err.message); }
     };
-    (document.body || document.documentElement).appendChild(b);
-  }, 3000);
+    d.appendChild(box);
+  }, 2500);
 })();
 </script>
 
@@ -797,28 +821,7 @@ try {
 }
 document.body.classList.add('ready');
 
-/* 최후의 안전망 — 1.5초 뒤에도 로그인 상자도 본체도 안 보이면 원인을 글자로 띄운다.
-   (검은 화면만 나오는 상황을 없애기 위한 장치) */
-setTimeout(function(){
-  try{
-    var g = document.getElementById('gate'), ap = document.getElementById('app');
-    var seen = (g && g.getBoundingClientRect().height > 30) || (ap && ap.getBoundingClientRect().height > 30);
-    if (seen) return;
-    var d = document.createElement('div');
-    d.setAttribute('style','position:fixed;inset:0;z-index:99999;background:#09070D;color:#F4EEF8;'
-      + 'font:14px/1.9 system-ui,sans-serif;padding:40px 26px;overflow:auto');
-    d.innerHTML = '<div style="max-width:560px;margin:8vh auto">'
-      + '<div style="color:#E88A9A;font-weight:800;font-size:16px;margin-bottom:14px">관리자 화면을 그리지 못했습니다</div>'
-      + '<div>아래를 순서대로 확인해 주세요.</div>'
-      + '<ol style="padding-left:20px;margin-top:12px">'
-      + '<li><b>zip 을 풀고</b> 열었는지 (압축 안에서 바로 열면 파일을 못 찾습니다)</li>'
-      + '<li><code>admin</code> 폴더가 <b>사이트 최상위</b>에 있는지 — 최상위에 <code>index.html · style.css · site.js · supabase.js</code> 가 함께 있어야 합니다</li>'
-      + '<li>브라우저에서 <b>Ctrl+Shift+R</b> (Mac 은 Cmd+Shift+R) 로 강력 새로고침</li>'
-      + '<li>그래도 안 되면 <b>F12 → Console</b> 탭의 빨간 글자를 알려주세요</li>'
-      + '</ol></div>';
-    document.body.appendChild(d);
-  }catch(e){}
-}, 1500);
+/* (옛 전체화면 안전망은 제거 — 아래 통합 진단기가 대신한다) */
 
 /* ══════════ 자가진단 — 공유 파일이 안 불러와졌을 때 원인을 화면에 띄운다 ══════════ */
 /* 관리자는 ../supabase.js · ../site.js · ../style.css 3개에 기대고 있다.

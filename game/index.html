@@ -46,20 +46,115 @@ body.day .lgstage{background:rgba(255,255,255,.5)}
 .lglog div b{color:var(--main-light)}
 body.day .lglog div b{color:var(--main-deep)}
 
-/* ── 핀볼 ── */
-.pbwrap{display:grid;grid-template-columns:min(340px,100%) minmax(0,1fr);gap:26px;align-items:start}
-@media (max-width:820px){.pbwrap{grid-template-columns:minmax(0,1fr)}}
+/* ── 룰렛 ── */
+@media (max-width:820px){}
 /* 캔버스 해상도는 340×540 고정, 화면 크기는 CSS 로만 조절한다.
    (JS 로 폭을 재면 탭이 숨겨져 있을 때 0 이 잡혀 캔버스가 사라진다) */
-#pbcv{border:1px solid var(--line);background:radial-gradient(circle at 50% 22%,rgba(80,49,93,.5),rgba(6,4,9,.96));
-  display:block;width:100%;max-width:340px;aspect-ratio:340/540;height:auto;touch-action:none;cursor:pointer}
-body.day #pbcv{background:radial-gradient(circle at 50% 22%,rgba(199,155,216,.35),rgba(247,243,248,.98))}
-.pbstat{border-left:1px solid var(--line);border-top:1px solid var(--line)}
-.pbstat > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 18px}
-.pbstat .k{font-size:9px;font-weight:900;letter-spacing:.2em;color:var(--main)}
-.pbstat .v{font-family:var(--ff-serif);font-size:clamp(24px,3vw,40px);line-height:1.1;margin-top:5px}
-.keys{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+body.day .keys{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .keys kbd{border:1px solid var(--line);padding:4px 9px;font-size:10.5px;letter-spacing:.1em;font-family:var(--ff-body)}
+
+/* ═══════════ 룰렛(구슬 레이스) ═══════════ */
+.rlwrap{display:grid;grid-template-columns:min(420px,100%) minmax(0,1fr);gap:26px;align-items:start}
+@media (max-width:860px){.rlwrap{grid-template-columns:minmax(0,1fr)}}
+.rlstage{position:relative;border:1px solid var(--line);background:
+  radial-gradient(circle at 50% 12%,rgba(80,49,93,.42),rgba(6,4,9,.97))}
+#rlcv{display:block;width:100%;max-width:420px;aspect-ratio:420/720;height:auto;touch-action:none}
+.rlwin{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(6,4,9,.82);backdrop-filter:blur(3px)}
+.rlwin.on{display:flex}
+.rlwin .in{text-align:center;padding:26px 30px;border:1px solid var(--main)}
+.rlwin small{display:block;font-size:9px;font-weight:900;letter-spacing:.26em;color:var(--main)}
+.rlwin b{display:block;margin:12px 0 0;font-size:clamp(24px,5vw,38px);font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+.rlwin em{display:block;margin-top:8px;font-style:normal;font-size:11.5px;color:var(--ink-soft);letter-spacing:.05em}
+
+.rlfield span{display:block;font-size:9.5px;font-weight:900;letter-spacing:.2em;color:var(--main);margin-bottom:9px}
+.rlfield span i{font-style:normal;font-weight:400;letter-spacing:.04em;color:var(--ink-dim);font-size:10.5px}
+.rlfield textarea{width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid var(--line);
+  color:var(--ink);font:inherit;font-size:13px;line-height:1.75;padding:12px 13px;resize:vertical;outline:none}
+.rlfield textarea:focus{border-color:var(--main)}
+.rlhint{margin:9px 0 0;font-size:11.5px;line-height:1.7;color:var(--ink-dim)}
+.rlhint b{color:var(--ink-soft)}
+
+.rlopt{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.rlopt .k{font-size:9.5px;font-weight:900;letter-spacing:.2em;color:var(--main);min-width:56px}
+.rlseg{display:flex;border:1px solid var(--line)}
+.rlseg button{background:transparent;border:0;border-right:1px solid var(--line);color:var(--ink-dim);
+  font:inherit;font-size:11.5px;letter-spacing:.06em;padding:7px 14px;cursor:pointer}
+.rlseg button:last-child{border-right:0}
+.rlseg button.on{background:var(--main-deep);color:var(--ink)}
+.rlbtns{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+
+.rlrank{margin-top:24px;border-top:1px solid var(--line);padding-top:16px}
+.rlrank .lbl{font-size:9px;font-weight:900;letter-spacing:.22em;color:var(--main);margin-bottom:12px}
+.rlrank ol{list-style:none;margin:0;padding:0;counter-reset:r}
+.rlrank li{counter-increment:r;display:flex;align-items:center;gap:11px;padding:8px 0;
+  border-bottom:1px dashed var(--line);font-size:13px}
+.rlrank li:last-child{border-bottom:0}
+.rlrank li::before{content:counter(r,decimal-leading-zero);font-family:var(--ff-serif);font-size:12px;
+  color:var(--main);min-width:22px}
+.rlrank li .dotc{width:11px;height:11px;flex:0 0 auto}
+.rlrank li.win{color:var(--ink);font-weight:800}
+.rlrank li.empty{color:var(--ink-dim);font-size:12px}
+.rlrank li.empty::before{content:'—';color:var(--ink-dim)}
+
+
+/* ═══════════ 사다리타기 (모요 원본 구조 · 난초 테마) ═══════════ */
+.lgtop{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.lgcount{display:flex;align-items:center;gap:10px}
+.lgcount .k{font-size:9.5px;font-weight:900;letter-spacing:.2em;color:var(--main)}
+.lgcount button{width:32px;height:32px;border:1px solid var(--line);background:transparent;
+  color:var(--ink-soft);font:inherit;font-size:17px;line-height:1;cursor:pointer}
+.lgcount button:hover{border-color:var(--main);color:var(--ink)}
+.lgcount b{font-family:var(--ff-serif);font-size:19px;min-width:28px;text-align:center;color:var(--ink)}
+.lgbtns{display:flex;gap:8px;flex-wrap:wrap}
+.lghint{margin:0 0 10px;font-size:12px;line-height:1.7;color:var(--ink-dim)}
+
+.lgstage{position:relative;border:1px solid var(--line);padding:14px 0 0;
+  background:linear-gradient(180deg,rgba(80,49,93,.16),rgba(6,4,9,.5))}
+.lgrow{position:relative}
+#lgcv{display:block;width:100%}
+
+/* 캐릭터 칩 — 각진 사각형(난초 기하 규칙) */
+.lgav{position:absolute;transform:translateX(-50%);width:44px;height:44px;
+  border:1px solid var(--line);background:rgba(9,7,13,.85);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;font:inherit;font-size:16px;
+  cursor:default;padding:0;transition:transform .16s ease,box-shadow .16s ease}
+.lgav.clickable{cursor:pointer}
+.lgav.clickable:hover{transform:translateX(-50%) scale(1.12)}
+.lgav.done{opacity:.32}
+.lgrunner{position:absolute;width:40px;height:40px;border:1px solid var(--line);
+  background:rgba(9,7,13,.92);display:flex;align-items:center;justify-content:center;
+  font-size:15px;transform:translate(-50%,-50%);z-index:6;pointer-events:none}
+
+.lgname{position:absolute;transform:translateX(-50%);width:84px;top:52px}
+.lgname input{width:100%;box-sizing:border-box;text-align:center;padding:6px 4px;
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);
+  font:inherit;font-size:11.5px;outline:none}
+.lgname input:focus{border-color:var(--main)}
+.lgname .nm{display:block;text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.02em}
+
+.lgres{position:absolute;transform:translateX(-50%);width:88px;top:4px}
+.lgres input{width:100%;box-sizing:border-box;text-align:center;padding:8px 6px;
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);
+  font:inherit;font-size:12px;font-weight:700;outline:none}
+.lgres input:focus{border-color:var(--main)}
+/* ⚠️ 결과는 처음부터 보인다 — 가리는 칸이 아니라 "결과 패널"이다 (모요 원본과 동일) */
+.lgres .mask{display:block;text-align:center;padding:8px 6px;background:rgba(199,155,216,.14);
+  color:var(--main-light);font-size:12.5px;font-weight:800;transition:all .2s ease;
+  border:1px solid transparent}
+.lgres .mask.open{background:rgba(9,7,13,.9);transform:scale(1.07)}
+
+.lglog{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+.lglog div{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;
+  color:var(--ink-soft);background:rgba(255,255,255,.03);padding:8px 13px;border-left:3px solid var(--main)}
+.lglog .ico{width:20px;text-align:center}
+@media (max-width:640px){
+  .lgav{width:36px;height:36px;font-size:14px}
+  .lgname{width:64px;top:44px}
+  .lgres{width:70px}
+  .lgrow#lgTops{height:92px}
+}
+
 </style>
 </head>
 <body>
@@ -94,67 +189,103 @@ body.day #pbcv{background:radial-gradient(circle at 50% 22%,rgba(199,155,216,.35
   <div class="col">
     <div class="fh-kicker"><i></i><span>FILE 08 · MINI GAME</span></div>
     <h1 class="fh-title">미니게임 <em>MINI&nbsp;GAME</em></h1>
-    <p class="fh-sub" data-sub="game">방송이 끝난 뒤에도 불이 꺼지지 않는 구역. 사다리로 벌칙을 정하고, 핀볼로 별을 쏘아올립니다.</p>
+    <p class="fh-sub" data-sub="game">방송이 끝난 뒤에도 불이 꺼지지 않는 구역. 사다리로 벌칙을 정하고, 룰렛으로 당첨자를 뽑습니다.</p>
   </div>
 </section>
 <section class="panel">
   <div class="col">
     <div class="gtabs">
       <button class="on" data-g="ladder">🪜 사다리타기</button>
-      <button data-g="pinball">🌠 미드나잇 핀볼</button>
+      <button data-g="roulette">🎲 미드나잇 룰렛</button>
     </div>
 
     <!-- ── 사다리 ── -->
     <div class="gpanel on" id="g-ladder">
       <div class="sec-head">
         <div><div class="sec-no">GAME 01</div><h2 class="sec-title"><small>LADDER</small>사다리타기</h2></div>
-        <div class="sec-note">가로줄은 숨겨져 있어요 — 캐릭터를 눌러야 경로가 드러납니다</div>
+        <div class="sec-note">가로줄은 숨겨져 있어요 — 눌러야 어디로 가는지 드러납니다</div>
       </div>
+
       <div class="lgtop">
-        <label class="lbl" for="lgN" style="align-self:center">인원</label>
-        <input class="input num" id="lgN" type="number" min="2" max="10" value="4">
-        <button class="btn solid" id="lgBuild">🪜 사다리 만들기</button>
-        <button class="btn" id="lgAll" disabled>전부 공개</button>
+        <div class="lgcount">
+          <span class="k">인원</span>
+          <button type="button" id="lgMinus">−</button>
+          <b id="lgN">4</b>
+          <button type="button" id="lgPlus">+</button>
+        </div>
+        <div class="lgbtns">
+          <button class="btn" id="lgReset" style="display:none">↺ 다시하기</button>
+          <button class="btn" id="lgAll" style="display:none">전부 공개</button>
+          <button class="btn solid" id="lgStart">시작하기</button>
+        </div>
       </div>
+
+      <p class="lghint" id="lgHint">아래 칸에 결과를 적고 시작하기를 누르면 사다리가 숨겨집니다. 캐릭터를 눌러 타고 내려가세요.</p>
+
       <div class="lgstage" id="lgStage">
-        <div class="lgrow" id="lgTop"></div>
-        <canvas class="lgcv" id="lgcv"></canvas>
-        <div class="lgrow" id="lgRes"></div>
-        <div class="lglog" id="lgLog"></div>
+        <div class="lgrow" id="lgTops" style="height:104px"></div>
+        <canvas id="lgcv"></canvas>
+        <div class="lgrow" id="lgBots" style="height:52px"></div>
       </div>
-      <p style="color:var(--ink-dim);font-size:11.5px;margin-top:12px">
-        결과칸에 <b style="color:var(--main)">꽝*3</b> 처럼 적으면 그 결과가 3칸으로 늘어나요. 사다리를 만들면 결과가 섞이고 <b style="color:var(--main)">?</b> 로 가려집니다.
-      </p>
+      <div class="lglog" id="lgLog"></div>
     </div>
 
-    <!-- ── 핀볼 ── -->
-    <div class="gpanel" id="g-pinball">
+    <!-- ── 룰렛(구슬 레이스) ── -->
+    <div class="gpanel" id="g-roulette">
       <div class="sec-head">
-        <div><div class="sec-no">GAME 02</div><h2 class="sec-title"><small>PINBALL</small>미드나잇 핀볼</h2></div>
-        <div class="sec-note">별을 밤하늘로 쏘아올리기 · 공 3개</div>
+        <div><div class="sec-no">GAME 02</div><h2 class="sec-title"><small>ROULETTE</small>미드나잇 룰렛</h2></div>
+        <div class="sec-note">이름을 넣고 굴리면 · 먼저 도착한 구슬이 당첨</div>
       </div>
-      <div class="pbwrap">
-        <div><canvas id="pbcv"></canvas></div>
-        <div>
-          <div class="pbstat">
-            <div><div class="k">SCORE</div><div class="v" id="pbScore">0</div></div>
-            <div><div class="k">BALLS</div><div class="v" id="pbBalls">3</div></div>
-            <div><div class="k">BEST</div><div class="v" id="pbBest">0</div></div>
+
+      <div class="rlwrap">
+        <div class="rlstage">
+          <canvas id="rlcv" width="420" height="720"></canvas>
+          <div class="rlwin" id="rlWin"><div class="in"><small>WINNER</small><b id="rlWinName">—</b><em id="rlWinSub"></em></div></div>
+        </div>
+
+        <div class="rlside">
+          <label class="rlfield"><span>참가자 <i>(한 줄에 한 명, 또는 쉼표)</i></span>
+            <textarea id="rlNames" rows="7" spellcheck="false">초단1
+초단2
+초단3
+초단4
+초단5
+초단6</textarea>
+          </label>
+          <p class="rlhint"><b>이름*3</b> 처럼 적으면 그 사람 구슬이 3개가 되어 당첨 확률이 3배가 됩니다.</p>
+
+          <div class="rlopt">
+            <span class="k">당첨 인원</span>
+            <div class="rlseg" id="rlRank">
+              <button class="on" data-r="1">1명</button>
+              <button data-r="2">2명</button>
+              <button data-r="3">3명</button>
+            </div>
           </div>
-          <div class="keys">
-            <kbd>←</kbd><kbd>A</kbd> 왼쪽 플리퍼
-            <kbd>→</kbd><kbd>D</kbd> 오른쪽 플리퍼
-            <kbd>SPACE</kbd> 발사
+          <div class="rlopt">
+            <span class="k">속도</span>
+            <div class="rlseg" id="rlSpeed">
+              <button data-s="1">1x</button>
+              <button class="on" data-s="2">2x</button>
+              <button data-s="4">4x</button>
+            </div>
           </div>
-          <p style="color:var(--ink-dim);font-size:11.5px;margin-top:12px">
-            모바일은 화면 왼쪽/오른쪽을 눌러 플리퍼를 올리고, 공이 없을 때 누르면 발사돼요.
-          </p>
-          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
-            <button class="btn solid" id="pbLaunch">LAUNCH</button>
-            <button class="btn" id="pbReset">처음부터</button>
+
+          <div class="rlbtns">
+            <button class="btn solid" id="rlStart">굴리기</button>
+            <button class="btn" id="rlReset">처음부터</button>
+          </div>
+
+          <div class="rlrank">
+            <div class="lbl">RANKING · 도착 순서</div>
+            <ol id="rlList"><li class="empty">아직 도착한 구슬이 없어요</li></ol>
           </div>
         </div>
       </div>
+
+      <p class="sec-note" style="margin-top:16px">
+        구슬은 회전 막대와 못을 지나며 굴러 내려갑니다. 카메라는 선두를 따라가고, 결승선을 먼저 끊은 순서대로 순위가 매겨집니다.
+      </p>
     </div>
   </div>
 </section>
@@ -199,8 +330,8 @@ document.querySelectorAll('.gtabs button').forEach(function(b){
     document.querySelectorAll('.gpanel').forEach(function(x){ x.classList.remove('on'); });
     b.classList.add('on');
     document.getElementById('g-' + b.dataset.g).classList.add('on');
-    if (b.dataset.g === 'pinball') PB.fit();
-    if (b.dataset.g === 'ladder') LG.draw();
+    if (b.dataset.g === 'roulette') RL.fit();
+    if (b.dataset.g === 'ladder') LG.repaint();
   });
 });
 
@@ -208,432 +339,695 @@ document.querySelectorAll('.gtabs button').forEach(function(b){
    🪜 사다리타기 — 모요 원본 방식
    세로줄만 보임 → 캐릭터 주행 → 도착 시 경로+결과 동시 공개
    ═══════════════════════════════════════════ */
+/* ═══════════════ GAME 01 · 사다리타기 (모요 원본 이식) ═══════════════
+   원본 동작을 그대로 따른다:
+     · 결과는 섞지 않는다 (입력한 순서 그대로)
+     · 결과는 처음부터 보인다 — 숨기는 것은 가로줄(rung)뿐
+     · 캐릭터를 누르면 러너가 내려가며 지나온 경로가 실시간으로 그려진다
+     · 도착하면 그 결과칸이 강조되고 기록이 남는다 */
 var LG = (function(){
-  var PC = ['#C79BD8','#8FB6E8','#7FBFA0','#E08AA8','#E0A87F','#7FC7C7','#B08FD8','#E08585','#9A93A5','#D7B1E8'];
-  var N = 4, phase = 'setup', G = null, busy = false, done = 0;
-  var cv, ctx, stage;
+  var MARKS = ['✦','✧','◆','◇','●','○','▲','△','■','□'];
+  var COLS  = ['#C79BD8','#E4CDF0','#9D77A6','#B9A0E0','#8FC7E8','#E8A8BE',
+               '#CFE6F5','#F0B48C','#A8D8C0','#D8C79B'];
+  var N = 4, phase = 'setup', G = null, busy = false;
+
+  function $(id){ return document.getElementById(id); }
+  function esc2(s){ return String(s).replace(/[<>&]/g, function(c){
+    return c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&amp;'; }); }
 
   function geom(){
-    var W = cv.clientWidth || 600, H = 440;
-    var pad = Math.max(38, W * 0.07);
-    var colW = N > 1 ? (W - pad*2) / (N - 1) : 0;
+    var cv = $('lgcv');
+    var W = cv.clientWidth || cv.parentElement.clientWidth || 600;
+    var H = 380;
+    var minPad = Math.max(44, W * 0.06);
+    var colW = Math.min(150, (W - minPad*2) / (N - 1));
+    var pad  = (W - colW*(N - 1)) / 2;
     var rows = (G && G.rows) || 9;
-    var y0 = 12, y1 = H - 12, rowH = (y1 - y0) / (rows + 1);
+    var y0 = 10, y1 = H - 10, rowH = (y1 - y0) / (rows + 1);
     return { W:W, H:H, pad:pad, colW:colW, y0:y0, y1:y1, rowH:rowH, rows:rows };
   }
-  function colX(i){ var g = geom(); return g.pad + i * g.colW; }
-  function rowY(r){ var g = geom(); return g.y0 + g.rowH * (r + 1); }
 
-  function nameOf(i){
-    var el = document.getElementById('lgn-' + i);
-    return (el && el.value.trim()) || ('참가자 ' + (i+1));
-  }
-  function resOf(i){
-    var el = document.getElementById('lgr-' + i);
-    return (el && el.value.trim()) || '꽝';
-  }
-  /* 결과 파싱: "꽝*3" 배수 문법 지원 */
-  function expandResults(){
-    var out = [];
-    for (var i=0;i<N;i++){
-      var v = resOf(i);
-      var m = String(v).match(/^(.*?)\s*[*x×]\s*(\d+)$/);
-      if (m){ for (var k=0;k<+m[2] && out.length<N;k++) out.push(m[1].trim()); }
-      else out.push(v);
-    }
-    while (out.length < N) out.push('꽝');
-    return out.slice(0, N);
-  }
-
-  function setup(){
-    var top = document.getElementById('lgTop'), res = document.getElementById('lgRes');
-    var css = 'grid-template-columns:repeat(' + N + ',minmax(0,1fr))';
-    top.style.cssText = css; res.style.cssText = css;
-    var a = '', b = '';
-    for (var i=0;i<N;i++){
-      a += '<div class="lgname"><input class="input" id="lgn-' + i + '" type="text" maxlength="8" placeholder="' + (i+1) + '번">'
-         + '<div class="lgav" data-i="' + i + '" style="--c:' + PC[i%10] + '">✦</div></div>';
-      b += '<div><input class="input" id="lgr-' + i + '" type="text" maxlength="12" value="' + (i===0?'당첨':'꽝') + '">'
-         + '<div class="mask" id="lgm-' + i + '" style="display:none">?</div></div>';
-    }
-    top.innerHTML = a; res.innerHTML = b;
-    document.getElementById('lgLog').innerHTML = '';
-    phase = 'setup'; G = null; done = 0;
-    document.getElementById('lgBuild').textContent = '🪜 사다리 만들기';
-    document.getElementById('lgAll').disabled = true;
-    var rs = stage.querySelectorAll('.lgrunner');
-    for (var k=0;k<rs.length;k++) rs[k].remove();
-    draw();
-  }
-
-  function build(){
-    var rows = Math.max(7, N + 4);
-    var rungs = [];
-    for (var r=0;r<rows;r++){
-      var row = [];
-      for (var c=0;c<N-1;c++) row.push(false);
-      rungs.push(row);
-    }
-    for (var r2=0;r2<rows;r2++){
-      for (var c2=0;c2<N-1;c2++){
-        if (Math.random() < 0.45 && !(c2>0 && rungs[r2][c2-1])) rungs[r2][c2] = true;
-      }
-    }
-    /* 빈 칸(가로줄 하나도 없는 세로칸) 보장 */
-    for (var c3=0;c3<N-1;c3++){
-      var any = false;
-      for (var r3=0;r3<rows;r3++) if (rungs[r3][c3]) any = true;
-      if (!any){
-        for (var t=0;t<40;t++){
-          var rr = Math.floor(Math.random()*rows);
-          if (!(c3>0 && rungs[rr][c3-1]) && !(c3<N-2 && rungs[rr][c3+1])){ rungs[rr][c3] = true; break; }
-        }
-      }
-    }
-    var res = expandResults();
-    /* 결과 섞기 */
-    for (var s=res.length-1;s>0;s--){ var j = Math.floor(Math.random()*(s+1)); var tmp=res[s]; res[s]=res[j]; res[j]=tmp; }
-    G = { rows: rows, rungs: rungs, res: res, path: {}, opened: {} };
-    for (var i=0;i<N;i++){
-      document.getElementById('lgr-' + i).style.display = 'none';
-      var m = document.getElementById('lgm-' + i);
-      m.style.display = ''; m.className = 'mask'; m.textContent = '?';
-    }
-    phase = 'play';
-    document.getElementById('lgBuild').textContent = '↺ 다시 하기';
-    document.getElementById('lgAll').disabled = false;
-    draw();
-  }
-
-  function pathOf(start){
-    var col = start, pts = [{ x: colX(col), y: geom().y0 }];
-    for (var r=0;r<G.rows;r++){
-      var y = rowY(r);
-      pts.push({ x: colX(col), y: y });
-      if (col < N-1 && G.rungs[r][col]){ col++; pts.push({ x: colX(col), y: y }); }
-      else if (col > 0 && G.rungs[r][col-1]){ col--; pts.push({ x: colX(col), y: y }); }
-    }
-    pts.push({ x: colX(col), y: geom().y1 });
-    return { col: col, pts: pts };
-  }
-
-  function draw(){
-    if (!cv) return;
-    var dpr = window.devicePixelRatio || 1;
+  function renderSetup(){
+    var keepR = [].map.call(document.querySelectorAll('#lgBots .lgres input'), function(i){ return i.value; });
+    var keepN = (G && G.rawNames) ? G.rawNames
+              : [].map.call(document.querySelectorAll('#lgTops .lgname input'), function(i){ return i.value; });
     var g = geom();
-    cv.width = g.W * dpr; cv.height = g.H * dpr;
-    cv.style.height = g.H + 'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,g.W,g.H);
-    var st = getComputedStyle(document.body);
-    var line = st.getPropertyValue('--line').trim() || 'rgba(255,255,255,.22)';
-    /* 세로줄만 */
-    ctx.strokeStyle = line; ctx.lineWidth = 1;
+    $('lgcv').style.height = g.H + 'px';
+    var tops = $('lgTops'), bots = $('lgBots');
+    tops.innerHTML = ''; bots.innerHTML = '';
     for (var i=0;i<N;i++){
-      ctx.beginPath(); ctx.moveTo(colX(i), g.y0); ctx.lineTo(colX(i), g.y1); ctx.stroke();
+      var a = document.createElement('button');
+      a.className = 'lgav'; a.type = 'button'; a.id = 'lgav-' + i;
+      a.textContent = MARKS[i % MARKS.length];
+      a.style.left = (g.pad + i*g.colW) + 'px';
+      a.style.top = '2px';
+      a.style.borderColor = COLS[i % COLS.length];
+      a.style.color = COLS[i % COLS.length];
+      tops.appendChild(a);
+
+      var nw = document.createElement('div');
+      nw.className = 'lgname'; nw.id = 'lgname-' + i;
+      nw.style.left = (g.pad + i*g.colW) + 'px';
+      var ni = document.createElement('input');
+      ni.placeholder = (i+1) + '번';
+      ni.value = keepN[i] !== undefined ? keepN[i] : '';
+      nw.appendChild(ni); tops.appendChild(nw);
+
+      var w = document.createElement('div');
+      w.className = 'lgres'; w.id = 'lgres-' + i;
+      w.style.left = (g.pad + i*g.colW) + 'px';
+      var inp = document.createElement('input');
+      inp.placeholder = '결과';
+      inp.value = keepR[i] !== undefined ? keepR[i] : (i === 0 ? '당첨' : '꽝');
+      w.appendChild(inp); bots.appendChild(w);
     }
-    /* 공개된 경로 */
-    if (G){
-      Object.keys(G.path).forEach(function(k){
-        if (!G.opened[k]) return;
-        var p = G.path[k];
-        ctx.strokeStyle = PC[k%10]; ctx.lineWidth = 2.4;
-        ctx.beginPath();
-        p.pts.forEach(function(pt, idx){ idx ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y); });
-        ctx.stroke();
-      });
+    drawBase();
+  }
+
+  function drawBase(){
+    var cv = $('lgcv'), g = geom();
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = g.W * dpr; cv.height = g.H * dpr;
+    var c = cv.getContext('2d');
+    c.setTransform(dpr,0,0,dpr,0,0);
+    c.clearRect(0,0,g.W,g.H);
+    /* 세로줄만 그린다 — 가로줄은 숨겨져 있다 */
+    c.lineCap = 'butt'; c.lineWidth = 2;
+    c.strokeStyle = 'rgba(255,255,255,.26)';
+    for (var i=0;i<N;i++){
+      var x = g.pad + i*g.colW;
+      c.beginPath(); c.moveTo(x, g.y0); c.lineTo(x, g.y1); c.stroke();
     }
   }
 
-  function walk(i){
-    if (phase !== 'play' || busy) return;
-    if (G.opened[i]) return;
-    busy = true;
-    var p = pathOf(i);
-    G.path[i] = p;
-    var av = stage.querySelector('.lgav[data-i="' + i + '"]');
-    var run = document.createElement('div');
-    run.className = 'lgrunner'; run.textContent = '✦';
-    run.style.borderColor = PC[i%10];
-    stage.appendChild(run);
-    var cvBox = cv.getBoundingClientRect(), stBox = stage.getBoundingClientRect();
-    var ox = cvBox.left - stBox.left, oy = cvBox.top - stBox.top;
+  function start(){
+    if (phase !== 'setup') return;
 
-    var seg = 0, t = 0;
-    function step(){
-      if (seg >= p.pts.length - 1){
-        run.remove();
-        G.opened[i] = true;
-        var m = document.getElementById('lgm-' + p.col);
-        m.classList.add('open'); m.textContent = G.res[p.col];
-        draw();
-        var log = document.getElementById('lgLog');
-        log.insertAdjacentHTML('beforeend',
-          '<div><span>' + esc(nameOf(i)) + '</span><b>' + esc(G.res[p.col]) + '</b></div>');
-        done++;
-        if (av) av.classList.add('done');
-        busy = false;
-        return;
-      }
-      var a = p.pts[seg], b = p.pts[seg+1];
-      var dist = Math.hypot(b.x-a.x, b.y-a.y) || 1;
-      t += 260 / 60 / dist;
-      if (t >= 1){ t = 0; seg++; requestAnimationFrame(step); return; }
-      var x = a.x + (b.x-a.x)*t, y = a.y + (b.y-a.y)*t;
-      run.style.left = (ox + x - 13) + 'px';
-      run.style.top  = (oy + y - 13) + 'px';
-      requestAnimationFrame(step);
+    /* ── 사다리 만들기 ──────────────────────────────────────────────
+       가로줄을 무작위로 뿌리면 두 가지 문제가 생긴다:
+         ① 같은 행에 가로줄이 붙어 두 사람이 같은 칸에 도착(사다리가 깨짐)
+         ② 가로줄이 적으면 왼쪽 사람이 왼쪽 결과를 가져갈 확률이 압도적
+            (6명 기준 1번이 6번보다 6배 유리했다)
+       그래서 "균등한 순열을 먼저 뽑고, 그걸 만들어 내는 가로줄을 역산"한다.
+       각 행에 가로줄을 하나씩만 놓으므로 겹칠 수 없고, 결과는 수학적으로 균등하다. */
+    var target = [];
+    for (var i0=0;i0<N;i0++) target.push(i0);
+    for (var i1=N-1;i1>0;i1--){
+      var j1 = (Math.random()*(i1+1))|0;
+      var t1 = target[i1]; target[i1] = target[j1]; target[j1] = t1;
     }
-    requestAnimationFrame(step);
+    var pos = [];
+    for (var k0=0;k0<N;k0++) pos[target[k0]] = k0;
+    var arr = [];
+    for (var k1=0;k1<N;k1++) arr.push(k1);
+    var swaps = [];
+    for (var a0=0;a0<N;a0++) for (var b0=0;b0<N-1-a0;b0++){
+      if (pos[arr[b0]] > pos[arr[b0+1]]){
+        var tm = arr[b0]; arr[b0] = arr[b0+1]; arr[b0+1] = tm;
+        swaps.push(b0);
+      }
+    }
+    var pad  = 3 + ((Math.random()*5)|0);
+    var rows = swaps.length + pad;
+    var slots = [];
+    for (var r0=0;r0<rows;r0++) slots.push(r0);
+    for (var r1=rows-1;r1>0;r1--){
+      var j2 = (Math.random()*(r1+1))|0;
+      var t2 = slots[r1]; slots[r1] = slots[j2]; slots[j2] = t2;
+    }
+    var chosen = slots.slice(0, swaps.length).sort(function(x,y){ return x-y; });
+    var rung = [];
+    for (var g0=0;g0<N-1;g0++){
+      rung[g0] = [];
+      for (var r2=0;r2<rows;r2++) rung[g0][r2] = false;
+    }
+    for (var s0=0;s0<swaps.length;s0++) rung[swaps[s0]][chosen[s0]] = true;
+
+    /* ⚠️ 결과는 섞지 않는다 — 적은 순서 그대로 (모요 원본) */
+    var results  = [].map.call(document.querySelectorAll('#lgBots .lgres input'),
+                     function(i){ return i.value.trim() || '꽝'; });
+    var rawNames = [].map.call(document.querySelectorAll('#lgTops .lgname input'),
+                     function(i){ return i.value; });
+    var names = rawNames.map(function(v,i){ return v.trim() || ((i+1) + '번'); });
+
+    G = { rows:rows, rung:rung, results:results, names:names, rawNames:rawNames,
+          done: (function(){ var d=[]; for(var k=0;k<N;k++) d.push(false); return d; })() };
+
+    for (var i2=0;i2<N;i2++){
+      var nw = $('lgname-' + i2); nw.innerHTML = '';
+      var sp = document.createElement('span');
+      sp.className = 'nm'; sp.textContent = names[i2];
+      sp.style.color = COLS[i2 % COLS.length];
+      nw.appendChild(sp);
+
+      var w = $('lgres-' + i2); w.innerHTML = '';
+      var m = document.createElement('span');
+      m.className = 'mask'; m.id = 'lgmask-' + i2;
+      m.textContent = results[i2];        /* 결과는 그대로 보인다 */
+      w.appendChild(m);
+
+      (function(idx){
+        var a = $('lgav-' + idx);
+        a.classList.add('clickable');
+        a.onclick = function(){ run(idx, false); };
+      })(i2);
+    }
+    phase = 'play'; busy = false;
+    $('lgStart').style.display = 'none';
+    $('lgReset').style.display = ''; $('lgAll').style.display = '';
+    $('lgHint').textContent = '캐릭터를 눌러보세요. 사다리가 숨겨져 있어 어디로 갈지 알 수 없어요.';
+    drawBase();
+  }
+
+  function reset(){
+    phase = 'setup'; G = null; busy = false;
+    [].forEach.call(document.querySelectorAll('.lgrunner'), function(e){ e.remove(); });
+    $('lgStart').style.display = '';
+    $('lgReset').style.display = 'none'; $('lgAll').style.display = 'none';
+    $('lgLog').innerHTML = '';
+    $('lgHint').textContent = '아래 칸에 결과를 적고 시작하기를 누르면 사다리가 숨겨집니다. 캐릭터를 눌러 타고 내려가세요.';
+    renderSetup();
+  }
+
+  function pathOf(startCol){
+    var g = geom(), col = startCol;
+    var pts = [[g.pad + col*g.colW, g.y0]];
+    for (var r=0;r<g.rows;r++){
+      var y = g.y0 + g.rowH*(r+1);
+      pts.push([g.pad + col*g.colW, y]);
+      if (col < N-1 && G.rung[col][r]){ col++; pts.push([g.pad + col*g.colW, y]); }
+      else if (col > 0 && G.rung[col-1][r]){ col--; pts.push([g.pad + col*g.colW, y]); }
+    }
+    pts.push([g.pad + col*g.colW, g.y1]);
+    return { pts:pts, end:col };
+  }
+
+  function strokePath(c, pts, upto, col){
+    c.strokeStyle = col; c.lineWidth = 3.4; c.lineCap = 'butt'; c.lineJoin = 'miter';
+    c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
+    for (var k=1;k<=upto;k++) c.lineTo(pts[k][0], pts[k][1]);
+    c.stroke();
+  }
+
+  function finish(i, end, pts){
+    G.done[i] = true;
+    var a = $('lgav-' + i);
+    a.classList.remove('clickable'); a.classList.add('done'); a.onclick = null;
+    var m = $('lgmask-' + end);
+    m.classList.add('open');
+    m.style.borderColor = COLS[i % COLS.length];
+    m.style.color = COLS[i % COLS.length];
+    var log = document.createElement('div');
+    log.innerHTML = '<span class="ico" style="color:' + COLS[i % COLS.length] + '">'
+      + MARKS[i % MARKS.length] + '</span><b>' + esc2(G.names[i]) + '</b> → ' + esc2(G.results[end]);
+    log.style.borderLeftColor = COLS[i % COLS.length];
+    $('lgLog').appendChild(log);
+    if (typeof window.fxHearts === 'function'){
+      var r = $('lgcv').getBoundingClientRect();
+      window.fxHearts(r.left + pts[pts.length-1][0], r.top + pts[pts.length-1][1], 8);
+    }
+  }
+
+  function run(i, instant){
+    if (phase !== 'play' || !G || G.done[i] || busy) return;
+    var p = pathOf(i), pts = p.pts, end = p.end;
+    var cv = $('lgcv'), c = cv.getContext('2d');
+    if (instant){ strokePath(c, pts, pts.length-1, COLS[i % COLS.length]); finish(i, end, pts); return; }
+
+    busy = true;
+    var stage = $('lgStage');
+    var crect = cv.getBoundingClientRect(), srect = stage.getBoundingClientRect();
+    var ox = crect.left - srect.left, oy = crect.top - srect.top;
+    var runner = document.createElement('div');
+    runner.className = 'lgrunner';
+    runner.textContent = MARKS[i % MARKS.length];
+    runner.style.borderColor = COLS[i % COLS.length];
+    runner.style.color = COLS[i % COLS.length];
+    stage.appendChild(runner);
+
+    var seg = [0];
+    for (var k=1;k<pts.length;k++)
+      seg[k] = seg[k-1] + Math.hypot(pts[k][0]-pts[k-1][0], pts[k][1]-pts[k-1][1]);
+    var total = seg[seg.length-1], SPEED = 470;
+    var t0 = performance.now();
+
+    (function step(now){
+      var dist = Math.min(total, (now - t0)/1000*SPEED);
+      var k2 = 1; while (k2 < seg.length && seg[k2] < dist) k2++;
+      var a = pts[k2-1], b = pts[Math.min(k2, pts.length-1)];
+      var segLen = (seg[k2] - seg[k2-1]) || 1, t = (dist - seg[k2-1]) / segLen;
+      var x = a[0] + (b[0]-a[0])*t, y = a[1] + (b[1]-a[1])*t;
+
+      drawBase();
+      for (var j=0;j<N;j++) if (G.done[j]){
+        var q = pathOf(j); strokePath(c, q.pts, q.pts.length-1, COLS[j % COLS.length]);
+      }
+      strokePath(c, pts, k2-1, COLS[i % COLS.length]);
+      c.strokeStyle = COLS[i % COLS.length]; c.lineWidth = 3.4;
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(x, y); c.stroke();
+
+      runner.style.left = (ox + x) + 'px';
+      runner.style.top  = (oy + y) + 'px';
+
+      if (dist < total) requestAnimationFrame(step);
+      else {
+        runner.remove(); busy = false;
+        strokePath(c, pts, pts.length-1, COLS[i % COLS.length]);
+        finish(i, end, pts);
+      }
+    })(performance.now());
   }
 
   function revealAll(){
-    if (phase !== 'play') return;
+    if (phase !== 'play' || !G || busy) return;
+    for (var i=0;i<N;i++) if (!G.done[i]) run(i, true);
+  }
+
+  function repaint(){
+    if (phase === 'setup'){ renderSetup(); return; }
+    var g = geom();
     for (var i=0;i<N;i++){
-      if (!G.path[i]) G.path[i] = pathOf(i);
-      if (!G.opened[i]){
-        G.opened[i] = true;
-        var col = G.path[i].col;
-        var m = document.getElementById('lgm-' + col);
-        m.classList.add('open'); m.textContent = G.res[col];
-        document.getElementById('lgLog').insertAdjacentHTML('beforeend',
-          '<div><span>' + esc(nameOf(i)) + '</span><b>' + esc(G.res[col]) + '</b></div>');
-      }
-      var av = stage.querySelector('.lgav[data-i="' + i + '"]');
-      if (av) av.classList.add('done');
+      $('lgav-' + i).style.left   = (g.pad + i*g.colW) + 'px';
+      $('lgname-' + i).style.left = (g.pad + i*g.colW) + 'px';
+      $('lgres-' + i).style.left  = (g.pad + i*g.colW) + 'px';
     }
-    draw();
+    drawBase();
+    var c = $('lgcv').getContext('2d');
+    for (var j=0;j<N;j++) if (G.done[j]){
+      var q = pathOf(j); strokePath(c, q.pts, q.pts.length-1, COLS[j % COLS.length]);
+    }
+  }
+
+  function setN(d){
+    if (phase !== 'setup') return;
+    N = Math.min(10, Math.max(2, N + d));
+    $('lgN').textContent = N;
+    renderSetup();
   }
 
   function init(){
-    cv = document.getElementById('lgcv'); ctx = cv.getContext('2d');
-    stage = document.getElementById('lgStage');
-    document.getElementById('lgN').addEventListener('change', function(){
-      N = Math.max(2, Math.min(10, parseInt(this.value,10) || 4));
-      this.value = N; setup();
-    });
-    document.getElementById('lgBuild').addEventListener('click', function(){
-      if (phase === 'setup') build(); else setup();
-    });
-    document.getElementById('lgAll').addEventListener('click', revealAll);
-    stage.addEventListener('click', function(e){
-      var a = e.target.closest && e.target.closest('.lgav');
-      if (!a) return;
-      if (phase !== 'play'){ toast('먼저 사다리를 만들어주세요'); return; }
-      walk(+a.dataset.i);
-    });
-    window.addEventListener('resize', function(){ draw(); });
-    setup();
+    if (!$('lgcv')) return;
+    $('lgMinus').addEventListener('click', function(){ setN(-1); });
+    $('lgPlus').addEventListener('click',  function(){ setN(1); });
+    $('lgStart').addEventListener('click', start);
+    $('lgReset').addEventListener('click', reset);
+    $('lgAll').addEventListener('click', revealAll);
+    window.addEventListener('resize', function(){ if (!busy) repaint(); });
+    renderSetup();
   }
-  return { init: init, draw: function(){ draw(); } };
+
+  return { init:init, repaint:repaint, reset:reset,
+           _start:start, _run:run, _state:function(){ return { N:N, phase:phase, G:G }; } };
 })();
 
 /* ═══════════════════════════════════════════
-   🌠 미드나잇 핀볼
+   🎲 미드나잇 룰렛
    ═══════════════════════════════════════════ */
-var PB = (function(){
-  var W = 340, H = 540, cv, ctx, raf = null;
-  var ball = null, score = 0, balls = 3, best = 0, running = false, msg = 'PRESS LAUNCH';
-  var lowSpd = 0, searchN = 0;   /* 공이 어딘가 끼었을 때 구조용 카운터 */
-  var lf = { x:118, y:462, len:56, ang:0.42, target:0.42, up:false },
-      rf = { x:222, y:462, len:56, ang:Math.PI-0.42, target:Math.PI-0.42, up:false };
-  var bumpers = [
-    { x:98,  y:152, r:20, hit:0, pt:120 },
-    { x:196, y:134, r:20, hit:0, pt:120 },
-    { x:150, y:234, r:18, hit:0, pt:180 },
-    { x:66,  y:246, r:13, hit:0, pt:80  },
-    { x:232, y:238, r:13, hit:0, pt:80  },
-    { x:50,  y:106, r:12, hit:0, pt:80  },
-    { x:262, y:182, r:12, hit:0, pt:80  },
-    { x:108, y:332, r:14, hit:0, pt:100 },
-    { x:214, y:332, r:14, hit:0, pt:100 }
-  ];
-  /* 우측 발사 레인 → 좌로 휘는 천장 아치 → 플레이필드.
-     아치는 각도 변화를 작게 쪼개야 공이 튕겨 되돌아오지 않고 천장을 타고 왼쪽으로 흐른다. */
-  var walls = [
-    [330,540,330,64],                                  /* 우측 외벽(레인 바깥) */
-    [330,64,324,40],[324,40,310,22],[310,22,288,11],[288,11,250,6],   /* 우상단 커브 */
-    [250,6,120,6],[120,6,60,18],[60,18,22,46],[22,46,10,72],          /* 천장 → 좌상단 커브 */
-    [10,72,10,470],                                    /* 좌측 외벽 */
-    [306,116,306,540],                                 /* 발사 레인 내벽 (아래로 열림 = 복귀구는 드레인) */
-    [10,470,104,436],[104,436,104,462],                /* 좌 슬링샷 */
-    [306,470,236,436],[236,436,236,462],               /* 우 슬링샷 */
-    [10,470,10,540]
-  ];
+/* ═══════════════ GAME 02 · 미드나잇 룰렛 (구슬 레이스) ═══════════════
+   lazygyu/roulette 의 놀이 방식을 참고해 바닐라로 새로 구현했다.
+   원리: 세로로 긴 코스에 이름표를 단 구슬을 떨어뜨려, 결승선을 먼저 끊는 순서대로 당첨.
+   물리는 원-선분 최근접점 충돌 + 원-원 충돌만으로 처리한다(외부 엔진 없음). */
+var RL = (function(){
+  var W = 420, H = 720;              /* 캔버스 픽셀 */
+  var VW = 30;                       /* 코스 가로 폭(월드 단위) */
+  var SCALE = W / VW;                /* 월드 → 픽셀 */
+  var GOAL_Y = 0;                    /* 결승선 — buildCourse 가 코스 길이에 맞춰 정한다 */
+  var R = 0.62;                      /* 구슬 반지름 */
+  var GRAV = 0.028, AIR = 0.999, REST = 0.42, FRIC = 0.986;
+  var cv, ctx, raf = null, running = false;
+  var marbles = [], walls = [], pegs = [], bars = [], finished = [], t = 0;
+  var camY = 0, speed = 2, winnerRank = 1, done = false;
+  var L_EDGE = 1.82, R_EDGE = 28.18;
 
-  function reset(full){
-    if (full){ score = 0; balls = 3; }
-    ball = { x:318, y:420, vx:0, vy:0, r:6.6, live:false };
-    lowSpd = 0; searchN = 0;
-    msg = 'PRESS LAUNCH';
-  }
-  function launch(){
-    if (!ball || ball.live) return;
-    if (balls <= 0){ reset(true); return; }
-    ball.live = true; ball.vy = -21; ball.vx = -0.5;
-    lowSpd = 0; searchN = 0;
-    msg = '';
+  /* ── 코스 만들기 ─────────────────────────────────────────
+     seg(x1,y1,x2,y2) 정적 벽 / peg(x,y,r) 못 / bar(x,y,len,speed) 회전 막대 */
+  function seg(x1,y1,x2,y2){ walls.push([x1,y1,x2,y2]); }
+  function buildCourse(){
+    walls = []; pegs = []; bars = [];
+    var L = 1.2, Rt = VW - 1.2;
+
+    /* 출발 깔때기 */
+    seg(L, 6, 11.5, 11);  seg(Rt, 6, 18.5, 11);
+    seg(11.5, 11, 12.6, 14.5);  seg(18.5, 11, 17.4, 14.5);
+
+    var y = 21;
+
+    /* 1구역 — 지그재그 미끄럼틀 (경사를 충분히 급하게: 높이/폭 ≈ 0.55) */
+    for (var i=0;i<4;i++){
+      if (i % 2 === 0){ seg(L, y, VW - 7.5, y + 11);  seg(VW - 7.5, y + 11, VW - 7.5, y + 13); }
+      else            { seg(Rt, y, 7.5, y + 11);      seg(7.5, y + 11, 7.5, y + 13); }
+      y += 14;
+    }
+
+    /* 2구역 — 못밭 */
+    var pegTop = y + 4;
+    for (var r2=0;r2<6;r2++){
+      var cols = (r2 % 2 === 0) ? 5 : 4;
+      var gap = (VW - 6) / cols;
+      for (var c=0;c<cols;c++){
+        var px = 3 + gap * (c + 0.5) + (r2 % 2 ? gap/2 : 0);
+        if (px > VW - 3) continue;
+        pegs.push({ x:px, y:pegTop + r2*5.6, r:0.75 });
+      }
+    }
+    y = pegTop + 6*5.6 + 5;
+
+    /* 3구역 — 회전 막대 3개 (막대 앞뒤로 급한 유도벽) */
+    for (var b=0;b<3;b++){
+      var by = y + b*13;
+      bars.push({ x: VW/2 + (b%2 ? 4.2 : -4.2), y: by, len: 7.4, a: b*1.1, w: (b%2 ? -0.022 : 0.022) });
+      seg(L,  by - 6, 5.2,      by - 1.5);
+      seg(Rt, by - 6, VW - 5.2, by - 1.5);
+    }
+    y += 3*13 + 5;
+
+    /* 4구역 — 가운데 삼각 섬 (막다른 골목이 생기지 않게 지붕만) */
+    seg(VW/2 - 4.2, y + 7, VW/2, y);
+    seg(VW/2 + 4.2, y + 7, VW/2, y);
+    y += 12;
+
+    /* 5구역 — 계단.
+       ⚠️ 계단은 반드시 "벽에 붙은 쪽에서 시작해 열린 쪽으로 내려가야" 한다.
+          양끝이 다 벽에 닿으면 막다른 골목이 되어 구슬이 영원히 갇힌다. */
+    for (var s2=0;s2<4;s2++){
+      var sy = y + s2*7;
+      if (s2 % 2 === 0) seg(L,  sy, L  + (VW/2 - 1.7), sy + 5.4);   /* 왼벽 → 가운데(오른쪽이 열림) */
+      else              seg(Rt, sy, Rt - (VW/2 - 1.7), sy + 5.4);   /* 오른벽 → 가운데(왼쪽이 열림) */
+    }
+    y += 4*7 + 6;
+
+    /* 마지막 깔때기 → 결승선 */
+    seg(L,  y, VW/2 - 2.4, y + 9);
+    seg(Rt, y, VW/2 + 2.4, y + 9);
+    seg(VW/2 - 2.4, y + 9, VW/2 - 2.4, y + 17);
+    seg(VW/2 + 2.4, y + 9, VW/2 + 2.4, y + 17);
+
+    GOAL_Y = y + 15;                    /* 코스가 끝나는 지점이 곧 결승선 */
+    L_EDGE = L + R; R_EDGE = Rt - R;
+
+    /* 바깥 벽은 결승선까지 (길이를 알고 난 뒤에 세운다) */
+    seg(L,  -6, L,  GOAL_Y + 8);
+    seg(Rt, -6, Rt, GOAL_Y + 8);
   }
 
-  function segCollide(b, x1,y1,x2,y2, bounce, vel){
-    var dx = x2-x1, dy = y2-y1, L2 = dx*dx+dy*dy || 1;
-    var t = Math.max(0, Math.min(1, ((b.x-x1)*dx + (b.y-y1)*dy) / L2));
-    var px = x1 + dx*t, py = y1 + dy*t;
-    var ox = b.x-px, oy = b.y-py, d = Math.hypot(ox,oy);
-    if (d > b.r || d === 0) return false;
+  /* ── 이름 파싱 : "이름*3" = 구슬 3개 ── */
+  function parseNames(raw){
+    var out = [];
+    String(raw || '').split(/[\n,]/).forEach(function(line){
+      var s = line.trim(); if (!s) return;
+      var m = /^(.*?)\s*[*xX×]\s*(\d+)$/.exec(s);
+      var name = m ? m[1].trim() : s;
+      var n = m ? Math.max(1, Math.min(20, parseInt(m[2],10))) : 1;
+      if (!name) return;
+      for (var i=0;i<n;i++) out.push(name);
+    });
+    return out.slice(0, 60);
+  }
+
+  function reset(){
+    cancel();
+    buildCourse();
+    finished = []; done = false; camY = 0; t = 0;
+    var names = parseNames(document.getElementById('rlNames').value);
+    if (!names.length) names = ['참가자1','참가자2'];
+    /* 출발 자리를 무작위로 섞는다.
+       코스에 미세한 자리 유불리가 남아 있어도, 그게 특정 이름에 붙지 않도록. */
+    var slots = names.map(function(_, k){ return k; });
+    for (var sIdx = slots.length - 1; sIdx > 0; sIdx--){
+      var rIdx = Math.floor(Math.random() * (sIdx + 1));
+      var tmp = slots[sIdx]; slots[sIdx] = slots[rIdx]; slots[rIdx] = tmp;
+    }
+    marbles = names.map(function(n, i){
+      var slot = slots[i];
+      var perRow = 8, col = slot % perRow, row = Math.floor(slot / perRow);
+      return {
+        name: n, i: i,
+        x: 4 + (VW - 8) * ((col + 0.5) / perRow) + (Math.random()-0.5)*0.7,
+        y: -2 - row * 1.8,
+        vx: (Math.random()-0.5)*0.06, vy: 0,
+        hue: Math.round((i * 360 / Math.max(6, names.length) + 268) % 360),
+        alive: true, rank: 0
+      };
+    });
+    renderList(); render();
+    document.getElementById('rlWin').className = 'rlwin';
+    document.getElementById('rlStart').textContent = '굴리기';
+  }
+
+  /* ── 충돌 ── */
+  function hitSeg(m, x1,y1,x2,y2, extraR){
+    var dx = x2-x1, dy = y2-y1, L2 = dx*dx + dy*dy || 1;
+    var tt = Math.max(0, Math.min(1, ((m.x-x1)*dx + (m.y-y1)*dy) / L2));
+    var px = x1 + dx*tt, py = y1 + dy*tt;
+    var ox = m.x - px, oy = m.y - py, d = Math.hypot(ox, oy);
+    var rr = R + (extraR || 0);
+    if (d > rr || d === 0) return null;
     var nx = ox/d, ny = oy/d;
-    b.x = px + nx*(b.r+0.4); b.y = py + ny*(b.r+0.4);
-    var dot = b.vx*nx + b.vy*ny;
-    b.vx -= (1+bounce)*dot*nx; b.vy -= (1+bounce)*dot*ny;
-    if (vel){ b.vx += nx*vel; b.vy += ny*vel; }
-    return true;
+    m.x = px + nx*(rr + 0.01); m.y = py + ny*(rr + 0.01);
+    var dot = m.vx*nx + m.vy*ny;
+    if (dot < 0){ m.vx -= (1+REST)*dot*nx; m.vy -= (1+REST)*dot*ny; }
+    return { nx:nx, ny:ny, px:px, py:py };
   }
 
+  var _order = [];
   function step(){
-    if (!running) return;
-    /* 플리퍼 각도 */
-    lf.target = lf.up ? -0.36 : 0.42;
-    rf.target = rf.up ? Math.PI+0.36 : Math.PI-0.42;
-    lf.ang += (lf.target - lf.ang) * 0.42;
-    rf.ang += (rf.target - rf.ang) * 0.42;
+    /* ⚠️ 구슬을 배열 순서대로 처리하면 앞쪽 구슬이 충돌 해석에서 유리해진다.
+       (2명 추첨에서 첫 번째가 65% 승률이 나왔던 원인)
+       매 프레임 처리 순서를 섞어 순서 이점을 없앤다. */
+    if (_order.length !== marbles.length){
+      _order = marbles.map(function(_, k){ return k; });
+    }
+    for (var q = _order.length - 1; q > 0; q--){
+      var rq = Math.floor(Math.random() * (q + 1));
+      var tq = _order[q]; _order[q] = _order[rq]; _order[rq] = tq;
+    }
 
-    var b = ball;
-    if (b && b.live){
-      b.vy += 0.30;
-      b.vx *= 0.998; b.vy *= 0.999;
-      var steps = 3;
-      for (var s=0;s<steps;s++){
-        b.x += b.vx/steps; b.y += b.vy/steps;
-        for (var i=0;i<walls.length;i++){
-          var w = walls[i];
-          segCollide(b, w[0],w[1],w[2],w[3], 0.56, 0);
+    for (var oi=0;oi<_order.length;oi++){
+      var i = _order[oi];
+      var m = marbles[i]; if (!m.alive) continue;
+      m.vy += GRAV; m.vx *= AIR; m.vy *= AIR;
+
+      var sub = 3;
+      for (var s=0;s<sub;s++){
+        m.x += m.vx/sub; m.y += m.vy/sub;
+
+        for (var w=0;w<walls.length;w++){
+          var q = walls[w];
+          if (Math.abs(m.y - (q[1]+q[3])/2) > Math.abs(q[3]-q[1])/2 + 3) continue;
+          if (hitSeg(m, q[0],q[1],q[2],q[3])) { m.vx *= FRIC; }
         }
-        /* 슬링샷 킥 */
-        if (segCollide(b, 10,470,104,436, 0.62, 4.2)) { score += 60; }
-        if (segCollide(b, 306,470,236,436, 0.62, 4.2)) { score += 60; }
-        /* 범퍼 */
-        for (var k=0;k<bumpers.length;k++){
-          var m = bumpers[k];
-          var dx = b.x-m.x, dy = b.y-m.y, d = Math.hypot(dx,dy);
-          if (d < m.r + b.r){
-            var nx = dx/(d||1), ny = dy/(d||1);
-            b.x = m.x + nx*(m.r+b.r+0.5); b.y = m.y + ny*(m.r+b.r+0.5);
-            var dot = b.vx*nx + b.vy*ny;
-            b.vx -= 2*dot*nx; b.vy -= 2*dot*ny;
-            b.vx += nx*3.4; b.vy += ny*3.4;
-            m.hit = 12; score += m.pt;
+        for (var p=0;p<pegs.length;p++){
+          var g = pegs[p];
+          if (Math.abs(m.y - g.y) > 3) continue;
+          var ddx = m.x-g.x, ddy = m.y-g.y, dd = Math.hypot(ddx,ddy);
+          if (dd < g.r + R && dd > 0){
+            var nx = ddx/dd, ny = ddy/dd;
+            m.x = g.x + nx*(g.r+R+0.01); m.y = g.y + ny*(g.r+R+0.01);
+            var dt2 = m.vx*nx + m.vy*ny;
+            if (dt2 < 0){ m.vx -= 1.5*dt2*nx; m.vy -= 1.5*dt2*ny; }
           }
         }
-        /* 플리퍼 */
-        var lx2 = lf.x + Math.cos(lf.ang)*lf.len, ly2 = lf.y + Math.sin(lf.ang)*lf.len;
-        var rx2 = rf.x + Math.cos(rf.ang)*rf.len, ry2 = rf.y + Math.sin(rf.ang)*rf.len;
-        if (segCollide(b, lf.x,lf.y,lx2,ly2, 0.42, lf.up ? 9.5 : 0)) {}
-        if (segCollide(b, rf.x,rf.y,rx2,ry2, 0.42, rf.up ? 9.5 : 0)) {}
+        for (var b=0;b<bars.length;b++){
+          var bar = bars[b];
+          if (Math.abs(m.y - bar.y) > bar.len/2 + 3) continue;
+          var hx = Math.cos(bar.a)*bar.len/2, hy = Math.sin(bar.a)*bar.len/2;
+          var h = hitSeg(m, bar.x-hx, bar.y-hy, bar.x+hx, bar.y+hy, 0.34);
+          if (h){
+            /* 막대가 도는 힘을 접선 방향으로 얹어준다 */
+            var rx = h.px - bar.x, ry = h.py - bar.y;
+            m.vx += -ry * bar.w * 1.4;
+            m.vy +=  rx * bar.w * 1.4;
+          }
+        }
       }
-      var sp = Math.hypot(b.vx,b.vy);
-      if (sp > 22){ b.vx *= 22/sp; b.vy *= 22/sp; }
-      /* 볼 서치 — 어디 끼여 멈추면 살짝 밀어주고, 그래도 안 되면 그 공은 포기 */
-      if (sp < 0.9) lowSpd++; else lowSpd = 0;
-      if (lowSpd > 36){
-        b.vx += (Math.random()-0.5)*5; b.vy -= 3.2; lowSpd = 0; searchN++;
-        if (searchN > 4) b.y = H + 60;
+
+      /* 구슬끼리 (처리 순서를 섞었으므로 인덱스 비교로 중복 해석을 막는다) */
+      for (var j=0;j<marbles.length;j++){
+        if (j <= i) continue;
+        var o = marbles[j]; if (!o.alive) continue;
+        if (Math.abs(o.y - m.y) > R*2) continue;
+        var ax = o.x-m.x, ay = o.y-m.y, ad = Math.hypot(ax,ay);
+        if (ad < R*2 && ad > 0){
+          var ux = ax/ad, uy = ay/ad, ov = (R*2 - ad)/2;
+          m.x -= ux*ov; m.y -= uy*ov; o.x += ux*ov; o.y += uy*ov;
+          var rv = (o.vx-m.vx)*ux + (o.vy-m.vy)*uy;
+          if (rv < 0){
+            var imp = rv * 0.86;
+            m.vx += imp*ux; m.vy += imp*uy; o.vx -= imp*ux; o.vy -= imp*uy;
+          }
+        }
       }
-      if (b.y > H + 30){
-        balls--;
-        if (balls <= 0){
-          best = Math.max(best, score);
-          try{ localStorage.setItem('nancho_pinball', String(best)); }catch(e){}
-          msg = 'GAME OVER · ' + score;
-          reset(false); balls = 0;
-        } else { reset(false); }
+
+      var sp = Math.hypot(m.vx, m.vy);
+      if (sp > 1.5){ m.vx *= 1.5/sp; m.vy *= 1.5/sp; }
+
+      /* 끼임 방지 — 구슬이 거의 안 내려가면 살짝 흔들어 준다.
+         (추첨이라 아무도 도착 못 하는 상황이 제일 치명적) */
+      if (m.y - (m.lastY === undefined ? -99 : m.lastY) < 0.15){ m.stall = (m.stall||0) + 1; }
+      else { m.stall = 0; m.lastY = m.y; }
+      if (m.stall > 30){
+        m.nudge = (m.nudge || 0) + 1;
+        m.vx += (Math.random()-0.5) * (0.4 + m.nudge*0.08);
+        m.vy += 0.16;
+        /* 그래도 계속 갇히면 아래로 살짝 통과시킨다 — 추첨이 멈추는 것보다 낫다 */
+        if (m.nudge > 6){ m.y += 1.2; m.nudge = 0; }
+        m.stall = 0; m.lastY = m.y;
       }
+      if (m.x < L_EDGE) { m.x = L_EDGE; m.vx = Math.abs(m.vx)*REST; }
+      if (m.x > R_EDGE) { m.x = R_EDGE; m.vx = -Math.abs(m.vx)*REST; }
+
+      if (m.y > GOAL_Y){ m.alive = false; m.rank = finished.length + 1; finished.push(m); onFinish(); }
     }
-    for (var q=0;q<bumpers.length;q++) if (bumpers[q].hit > 0) bumpers[q].hit--;
-    render();
-    document.getElementById('pbScore').textContent = score.toLocaleString();
-    document.getElementById('pbBalls').textContent = Math.max(0, balls);
-    document.getElementById('pbBest').textContent = Math.max(best, score).toLocaleString();
-    raf = requestAnimationFrame(step);
+
+    for (var k=0;k<bars.length;k++) bars[k].a += bars[k].w;
+
+    /* 카메라 — 선두를 따라간다 */
+    var lead = -99;
+    for (var c=0;c<marbles.length;c++) if (marbles[c].alive && marbles[c].y > lead) lead = marbles[c].y;
+    if (lead > -99){
+      var want = Math.max(0, Math.min(GOAL_Y + 10 - H/SCALE, lead - (H/SCALE)*0.42));
+      camY += (want - camY) * 0.12;
+    }
+    t++;
   }
+
+
+  function onFinish(){
+    renderList();
+    if (finished.length >= Math.min(winnerRank, marbles.length) && !done){
+      done = true;
+      var names = finished.slice(0, winnerRank).map(function(m){ return m.name; });
+      setTimeout(function(){
+        document.getElementById('rlWinName').textContent = names.join(' · ');
+        document.getElementById('rlWinSub').textContent =
+          winnerRank === 1 ? '가장 먼저 도착했어요' : (winnerRank + '명 당첨');
+        document.getElementById('rlWin').className = 'rlwin on';
+      }, 420);
+    }
+    if (finished.length >= marbles.length) cancel();
+  }
+
+  function renderList(){
+    var ol = document.getElementById('rlList');
+    if (!finished.length){ ol.innerHTML = '<li class="empty">아직 도착한 구슬이 없어요</li>'; return; }
+    ol.innerHTML = finished.map(function(m, i){
+      return '<li class="' + (i < winnerRank ? 'win' : '') + '">'
+        + '<span class="dotc" style="background:hsl(' + m.hue + ',62%,68%)"></span>'
+        + esc(m.name) + '</li>';
+    }).join('');
+  }
+
+  /* ── 그리기 ── */
+  function wx(x){ return x * SCALE; }
+  function wy(y){ return (y - camY) * SCALE; }
 
   function render(){
-    var st = getComputedStyle(document.body);
-    var line = st.getPropertyValue('--line').trim() || 'rgba(255,255,255,.22)';
-    var main = st.getPropertyValue('--main').trim() || '#C79BD8';
-    var lightMain = st.getPropertyValue('--main-light').trim() || '#E4CDF0';
-    var ink = st.getPropertyValue('--ink').trim() || '#fff';
+    if (!ctx) return;
     ctx.clearRect(0,0,W,H);
 
-    ctx.strokeStyle = line; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
-    walls.forEach(function(w){ ctx.beginPath(); ctx.moveTo(w[0],w[1]); ctx.lineTo(w[2],w[3]); ctx.stroke(); });
-
-    bumpers.forEach(function(m){
-      ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7);
-      ctx.strokeStyle = m.hit ? lightMain : main; ctx.lineWidth = m.hit ? 3 : 1.4; ctx.stroke();
-      ctx.beginPath(); ctx.arc(m.x,m.y,m.r*0.42,0,7);
-      ctx.fillStyle = m.hit ? lightMain : line; ctx.fill();
-    });
-
-    ctx.strokeStyle = lightMain; ctx.lineWidth = 6; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(lf.x,lf.y); ctx.lineTo(lf.x+Math.cos(lf.ang)*lf.len, lf.y+Math.sin(lf.ang)*lf.len); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(rf.x,rf.y); ctx.lineTo(rf.x+Math.cos(rf.ang)*rf.len, rf.y+Math.sin(rf.ang)*rf.len); ctx.stroke();
-
-    if (ball){
-      ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,7);
-      ctx.fillStyle = ink; ctx.fill();
-      ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r+3.5,0,7);
-      ctx.strokeStyle = main; ctx.lineWidth = 1; ctx.stroke();
+    /* 결승선 */
+    var gy = wy(GOAL_Y);
+    if (gy > -40 && gy < H + 40){
+      ctx.save();
+      ctx.strokeStyle = 'rgba(199,155,216,.9)'; ctx.lineWidth = 2; ctx.setLineDash([7,5]);
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(199,155,216,.85)';
+      ctx.font = '900 9px system-ui,sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('G O A L', W/2, gy - 9);
+      ctx.restore();
     }
-    if (msg){
-      ctx.fillStyle = main; ctx.font = '900 11px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(msg, W/2, H/2 + 60);
+
+    /* 벽 */
+    ctx.strokeStyle = 'rgba(255,255,255,.30)'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (var i=0;i<walls.length;i++){
+      var q = walls[i];
+      var y1 = wy(q[1]), y2 = wy(q[3]);
+      if ((y1 < -60 && y2 < -60) || (y1 > H+60 && y2 > H+60)) continue;
+      ctx.moveTo(wx(q[0]), y1); ctx.lineTo(wx(q[2]), y2);
+    }
+    ctx.stroke();
+
+    /* 못 */
+    ctx.fillStyle = 'rgba(157,119,166,.55)'; ctx.strokeStyle = 'rgba(228,205,240,.6)'; ctx.lineWidth = 1;
+    for (var p=0;p<pegs.length;p++){
+      var g = pegs[p], py = wy(g.y);
+      if (py < -30 || py > H+30) continue;
+      ctx.beginPath(); ctx.arc(wx(g.x), py, g.r*SCALE, 0, 6.2832); ctx.fill(); ctx.stroke();
+    }
+
+    /* 회전 막대 */
+    ctx.strokeStyle = 'rgba(228,205,240,.85)'; ctx.lineCap = 'round';
+    for (var b=0;b<bars.length;b++){
+      var bar = bars[b], by = wy(bar.y);
+      if (by < -80 || by > H+80) continue;
+      var hx = Math.cos(bar.a)*bar.len/2*SCALE, hy = Math.sin(bar.a)*bar.len/2*SCALE;
+      ctx.lineWidth = 0.68*SCALE;
+      ctx.beginPath(); ctx.moveTo(wx(bar.x)-hx, by-hy); ctx.lineTo(wx(bar.x)+hx, by+hy); ctx.stroke();
+      ctx.fillStyle = 'rgba(80,49,93,.9)';
+      ctx.beginPath(); ctx.arc(wx(bar.x), by, 0.42*SCALE, 0, 6.2832); ctx.fill();
+    }
+    ctx.lineCap = 'butt';
+
+    /* 구슬 */
+    for (var m2=0;m2<marbles.length;m2++){
+      var m = marbles[m2]; if (!m.alive) continue;
+      var mx = wx(m.x), my = wy(m.y);
+      if (my < -30 || my > H+30) continue;
+      ctx.fillStyle = 'hsl(' + m.hue + ',62%,66%)';
+      ctx.beginPath(); ctx.arc(mx, my, R*SCALE, 0, 6.2832); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1;
+      ctx.stroke();
+      /* 이름표 */
+      ctx.fillStyle = 'rgba(244,238,248,.92)';
+      ctx.font = '700 10px system-ui,sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(m.name.slice(0,6), mx, my - R*SCALE - 5);
     }
   }
 
-  /* 크기는 CSS(aspect-ratio)가 담당 — 여기선 내부 해상도만 보장한다. */
-  function fit(){
-    if (!cv) return;
-    if (cv.width !== W) cv.width = W;
-    if (cv.height !== H) cv.height = H;
+  function loop(){
+    for (var s=0;s<speed;s++) if (running) step();
     render();
+    raf = requestAnimationFrame(loop);
+  }
+  function cancel(){ running = false; if (raf){ cancelAnimationFrame(raf); raf = null; } }
+
+  function start(){
+    if (running) return;
+    if (done || finished.length) reset();
+    running = true;
+    document.getElementById('rlStart').textContent = '굴리는 중…';
+    if (!raf) raf = requestAnimationFrame(loop);
   }
 
   function init(){
-    cv = document.getElementById('pbcv'); ctx = cv.getContext('2d');
-    cv.width = W; cv.height = H;
-    try{ best = parseInt(localStorage.getItem('nancho_pinball'),10) || 0; }catch(e){}
-    reset(true); fit(); running = true; step();
-
-    document.addEventListener('keydown', function(e){
-      if (!document.getElementById('g-pinball').classList.contains('on')) return;
-      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a'){ lf.up = true; e.preventDefault(); }
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd'){ rf.up = true; e.preventDefault(); }
-      if (e.key === ' '){ launch(); e.preventDefault(); }
+    cv = document.getElementById('rlcv'); if (!cv) return;
+    ctx = cv.getContext('2d');
+    document.getElementById('rlStart').addEventListener('click', start);
+    document.getElementById('rlReset').addEventListener('click', reset);
+    document.getElementById('rlRank').addEventListener('click', function(e){
+      var b = e.target.closest('button[data-r]'); if (!b) return;
+      this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); winnerRank = +b.dataset.r; renderList();
     });
-    document.addEventListener('keyup', function(e){
-      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') lf.up = false;
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') rf.up = false;
+    document.getElementById('rlSpeed').addEventListener('click', function(e){
+      var b = e.target.closest('button[data-s]'); if (!b) return;
+      this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); speed = +b.dataset.s;
     });
-    function press(e){
-      var r = cv.getBoundingClientRect();
-      var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-      if (!ball.live){ launch(); return; }
-      if (x < r.width/2) lf.up = true; else rf.up = true;
-    }
-    function relase(){ lf.up = false; rf.up = false; }
-    cv.addEventListener('mousedown', press); cv.addEventListener('mouseup', relase);
-    cv.addEventListener('touchstart', function(e){ e.preventDefault(); press(e); }, {passive:false});
-    cv.addEventListener('touchend', function(e){ e.preventDefault(); relase(); }, {passive:false});
-    document.getElementById('pbLaunch').addEventListener('click', launch);
-    document.getElementById('pbReset').addEventListener('click', function(){ reset(true); });
-    window.addEventListener('resize', fit);
+    document.getElementById('rlWin').addEventListener('click', function(){ this.className = 'rlwin'; });
+    document.getElementById('rlNames').addEventListener('change', reset);
+    reset();
+    raf = requestAnimationFrame(loop);
   }
-  return { init: init, fit: function(){ if (cv) fit(); } };
+
+  return { init:init, reset:reset, fit:render };
 })();
 
 bootSite();
 LG.init();
-PB.init();
+RL.init();
 ready();
 
 </script>
