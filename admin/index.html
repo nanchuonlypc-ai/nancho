@@ -109,10 +109,10 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 .spectable th{background:rgba(255,255,255,.04);color:var(--main);font-size:10px;letter-spacing:.12em;font-weight:900}
 .prev .sw{width:44px;height:44px;border:1px solid var(--line)}
 
-.gate{max-width:380px;margin:16vh auto;border:1px solid var(--line);padding:34px}
-.gate h1{font-family:var(--ff-disp);font-size:34px;letter-spacing:-.05em;margin:0 0 6px}
-.gate p{color:var(--ink-dim);font-size:12px;margin:0 0 22px;letter-spacing:.08em}
-.hide{display:none!important}
+.nc-gate{max-width:380px;margin:16vh auto;border:1px solid var(--line);padding:34px}
+.nc-gate h1{font-family:var(--ff-disp);font-size:34px;letter-spacing:-.05em;margin:0 0 6px}
+.nc-gate p{color:var(--ink-dim);font-size:12px;margin:0 0 22px;letter-spacing:.08em}
+.nc-off{display:none!important}
 .note{font-size:11.5px;color:var(--ink-dim);line-height:1.7;margin-top:8px}
 .warn{border-left:2px solid #E0A87F;padding:10px 14px;font-size:12px;color:var(--ink-soft);background:rgba(224,168,127,.07);margin-bottom:16px}
 </style>
@@ -176,10 +176,10 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
          + ' parent=' + (el.parentElement ? el.parentElement.tagName : '-');
   }
   setTimeout(function(){
-    var g = document.getElementById('gate'), a = document.getElementById('app');
+    var g = document.getElementById('ncGate'), a = document.getElementById('ncApp');
     var gv = g && g.getBoundingClientRect().height > 20 && getComputedStyle(g).visibility !== 'hidden'
              && parseFloat(getComputedStyle(g).opacity) > 0.05;
-    var av = a && !a.classList.contains('hide') && a.getBoundingClientRect().height > 20;
+    var av = a && !a.classList.contains('nc-off') && a.getBoundingClientRect().height > 20;
     if (gv || av) return;
 
     add('로그인 화면이 그려지지 않았습니다.');
@@ -192,7 +192,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 
     /* 게이트를 강제로 되살려 본다 */
     if (g){
-      g.className = 'gate';
+      g.className = 'nc-gate';
       g.setAttribute('style','display:block!important;opacity:1!important;visibility:visible!important;'
         + 'max-width:380px;margin:40px auto;padding:28px;border:1px solid #888;background:#15101c;color:#fff');
     }
@@ -209,10 +209,10 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     box.querySelector('button').onclick = function(){
       try{
         if (document.getElementById('sospw').value !== ADMIN_PW){ alert('비밀번호가 달라요'); return; }
-        if (g) g.style.display = 'none';
-        var app = document.getElementById('app');
-        app.classList.remove('hide');
-        app.setAttribute('style','display:block!important;opacity:1!important;visibility:visible!important');
+        if (g) forceHide(g);
+        var app = document.getElementById('ncApp');
+        app.classList.remove('nc-off');
+        forceShow(app);
         if (typeof boot === 'function') boot();
         d.remove();
       }catch(err){ add('비상 로그인 실패: ' + err.message); }
@@ -223,7 +223,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 </script>
 
 <!-- ══ 로그인 ══ -->
-<div class="gate" id="gate">
+<div class="nc-gate" id="ncGate">
   <h1>ADMIN</h1>
   <p>THE MIDNIGHT LOG · 관리자</p>
   <label class="field"><span>비밀번호</span>
@@ -234,7 +234,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 </div>
 
 <!-- ══ 본체 ══ -->
-<div class="adwrap hide" id="app">
+<div class="adwrap nc-off" id="ncApp">
   <div class="adtop">
     <div class="b">난초<small>ADMIN</small></div>
     <div class="sp">
@@ -783,10 +783,24 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <script>
 /* ══════════ 로그인 ══════════ */
 var ADMIN_PW = '1234';   /* ⚠️ 배포 전에 반드시 바꾸세요 */
+/* 확장 프로그램이 #app · #gate 같은 흔한 이름을 display:none 으로 숨겨버리는 사례가 있어
+   (광고차단 필터 목록의 일반 규칙), 클래스 토글만 믿지 않고 인라인 !important 로 못 박는다. */
+function forceShow(el){
+  if (!el) return;
+  el.style.setProperty('display','block','important');
+  el.style.setProperty('visibility','visible','important');
+  el.style.setProperty('opacity','1','important');
+}
+function forceHide(el){
+  if (!el) return;
+  el.style.setProperty('display','none','important');
+}
 function enter(){
   if (document.getElementById('pw').value !== ADMIN_PW){ toast('비밀번호가 달라요'); return; }
-  document.getElementById('gate').classList.add('hide');
-  document.getElementById('app').classList.remove('hide');
+  document.getElementById('ncGate').classList.add('nc-off');
+  document.getElementById('ncApp').classList.remove('nc-off');
+  forceHide(document.getElementById('ncGate'));
+  forceShow(document.getElementById('ncApp'));
   try { boot(); } catch (e) { console.error('[admin] boot 오류:', e); runSelfCheck(); }
 }
 /* ⚠️ 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어
@@ -812,6 +826,7 @@ if (typeof toggleMode !== 'function'){
 }
 
 try {
+  forceShow(document.getElementById('ncGate'));
   document.getElementById('pwBtn').addEventListener('click', enter);
   document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
   document.querySelectorAll('[data-mode]').forEach(function(b){ b.addEventListener('click', toggleMode); });
@@ -1368,7 +1383,7 @@ document.getElementById('iq-load').addEventListener('click', RELOAD.inquiries);
 function boot(){
   runSelfCheck();
   setupThumbs();
-  document.getElementById('app').addEventListener('input', function(e){
+  document.getElementById('ncApp').addEventListener('input', function(e){
     if (e.target.closest('#tab-main, #tab-profile, #tab-theme')) markDirty();
   });
   loadProfile().then(function(){ refreshThumbs(); clearDirty(); });
