@@ -86,6 +86,12 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
   padding:8px 13px;font:inherit;font-size:11.5px;text-decoration:none;cursor:pointer}
 .topact a:hover,.topact button:hover{border-color:var(--main);color:var(--ink)}
 .dirty{color:#E8C46A}
+/* 자가진단 배너 (문제 있을 때만 표시) */
+#selfcheck{display:none;border:1px solid #E88A9A;background:rgba(232,138,154,.09);padding:14px 16px;margin:0 0 16px;font-size:12.5px;line-height:1.8}
+#selfcheck.on{display:block}
+#selfcheck b{color:#E88A9A}
+#selfcheck ul{margin:8px 0 0;padding-left:18px}
+#selfcheck code{background:rgba(0,0,0,.35);padding:1px 5px;font-size:11.5px}
 /* 왜 링크 방식인지 · 규격 안내 */
 details.why{border:1px solid var(--line);margin:14px 0 0;background:rgba(199,155,216,.04)}
 details.why summary{cursor:pointer;padding:11px 14px;font-size:12px;color:var(--main);font-weight:700;list-style:none}
@@ -114,6 +120,84 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <body>
 <script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
 
+<!-- ══════════════════════════════════════════════════════════════
+     비상 진단 — 화면이 까맣게만 나올 때 원인을 글자로 띄운다.
+     여기서 쓰는 스타일은 전부 인라인이라 style.css 가 죽어도 보인다.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  var LOG = [];
+  function panel(){
+    var d = document.getElementById('sos');
+    if (d) return d;
+    d = document.createElement('div');
+    d.id = 'sos';
+    d.setAttribute('style',
+      'position:relative;z-index:2147483647;'+
+      'background:#1a0a10;color:#ffd9e0;border-bottom:2px solid #E8506E;'+
+      'font:13px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;padding:16px 18px');
+    (document.body || document.documentElement).appendChild(d);
+    return d;
+  }
+  function show(){
+    if (!LOG.length) return;
+    var d = panel();
+    d.innerHTML =
+      '<div style="font-weight:700;color:#ff8fa3;margin-bottom:8px">⚠️ 관리자 페이지에 문제가 있어요 — 아래 내용을 그대로 복사해서 알려주세요</div>'
+      + LOG.map(function(x){ return '<div style="margin:5px 0;word-break:break-all">• ' + x + '</div>'; }).join('')
+      + '<div style="margin-top:12px;color:#ffb3c0">가장 흔한 원인: zip 을 풀지 않고 열었거나, 폴더 구조를 바꿔 올린 경우입니다. '
+      + 'admin 은 <b>사이트최상위/admin/index.html</b> 위치여야 하고, '
+      + '<b>style.css · supabase.js · site.js · fx.js</b> 는 최상위에 있어야 합니다.</div>'
+      + '<div style="margin-top:10px"><button onclick="document.getElementById(\'sos\').remove()" '
+      + 'style="background:#E8506E;color:#fff;border:0;padding:7px 14px;cursor:pointer;font:inherit">닫기</button></div>';
+  }
+  function add(msg){ if (LOG.indexOf(msg) < 0) { LOG.push(msg); show(); } }
+
+  window.addEventListener('error', function(e){
+    if (e.target && e.target !== window && (e.target.src || e.target.href)){
+      add('파일을 못 불러왔습니다 (404 등): ' + (e.target.src || e.target.href));
+    } else {
+      add('스크립트 오류: ' + (e.message || e) + (e.filename ? ' @ ' + e.filename + ':' + e.lineno : ''));
+    }
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){
+    add('처리되지 않은 오류: ' + ((e.reason && (e.reason.message || e.reason)) || e));
+  });
+
+  /* 감시견 — 3초 뒤에도 로그인 상자와 본문이 둘 다 안 보이면 강제로 살려낸다. */
+  setTimeout(function(){
+    var g = document.getElementById('gate'), a = document.getElementById('app');
+    var gv = g && g.getBoundingClientRect().height > 20 && getComputedStyle(g).visibility !== 'hidden'
+             && parseFloat(getComputedStyle(g).opacity) > 0.05;
+    var av = a && !a.classList.contains('hide') && a.getBoundingClientRect().height > 20;
+    if (gv || av) return;
+    add('로그인 화면이 그려지지 않았습니다 — 아래 상자로 대신 들어가세요.');
+    if (g) g.setAttribute('style','max-width:380px;margin:60px auto;padding:28px;border:1px solid #888;'+
+      'background:#15101c;color:#fff;opacity:1;visibility:visible;display:block');
+    var b = document.createElement('div');
+    b.setAttribute('style','max-width:380px;margin:24px auto;padding:20px;border:1px solid #E8506E;'+
+      'background:#15101c;color:#fff;font:14px/1.7 sans-serif;text-align:center');
+    b.innerHTML = '<div style="margin-bottom:10px">비상 로그인</div>'+
+      '<input id="sospw" type="password" placeholder="비밀번호" style="width:100%;padding:10px;'+
+      'background:#0b0810;color:#fff;border:1px solid #666;box-sizing:border-box;font:inherit">'+
+      '<button style="margin-top:10px;width:100%;padding:10px;background:#E8506E;color:#fff;border:0;'+
+      'cursor:pointer;font:inherit">들어가기</button>';
+    b.querySelector('button').onclick = function(){
+      try{
+        if (document.getElementById('sospw').value !== ADMIN_PW){ alert('비밀번호가 달라요'); return; }
+        document.getElementById('gate').style.display = 'none';
+        var app = document.getElementById('app');
+        app.classList.remove('hide');
+        app.setAttribute('style','display:block;opacity:1;visibility:visible');
+        if (typeof boot === 'function') boot();
+        b.remove();
+      }catch(err){ add('비상 로그인 실패: ' + err.message); }
+    };
+    (document.body || document.documentElement).appendChild(b);
+  }, 3000);
+})();
+</script>
+
 <!-- ══ 로그인 ══ -->
 <div class="gate" id="gate">
   <h1>ADMIN</h1>
@@ -134,6 +218,8 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
       <a class="tbtn" href="../index.html" target="_blank">사이트 보기 ↗</a>
     </div>
   </div>
+
+  <div id="selfcheck"></div>
 
   <div class="topact" id="topact">
     <a id="act-view" href="../index.html" target="_blank">👁 이 탭 페이지 미리보기 ↗</a>
@@ -677,13 +763,93 @@ function enter(){
   if (document.getElementById('pw').value !== ADMIN_PW){ toast('비밀번호가 달라요'); return; }
   document.getElementById('gate').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
-  boot();
+  try { boot(); } catch (e) { console.error('[admin] boot 오류:', e); runSelfCheck(); }
 }
-document.getElementById('pwBtn').addEventListener('click', enter);
-document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
-document.querySelectorAll('[data-mode]').forEach(function(b){ b.addEventListener('click', toggleMode); });
-applyMode(document.body.classList.contains('day') ? 'light' : 'dark');
+/* ⚠️ 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어
+   여기서 ReferenceError 가 나고, 그 뒤 줄이 통째로 안 돌아 화면이 캄캄해진다.
+   → 없으면 대체품을 만들고, 초기화 전체를 try/catch 로 감싼다. */
+if (typeof toast !== 'function'){ window.toast = function(m){ try{ console.log(m); }catch(e){} }; }
+/* supabase.js 가 안 실려도 화면은 끝까지 그려지도록 CRUD 헬퍼 대체품을 둔다 */
+if (typeof fetchAll   !== 'function'){ window.fetchAll   = function(){ return Promise.resolve([]); }; }
+if (typeof insertRow  !== 'function'){ window.insertRow  = function(){ return Promise.resolve(null); }; }
+if (typeof updateRow  !== 'function'){ window.updateRow  = function(){ return Promise.resolve(null); }; }
+if (typeof deleteRow  !== 'function'){ window.deleteRow  = function(){ return Promise.resolve(null); }; }
+if (typeof uploadImage!== 'function'){ window.uploadImage= function(){ return Promise.resolve(''); }; }
+if (typeof applyTheme !== 'function'){ window.applyTheme = function(){}; }
+if (typeof applyMode !== 'function'){
+  window.applyMode = function(mode){ document.body.classList.toggle('day', mode === 'light'); };
+}
+if (typeof toggleMode !== 'function'){
+  window.toggleMode = function(){
+    var day = !document.body.classList.contains('day');
+    applyMode(day ? 'light' : 'dark');
+    try{ localStorage.setItem('theme', day ? 'light' : 'dark'); }catch(e){}
+  };
+}
+
+try {
+  document.getElementById('pwBtn').addEventListener('click', enter);
+  document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
+  document.querySelectorAll('[data-mode]').forEach(function(b){ b.addEventListener('click', toggleMode); });
+  applyMode(document.body.classList.contains('day') ? 'light' : 'dark');
+} catch (e) {
+  console.error('[admin] 초기화 중 오류:', e);
+}
 document.body.classList.add('ready');
+
+/* 최후의 안전망 — 1.5초 뒤에도 로그인 상자도 본체도 안 보이면 원인을 글자로 띄운다.
+   (검은 화면만 나오는 상황을 없애기 위한 장치) */
+setTimeout(function(){
+  try{
+    var g = document.getElementById('gate'), ap = document.getElementById('app');
+    var seen = (g && g.getBoundingClientRect().height > 30) || (ap && ap.getBoundingClientRect().height > 30);
+    if (seen) return;
+    var d = document.createElement('div');
+    d.setAttribute('style','position:fixed;inset:0;z-index:99999;background:#09070D;color:#F4EEF8;'
+      + 'font:14px/1.9 system-ui,sans-serif;padding:40px 26px;overflow:auto');
+    d.innerHTML = '<div style="max-width:560px;margin:8vh auto">'
+      + '<div style="color:#E88A9A;font-weight:800;font-size:16px;margin-bottom:14px">관리자 화면을 그리지 못했습니다</div>'
+      + '<div>아래를 순서대로 확인해 주세요.</div>'
+      + '<ol style="padding-left:20px;margin-top:12px">'
+      + '<li><b>zip 을 풀고</b> 열었는지 (압축 안에서 바로 열면 파일을 못 찾습니다)</li>'
+      + '<li><code>admin</code> 폴더가 <b>사이트 최상위</b>에 있는지 — 최상위에 <code>index.html · style.css · site.js · supabase.js</code> 가 함께 있어야 합니다</li>'
+      + '<li>브라우저에서 <b>Ctrl+Shift+R</b> (Mac 은 Cmd+Shift+R) 로 강력 새로고침</li>'
+      + '<li>그래도 안 되면 <b>F12 → Console</b> 탭의 빨간 글자를 알려주세요</li>'
+      + '</ol></div>';
+    document.body.appendChild(d);
+  }catch(e){}
+}, 1500);
+
+/* ══════════ 자가진단 — 공유 파일이 안 불러와졌을 때 원인을 화면에 띄운다 ══════════ */
+/* 관리자는 ../supabase.js · ../site.js · ../style.css 3개에 기대고 있다.
+   하나라도 404 면 "열리긴 하는데 저장이 안 되는" 상태가 되어 원인을 찾기 어렵다.
+   그래서 로그인 직후 무엇이 빠졌는지 빨간 배너로 알려준다. */
+function runSelfCheck(){
+  var bad = [];
+  if (typeof fetchAll !== 'function')
+    bad.push(['../supabase.js', '저장·불러오기가 전부 안 됩니다', 'supabase.js 가 사이트 최상위(루트)에 있는지 확인하세요.']);
+  if (typeof PF_DEFAULT === 'undefined' || typeof toggleMode !== 'function')
+    bad.push(['../site.js', '기본값·다크모드가 안 됩니다', 'site.js 가 사이트 최상위(루트)에 있는지 확인하세요.']);
+  if (!document.querySelector('link[href$="style.css"]') ||
+      getComputedStyle(document.body).getPropertyValue('--main').trim() === '')
+    bad.push(['../style.css', '화면이 꾸며지지 않습니다', 'style.css 가 사이트 최상위(루트)에 있는지 확인하세요.']);
+  if (typeof supabase === 'undefined')
+    bad.push(['Supabase 라이브러리(CDN)', '인터넷이 막혀 있으면 저장이 안 됩니다', '사내망·광고차단 확장 프로그램이 cdn.jsdelivr.net 을 막고 있는지 확인하세요.']);
+  else if (typeof db === 'undefined' || !db)
+    bad.push(['Supabase 주소/키', '값이 저장되지 않고 기본값만 보입니다', 'supabase.js 상단 두 줄을 확인하세요.']);
+
+  var box = document.getElementById('selfcheck');
+  if (!bad.length){ box.className = ''; return true; }
+  box.className = 'on';
+  box.innerHTML = '<b>⚠️ 관리자가 완전하게 열리지 않았습니다 — 아래 파일을 못 찾았어요.</b>'
+    + '<ul>' + bad.map(function(x){
+        return '<li><code>' + x[0] + '</code> — ' + x[1] + '<br><span style="color:var(--ink-soft)">' + x[2] + '</span></li>';
+      }).join('') + '</ul>'
+    + '<div style="margin-top:9px;color:var(--ink-soft)">'
+    + '가장 흔한 원인: <b>zip 을 풀지 않고 열었거나</b>, 폴더 구조를 바꿔 올린 경우입니다. '
+    + 'admin 폴더는 반드시 <code>사이트최상위/admin/index.html</code> 위치여야 합니다.</div>';
+  return false;
+}
 
 /* ══════════ DB 연결 가드 ══════════ */
 /* supabase.js 의 URL/KEY 가 아직 자리표시자면 db 는 null 이다.
@@ -1197,6 +1363,7 @@ document.getElementById('iq-load').addEventListener('click', RELOAD.inquiries);
 
 /* ══════════ 부팅 ══════════ */
 function boot(){
+  runSelfCheck();
   setupThumbs();
   document.getElementById('app').addEventListener('input', function(e){
     if (e.target.closest('#tab-main, #tab-profile, #tab-theme')) markDirty();
