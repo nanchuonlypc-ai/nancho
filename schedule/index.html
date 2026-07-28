@@ -14,27 +14,42 @@
 <style>
 .calbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
 .calbar .mo{display:flex;align-items:baseline;gap:14px}
-.calbar .mo b{font-family:var(--ff-disp);font-size:clamp(34px,5.4vw,68px);line-height:.9;letter-spacing:-.06em}
-.calbar .mo span{font-family:var(--ff-serif);font-size:15px;color:var(--main)}
+.calbar .mo b{font-family:var(--ff-disp);font-size:calc(clamp(34px,5.4vw,68px) * var(--fs-display));line-height:.9;letter-spacing:-.06em}
+.calbar .mo span{font-family:var(--ff-serif);font-size:calc(15px * var(--fs-body));color:var(--main)}
 .calbar .nav{display:flex;gap:6px}
 
 .cal{border-left:1px solid var(--line);border-top:1px solid var(--line)}
 .cal .hd,.cal .wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .cal .hd > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);
-  padding:9px 6px;text-align:center;font-size:9px;font-weight:900;letter-spacing:.18em;color:var(--main)}
+  padding:9px 6px;text-align:center;font-size:calc(9px * var(--fs-label));font-weight:900;letter-spacing:.18em;color:var(--main)}
 .cal .hd > div:first-child{color:#E08AA8}
 .cal .hd > div:last-child{color:#8FB6E8}
 .cal .cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);
   min-height:112px;padding:8px 7px;position:relative;overflow:hidden}
 .cal .cell.out{opacity:.32}
+/* ── 기간 일정 띠 — 셀 경계를 넘어 쭉 이어진다 ── 좌우 음수 마진으로 이웃 칸까지 늘리고, 시작/끝 칸에서만 막는다. 난초 기하에 맞춰 둥근 캡 대신 각진 끝 + 끝선으로 마감. */
+.cal .cell.hasband{overflow:visible}
+.cal .band{position:relative;display:block;height:19px;margin:4px -8px 0 -7px;
+  background:color-mix(in srgb, var(--c) 26%, transparent);
+  border-top:1px solid var(--c);border-bottom:1px solid var(--c);
+  font-size:calc(10px * var(--fs-label));line-height:17px;cursor:pointer;z-index:1}
+.cal .band b{display:block;font-weight:800;letter-spacing:.01em;color:var(--ink);
+  padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal .band.b-start{margin-left:0;border-left:2px solid var(--c)}
+.cal .band.b-end{margin-right:0;border-right:2px solid var(--c)}
+.cal .band.off{opacity:.55}
+.cal .band:hover{background:color-mix(in srgb, var(--c) 42%, transparent)}
+/* 주 시작/끝 칸에서 밖으로 삐지지 않게 */
+.cal .wk > .cell:first-child .band{margin-left:0}
+.cal .wk > .cell:last-child  .band{margin-right:0}
 .cal .cell.today{background:rgba(199,155,216,.12);box-shadow:inset 0 0 0 1px var(--main)}
-.cal .cell .n{font-family:var(--ff-serif);font-size:13px;color:var(--ink-soft)}
+.cal .cell .n{font-family:var(--ff-serif);font-size:calc(13px * var(--fs-body));color:var(--ink-soft)}
 .cal .cell.sun .n{color:#E08AA8}
 .cal .cell.sat .n{color:#8FB6E8}
 /* 주간(라이트) 모드에선 밝은 배경이라 한 톤 진하게 — 안 그러면 대비 2:1 대로 안 읽힘 */
 body.day .cal .cell.sun .n{color:#B23A63}
 body.day .cal .cell.sat .n{color:#2C5E9E}
-.chip{display:block;margin-top:5px;padding:4px 7px;font-size:10.5px;line-height:1.35;cursor:pointer;
+.chip{display:block;margin-top:5px;padding:4px 7px;font-size:calc(10.5px * var(--fs-label));line-height:1.35;cursor:pointer;
   border-left:2px solid var(--c,var(--main));background:rgba(255,255,255,.06);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .16s}
 body.day .chip{background:rgba(38,20,54,.06)}
@@ -45,28 +60,29 @@ body.day .chip .tm{color:var(--main-deep)}
 .chip.off{opacity:.55;text-decoration:line-through}
 @media (max-width:760px){
   .cal .cell{min-height:76px;padding:5px 4px}
-  .chip{font-size:9px;padding:3px 4px}
+  .cal .band{margin:3px -5px 0 -4px;height:16px;line-height:14px}
+  .chip{font-size:calc(9px * var(--fs-label));padding:3px 4px}
   .chip .tm{display:none}
 }
 
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
-.legend div{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--ink-soft);letter-spacing:.06em}
+.legend div{display:flex;align-items:center;gap:7px;font-size:calc(10.5px * var(--fs-label));color:var(--ink-soft);letter-spacing:.06em}
 .legend i{width:13px;height:3px;display:block;background:var(--c)}
 
 .upc{border-top:1px solid var(--line)}
 .upc .row{display:grid;grid-template-columns:96px 1fr auto;gap:18px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line-soft);cursor:pointer}
 .upc .row:hover{background:rgba(199,155,216,.07)}
-.upc .dt{font-family:var(--ff-disp);font-size:19px;letter-spacing:-.04em;color:var(--main-light)}
+.upc .dt{font-family:var(--ff-disp);font-size:calc(19px * var(--fs-title));letter-spacing:-.04em;color:var(--main-light)}
 body.day .upc .dt{color:var(--main-deep)}
-.upc .tt{font-size:14.5px;font-weight:700}
-.upc .sub{font-size:11.5px;color:var(--ink-dim);margin-top:3px}
-.upc .tg{font-size:9.5px;font-weight:900;letter-spacing:.14em;border:1px solid var(--line);padding:3px 8px;color:var(--ink-soft);white-space:nowrap}
+.upc .tt{font-size:calc(14.5px * var(--fs-body));font-weight:700}
+.upc .sub{font-size:calc(11.5px * var(--fs-label));color:var(--ink-dim);margin-top:3px}
+.upc .tg{font-size:calc(9.5px * var(--fs-label));font-weight:900;letter-spacing:.14em;border:1px solid var(--line);padding:3px 8px;color:var(--ink-soft);white-space:nowrap}
 @media (max-width:560px){.upc .row{grid-template-columns:70px 1fr;gap:12px}.upc .tg{display:none}}
 
 .det .part{border:1px solid var(--line);padding:14px 16px;margin-top:12px}
 .det .part .lbl{margin-bottom:6px}
-.det .part b{font-size:15px}
-.det .part .tm{font-family:var(--ff-serif);color:var(--main-light);font-size:13px}
+.det .part b{font-size:calc(15px * var(--fs-body))}
+.det .part .tm{font-family:var(--ff-serif);color:var(--main-light);font-size:calc(13px * var(--fs-body))}
 body.day .det .part .tm{color:var(--main-deep)}
 </style>
 </head>
@@ -79,15 +95,15 @@ body.day .det .part .tm{color:var(--main-deep)}
       <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
     </a>
     <nav class="menu" id="menu">
-        <a href="../index.html">메인</a>
-        <a href="../profile/">프로필</a>
-        <a href="../notice/">공지</a>
-        <a href="../schedule/" class="on">일정</a>
-        <a href="../work/">업보</a>
-        <a href="../diary/">일기</a>
-        <a href="../song/">노래책</a>
-        <a href="../dress/">옷장</a>
-        <a href="../game/">미니게임</a>
+        <a href="../index.html" data-t="nav-1">메인</a>
+        <a href="../profile/" data-t="nav-2">프로필</a>
+        <a href="../notice/" data-t="nav-3">공지</a>
+        <a href="../schedule/" class="on" data-t="nav-4">일정</a>
+        <a href="../work/" data-t="nav-5">업보</a>
+        <a href="../diary/" data-t="nav-6">일기</a>
+        <a href="../song/" data-t="nav-7">노래책</a>
+        <a href="../dress/" data-t="nav-8">옷장</a>
+        <a href="../game/" data-t="nav-9">미니게임</a>
     </nav>
     <div class="tools">
       <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
@@ -123,8 +139,8 @@ body.day .det .part .tm{color:var(--main-deep)}
 <section class="panel">
   <div class="col">
     <div class="sec-head">
-      <div><div class="sec-no">NEXT</div><h2 class="sec-title"><small>UPCOMING</small>다가오는 전파</h2></div>
-      <div class="sec-note">가까운 순 6건</div>
+      <div><div class="sec-no">NEXT</div><h2 class="sec-title"><small>UPCOMING</small><span data-t="t-schedule-1">다가오는 전파</span></h2></div>
+      <div class="sec-note" data-t="t-schedule-2">가까운 순 6건</div>
     </div>
     <div class="upc" id="upc"></div>
   </div>
@@ -187,8 +203,13 @@ function draw(){
   var first = new Date(VY, VM, 1);
   var start = new Date(VY, VM, 1 - ((first.getDay()+6)%7)); // 월요일 시작
   var today = keyOf(new Date());
-  var byDay = {};
-  ROWS.forEach(function(r){ (byDay[keyOf(r.date)] = byDay[keyOf(r.date)] || []).push(r); });
+  /* 기간 일정(end_date)이 있으면 그 사이 모든 날짜에 걸친다 */
+  function evOn(k){
+    return ROWS.filter(function(r){
+      var e = r.end_date || r.date;
+      return r.date <= k && k <= e;
+    });
+  }
 
   document.getElementById('moN').textContent = (VM+1);
   document.getElementById('moY').textContent = VY + ' / ' + ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'][VM];
@@ -201,15 +222,31 @@ function draw(){
       var k = keyOf(d);
       var cls = 'cell' + (d.getMonth() !== VM ? ' out' : '') + (k === today ? ' today' : '')
               + (i===6 ? ' sun' : '') + (i===5 ? ' sat' : '');
-      html += '<div class="' + cls + '"><div class="n">' + d.getDate() + '</div>';
-      (byDay[k] || []).forEach(function(r){
+      var evs = evOn(k), inner = '', bandUsed = false;
+      evs.forEach(function(r){
         var idx = ROWS.indexOf(r);
-        html += '<span class="chip ' + (r.highlight ? 'hl' : '') + (isOff(r) ? ' off' : '') + '" data-i="' + idx + '" style="--c:' + colorOf(r) + '">'
+        var ranged = r.end_date && r.end_date !== r.date;
+
+        if (ranged && !bandUsed){
+          /* 기간 일정 = 띠. 좌우로 셀 밖까지 늘려 이웃 칸과 이어 붙는다. 글자는 시작일에만, 양 끝만 막아 캡슐처럼 보이게. */
+          bandUsed = true;
+          var caps = (k === r.date ? ' b-start' : '') + (k === r.end_date ? ' b-end' : '');
+          var btxt = (r.time ? r.time + ' ' : '') + (r.title || (isOff(r) ? '휴방' : '방송'));
+          inner += '<span class="band' + caps + (isOff(r) ? ' off' : '') + '" data-i="' + idx + '"'
+                +  ' style="--c:' + colorOf(r) + '">'
+                +  (k === r.date ? '<b>' + esc(btxt) + '</b>' : '') + '</span>';
+          return;
+        }
+        if (ranged) return;   /* 한 칸에 띠는 하나만 */
+
+        inner += '<span class="chip ' + (r.highlight ? 'hl' : '') + (isOff(r) ? ' off' : '') + '" data-i="' + idx + '" style="--c:' + colorOf(r) + '">'
           + (r.time ? '<span class="tm">' + esc(r.time) + '</span>' : '') + esc(r.title || '') + '</span>';
-        if (r.title2) html += '<span class="chip" data-i="' + idx + '" style="--c:' + colorOf(r) + ';opacity:.82">'
+        if (r.title2) inner += '<span class="chip" data-i="' + idx + '" style="--c:' + colorOf(r) + ';opacity:.82">'
           + (r.time2 ? '<span class="tm">' + esc(r.time2) + '</span>' : '') + esc(r.title2) + '</span>';
       });
-      html += '</div>';
+      if (evs.length) cls += ' has';
+      if (bandUsed)  cls += ' hasband';
+      html += '<div class="' + cls + '"><div class="n">' + d.getDate() + '</div>' + inner + '</div>';
     }
     html += '</div>';
   }
@@ -219,7 +256,8 @@ function draw(){
 
 function drawUpcoming(){
   var now = new Date(); now.setHours(0,0,0,0);
-  var up = ROWS.filter(function(r){ return new Date(r.date) >= now; })
+  var todayK = keyOf(now);
+  var up = ROWS.filter(function(r){ return (r.end_date || r.date) >= todayK; })
                .sort(function(a,b){ return new Date(a.date) - new Date(b.date); }).slice(0, 6);
   var host = document.getElementById('upc');
   if (!up.length){ host.innerHTML = '<div class="empty"><b>NO SIGNAL</b>예정된 일정이 없어요</div>'; return; }
@@ -227,7 +265,10 @@ function drawUpcoming(){
     var d = new Date(r.date);
     var idx = ROWS.indexOf(r);
     return '<div class="row" data-i="' + idx + '">'
-      + '<div class="dt">' + ('0'+(d.getMonth()+1)).slice(-2) + '.' + ('0'+d.getDate()).slice(-2) + '</div>'
+      + '<div class="dt">' + ('0'+(d.getMonth()+1)).slice(-2) + '.' + ('0'+d.getDate()).slice(-2)
+      + ((r.end_date && r.end_date !== r.date)
+          ? '<i style="display:block;font-style:normal;font-size:.72em;opacity:.66">~' + r.end_date.slice(5).replace('-','.') + '</i>' : '')
+      + '</div>'
       + '<div><div class="tt">' + esc(r.title||'') + '</div><div class="sub">'
       + [r.time, r.title2 ? ('2부 ' + (r.time2||'') + ' ' + r.title2) : '', r.note].filter(Boolean).map(esc).join(' · ')
       + '</div></div>'
@@ -236,23 +277,30 @@ function drawUpcoming(){
 }
 
 document.addEventListener('click', function(e){
-  var c = e.target.closest && e.target.closest('.chip,[data-i].row');
+  var c = e.target.closest && e.target.closest('.chip,.band,[data-i].row');
   if (!c) return;
   var r = ROWS[+c.dataset.i]; if (!r) return;
-  document.getElementById('vDate').textContent = fmtDate(r.date) + ' · ' + (r.type || '일반');
+  var dtxt = (r.end_date && r.end_date !== r.date)
+    ? (fmtDate(r.date) + ' ~ ' + fmtDate(r.end_date))
+    : fmtDate(r.date);
+  document.getElementById('vDate').textContent = dtxt + ' · ' + (r.type || '일반');
   document.getElementById('vTitle').textContent = r.title || '';
   var h = '';
-  h += '<div class="part"><div class="lbl">1부</div><b>' + esc(r.title||'') + '</b>'
+  h += '<div class="part"><div class="lbl" data-t="t-schedule-3">1부</div><b>' + esc(r.title||'') + '</b>'
      + (r.time ? ' <span class="tm">' + esc(r.time) + '</span>' : '') + '</div>';
-  if (r.title2) h += '<div class="part"><div class="lbl">2부</div><b>' + esc(r.title2) + '</b>'
+  if (r.title2) h += '<div class="part"><div class="lbl" data-t="t-schedule-4">2부</div><b>' + esc(r.title2) + '</b>'
      + (r.time2 ? ' <span class="tm">' + esc(r.time2) + '</span>' : '') + '</div>';
-  if (r.description || r.note) h += '<div class="part"><div class="lbl">NOTE</div><div style="white-space:pre-wrap;font-size:13.5px;color:var(--ink-soft)">'
+  if (r.description || r.note) h += '<div class="part"><div class="lbl" data-t="t-schedule-5">NOTE</div><div style="white-space:pre-wrap;font-size:calc(13.5px * var(--fs-body));color:var(--ink-soft)">'
      + esc(r.description || r.note) + '</div></div>';
   document.getElementById('vBody').innerHTML = h;
   document.getElementById('vMask').classList.add('on');
 });
 document.getElementById('vMask').addEventListener('click', function(e){
   if (e.target === this || (e.target.closest && e.target.closest('[data-close]'))) this.classList.remove('on');
+});
+/* ESC 로도 닫히게 */
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') document.getElementById('vMask').classList.remove('on');
 });
 
 document.getElementById('prev').addEventListener('click', function(){ VM--; if (VM<0){ VM=11; VY--; } draw(); });

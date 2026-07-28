@@ -1,11 +1,6 @@
-/* ============================================================
-   fx.js — NANCHO / THE MIDNIGHT LOG 공통 연출
-   · 클릭 톡(입자)   · 프사 톡 + 바운스   · 페이지 전환 + 로딩 커버
-   · 생일 D-Day 도우미(fxDday) · iframe 높이 보고(postMessage)
-   ⚠ 이 사이트는 "플로팅 없음" 규칙 — 떠다니는 입자·카드 틸트 전부 OFF.
-   ============================================================ */
+/* ============================================================ fx.js — NANCHO / THE MIDNIGHT LOG 공통 연출 · 클릭 톡(입자) · 프사 톡 + 바운스 · 페이지 전환 + 로딩 커버 · 생일 D-Day 도우미(fxDday) · iframe 높이 보고(postMessage) 이 사이트는 "플로팅 없음" 규칙 — 떠다니는 입자·카드 틸트 전부 OFF. ============================================================ */
 
-/* ─────────── 설정 ─────────── */
+/* 설정 */
 var FX_FLOAT = [];        // 떠다니는 입자 (플로팅 금지 → 비움)
 var FX_COUNT = 0;         // 개수 0
 var FX_CLICK = '✦';       // 클릭/프사톡 모양
@@ -14,7 +9,6 @@ var FX_LOADER      = true;
 var FX_LOADER_IMG  = '';  // 비우면 자동: 파비콘(SOOP 프사) → 글자
 var FX_LOADER_TEXT = 'NANCHO';
 var FX_TRANS_MS    = 720;
-/* ──────────────────────────── */
 
 (function () {
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -47,7 +41,7 @@ var FX_TRANS_MS    = 720;
   var st = document.createElement('style'); st.id = 'fx-style'; st.textContent = css;
   document.head.appendChild(st);
 
-  /* ── 로딩 커버 + 페이지 전환 ── */
+  /* 로딩 커버 + 페이지 전환 */
   var loaderOn = FX_LOADER && !reduce;
   function faviconUrl(){
     var l = document.querySelector('link[rel~="icon"]');
@@ -96,7 +90,7 @@ var FX_TRANS_MS    = 720;
     });
   }
 
-  /* ── 클릭 톡 ── */
+  /* 클릭 톡 */
   window.fxHearts = function (x, y, n) {
     if (reduce) return;
     n = n || 5;
@@ -128,7 +122,7 @@ var FX_TRANS_MS    = 720;
     window.fxHearts(e.clientX, e.clientY, 4);
   });
 
-  /* ── 프사 톡 + 바운스 ── */
+  /* 프사 톡 + 바운스 */
   document.addEventListener('click', function (e) {
     var av = e.target.closest && e.target.closest('#avatarWrap,.avatar');
     if (!av) return;
@@ -138,9 +132,9 @@ var FX_TRANS_MS    = 720;
     av.classList.add('fx-avpop');
   });
 
-  /* ── D-Day 헬퍼는 site.js 에 있습니다 (fxDday / fxDsince) ── */
+  /* D-Day 헬퍼는 site.js 에 있습니다 (fxDday / fxDsince) */
 
-  /* ── SOOP 게시글 iframe 높이 자동 보고 ── */
+  /* SOOP 게시글 iframe 높이 자동 보고 */
   function report(){
     try {
       if (window.parent === window) return;

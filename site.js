@@ -1,8 +1,4 @@
-/* ============================================================
-   site.js — NANCHO 공통 런타임
-   테마(다크/주간) · 모바일 메뉴 · 문의 모달 · 프로필 로드 · 유틸
-   ⚠ supabase.js 뒤, fx.js 앞에 로드
-   ============================================================ */
+/* ============================================================ site.js — NANCHO 공통 런타임 테마(다크/주간) · 모바일 메뉴 · 문의 모달 · 프로필 로드 · 유틸 supabase.js 뒤, fx.js 앞에 로드 ============================================================ */
 
 var NANCHO = {
   soop: 'blackchu',
@@ -131,6 +127,92 @@ var PF_DEFAULT = {
   'tmi-song':'헤비 Be I / 첫 키스에 내 심장은 120BPM',
   'tmi-game':'마인크래프트, 배틀그라운드',
   'tmi-book':'',
+  'txt-t-profile-1':'',
+  'txt-t-profile-2':'',
+  'txt-t-profile-3':'',
+  'txt-t-profile-4':'',
+  'txt-t-profile-5':'',
+  'txt-t-profile-6':'',
+  'txt-t-profile-7':'',
+  'txt-t-profile-8':'',
+  'txt-t-profile-9':'',
+  'txt-t-profile-10':'',
+  'txt-t-notice-1':'',
+  'txt-t-schedule-1':'',
+  'txt-t-schedule-2':'',
+  'txt-t-work-1':'',
+  'txt-t-diary-1':'',
+  'txt-t-song-1':'',
+  'txt-t-song-2':'',
+  'txt-t-song-3':'',
+  'txt-t-dress-1':'',
+  'txt-t-game-1':'',
+  'txt-t-game-2':'',
+  'txt-t-game-3':'',
+  'txt-t-game-4':'',
+  'txt-t-index-1':'',
+  'txt-t-profile-11':'',
+  'txt-t-profile-12':'',
+  'txt-t-profile-13':'',
+  'txt-t-profile-14':'',
+  'txt-t-profile-15':'',
+  'txt-t-profile-16':'',
+  'txt-t-profile-17':'',
+  'txt-t-profile-18':'',
+  'txt-t-profile-19':'',
+  'txt-t-profile-20':'',
+  'txt-t-profile-21':'',
+  'txt-t-profile-22':'',
+  'txt-t-profile-23':'',
+  'txt-t-profile-24':'',
+  'txt-t-profile-25':'',
+  'txt-t-profile-26':'',
+  'txt-t-profile-27':'',
+  'txt-t-profile-28':'',
+  'txt-t-profile-29':'',
+  'txt-t-profile-30':'',
+  'txt-t-profile-31':'',
+  'txt-t-schedule-3':'',
+  'txt-t-schedule-4':'',
+  'txt-t-schedule-5':'',
+  'txt-t-diary-2':'',
+  'txt-t-song-4':'',
+  'txt-t-game-5':'',
+  'txt-t-game-6':'',
+  'txt-t-game-7':'',
+  'txt-t-game-8':'',
+  'txt-nav-1':'',
+  'txt-nav-2':'',
+  'txt-nav-3':'',
+  'txt-nav-4':'',
+  'txt-nav-5':'',
+  'txt-nav-6':'',
+  'txt-nav-7':'',
+  'txt-nav-8':'',
+  'txt-nav-9':'',
+  'txt-t-profile-2':'',
+  'txt-t-profile-3':'',
+  'txt-t-profile-4':'',
+  'txt-t-profile-5':'',
+  'txt-t-profile-6':'',
+  'txt-t-profile-7':'',
+  'txt-t-profile-8':'',
+  'txt-t-profile-9':'',
+  'txt-t-profile-10':'',
+  'txt-t-notice-1':'',
+  'txt-t-schedule-1':'',
+  'txt-t-schedule-2':'',
+  'txt-t-work-1':'',
+  'txt-t-diary-1':'',
+  'txt-t-song-1':'',
+  'txt-t-song-2':'',
+  'txt-t-song-3':'',
+  'txt-t-dress-1':'',
+  'txt-t-game-1':'',
+  'txt-t-game-2':'',
+  'txt-t-game-3':'',
+  'txt-t-game-4':'',
+  'type-display':'1', 'type-title':'1', 'type-body':'1', 'type-label':'1',
   'week-0':'', 'week-1':'', 'week-2':'', 'week-3':'', 'week-4':'', 'week-5':'', 'week-6':'',
   'days':'', 'main-time':'17:00',
   'fan-char':'', 'hero-art':'',
@@ -181,6 +263,22 @@ function avatarUrl(p){
   return 'https://profile.img.sooplive.co.kr/LOGO/' + id.slice(0,2) + '/' + id + '/' + id + '.jpg';
 }
 
+/* ─ 고정 문구 덮어쓰기 ─ */
+var TXT = null, _txtObs = null;
+function applyTexts(root){
+  if (!TXT || !root) return;
+  var list = [];
+  if (root.nodeType === 1 && root.hasAttribute && root.hasAttribute('data-t')) list.push(root);
+  if (root.querySelectorAll){
+    var q = root.querySelectorAll('[data-t]');
+    for (var i=0;i<q.length;i++) list.push(q[i]);
+  }
+  for (var j=0;j<list.length;j++){
+    var v = txt(TXT['txt-' + list[j].getAttribute('data-t')] || '');
+    if (v && list[j].textContent !== v) list[j].textContent = v;
+  }
+}
+
 /* ─ 문의 모달 ─ */
 function bindInquiry(){
   var mask = document.getElementById('askMask');
@@ -190,6 +288,10 @@ function bindInquiry(){
   });
   mask.addEventListener('click', function(e){
     if (e.target === mask || (e.target.closest && e.target.closest('[data-close]'))) mask.classList.remove('on');
+  });
+  /* ESC 로도 닫히게 (안 그러면 배경을 정확히 눌러야만 닫혀서 갇힌 느낌이 난다) */
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') mask.classList.remove('on');
   });
   var btn = document.getElementById('askSend');
   if (btn) btn.addEventListener('click', function(){
@@ -245,6 +347,21 @@ function bootSite(){
     if (tg){
       var te = document.querySelectorAll('[data-tagline]');
       for (var k=0;k<te.length;k++) te[k].textContent = tg;
+    }
+
+    /* 섹션 제목·라벨·메뉴 문구 — data-t="키" 요소를 관리자 값으로 덮어쓴다. 모달·탭처럼 나중에 그려지는 부분도 있어서, 한 번 적용한 뒤 감시자를 붙여 새로 생기는 [data-t] 요소에도 자동으로 적용한다. */
+    TXT = p;
+    applyTexts(document);
+    if (window.MutationObserver && !_txtObs){
+      _txtObs = new MutationObserver(function(muts){
+        for (var mi=0; mi<muts.length; mi++){
+          var ad = muts[mi].addedNodes;
+          for (var ni=0; ni<ad.length; ni++){
+            if (ad[ni].nodeType === 1) applyTexts(ad[ni]);
+          }
+        }
+      });
+      _txtObs.observe(document.body, { childList:true, subtree:true });
     }
 
     /* 페이지별 소개문 — <p class="fh-sub" data-sub="notice"> 식으로 표시 */

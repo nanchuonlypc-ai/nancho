@@ -17,16 +17,26 @@
 .sbar select{max-width:170px}
 .gfilter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
 
+.pick{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  border:1px solid var(--main);padding:22px 24px;background:rgba(199,155,216,.07)}
+body.day .pick{background:rgba(110,74,130,.06)}
+.pick.rolling{border-color:var(--line)}
+.pick .t{font-size:calc(clamp(20px,2.6vw,30px) * var(--fs-title));font-weight:900;letter-spacing:-.02em;margin-top:9px;line-height:1.2}
+.pick.rolling .t{color:var(--ink-dim)}
+.pick .a{font-size:calc(13px * var(--fs-body));color:var(--ink-soft);margin-top:6px}
+.pick .pk-l{min-width:0;flex:1 1 260px}
+.pick .pk-r{display:flex;gap:8px;flex-wrap:wrap}
+@keyframes pkPop{0%{transform:scale(.94);opacity:.4}100%{transform:scale(1);opacity:1}}
+.pick.hit .t{animation:pkPop .34s cubic-bezier(.2,1.4,.4,1)}
 .slist{border-top:1px solid var(--line)}
-.srow{display:grid;grid-template-columns:52px minmax(0,1fr) 150px 92px 92px;gap:16px;align-items:center;
+.srow{display:grid;grid-template-columns:52px minmax(0,1fr) 190px 92px;gap:16px;align-items:center;
   padding:13px 4px;border-bottom:1px solid var(--line-soft);transition:background .16s;cursor:pointer}
 .srow:hover{background:rgba(199,155,216,.08)}
 body.day .srow:hover{background:rgba(110,74,130,.07)}
-.srow .no{font-family:var(--ff-serif);font-size:12px;color:var(--ink-dim)}
-.srow .t{font-size:15px;font-weight:700;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.srow .t small{display:block;font-size:11px;font-weight:400;color:var(--ink-dim);margin-top:2px;letter-spacing:.02em}
-.srow .a{font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.srow .g{font-size:9.5px;font-weight:900;letter-spacing:.14em;color:var(--main);text-align:right}
+.srow .no{font-family:var(--ff-serif);font-size:calc(12px * var(--fs-body));color:var(--ink-dim)}
+.srow .t{font-size:calc(15px * var(--fs-body));font-weight:700;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .t small{display:block;font-size:calc(11px * var(--fs-label));font-weight:400;color:var(--ink-dim);margin-top:2px;letter-spacing:.02em}
+.srow .a{font-size:calc(12.5px * var(--fs-body));color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .srow .d{display:flex;gap:3px;justify-content:flex-end}
 .srow .d i{width:6px;height:6px;background:var(--line);display:block}
 .srow .d i.on{background:var(--main)}
@@ -36,16 +46,10 @@ body.day .srow:hover{background:rgba(110,74,130,.07)}
   .srow .d{display:none}
 }
 
-.pick{border:1px solid var(--main);padding:clamp(20px,3vw,34px);display:grid;
-  grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:rgba(199,155,216,.07)}
-.pick .t{font-family:var(--ff-serif);font-size:clamp(20px,3vw,38px);line-height:1.2}
-.pick .a{color:var(--ink-soft);font-size:13px;margin-top:6px}
-@media (max-width:640px){.pick{grid-template-columns:minmax(0,1fr)}}
-
 .vodgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--line);border-top:1px solid var(--line)}
 .vodgrid > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px}
 .vodgrid iframe{width:100%;aspect-ratio:16/9;border:0;display:block;background:#000}
-.vodgrid .vt{font-size:12.5px;margin-top:9px}
+.vodgrid .vt{font-size:calc(12.5px * var(--fs-body));margin-top:9px}
 @media (max-width:900px){.vodgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:600px){.vodgrid{grid-template-columns:minmax(0,1fr)}}
 </style>
@@ -59,15 +63,15 @@ body.day .srow:hover{background:rgba(110,74,130,.07)}
       <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
     </a>
     <nav class="menu" id="menu">
-        <a href="../index.html">메인</a>
-        <a href="../profile/">프로필</a>
-        <a href="../notice/">공지</a>
-        <a href="../schedule/">일정</a>
-        <a href="../work/">업보</a>
-        <a href="../diary/">일기</a>
-        <a href="../song/" class="on">노래책</a>
-        <a href="../dress/">옷장</a>
-        <a href="../game/">미니게임</a>
+        <a href="../index.html" data-t="nav-1">메인</a>
+        <a href="../profile/" data-t="nav-2">프로필</a>
+        <a href="../notice/" data-t="nav-3">공지</a>
+        <a href="../schedule/" data-t="nav-4">일정</a>
+        <a href="../work/" data-t="nav-5">업보</a>
+        <a href="../diary/" data-t="nav-6">일기</a>
+        <a href="../song/" class="on" data-t="nav-7">노래책</a>
+        <a href="../dress/" data-t="nav-8">옷장</a>
+        <a href="../game/" data-t="nav-9">미니게임</a>
     </nav>
     <div class="tools">
       <button class="tbtn mobtn" id="moBtn" aria-label="메뉴">≡</button>
@@ -88,7 +92,7 @@ body.day .srow:hover{background:rgba(110,74,130,.07)}
 <section class="panel">
   <div class="col">
     <div class="sec-head">
-      <div><div class="sec-no">SETLIST</div><h2 class="sec-title"><small>SONG BOOK</small>부를 수 있는 곡</h2></div>
+      <div><div class="sec-no">SETLIST</div><h2 class="sec-title"><small>SONG BOOK</small><span data-t="t-song-1">부를 수 있는 곡</span></h2></div>
       <div class="sec-note">표시 <span id="cnt">000</span> / 전체 <span id="all">000</span>곡 · 곡을 누르면 신청용으로 복사돼요</div>
     </div>
     <div class="sbar">
@@ -99,17 +103,20 @@ body.day .srow:hover{background:rgba(110,74,130,.07)}
         <option value="new">최근 추가순</option>
         <option value="diff">난이도순</option>
       </select>
-      <button class="btn" id="pickBtn">🎲 랜덤 선곡</button>
+      <button class="btn solid" id="pickBtn">🎲 랜덤 선곡</button>
     </div>
     <div class="gfilter" id="gf"></div>
     <div id="pickBox" style="display:none;margin-bottom:22px">
-      <div class="pick">
-        <div>
-          <div class="lbl">TONIGHT'S FREQUENCY</div>
+      <div class="pick" id="pickCard">
+        <div class="pk-l">
+          <div class="lbl" data-t="t-song-4">TONIGHT'S FREQUENCY</div>
           <div class="t" id="pickT">—</div>
           <div class="a" id="pickA">—</div>
         </div>
-        <button class="btn" id="pickBtn2" onclick="document.getElementById('pickBtn').click()">다시 뽑기</button>
+        <div class="pk-r">
+          <button class="btn" id="pickBtn2">🎲 다시 뽑기</button>
+          <button class="btn" id="pickCopy">복사</button>
+        </div>
       </div>
     </div>
     <div class="slist" id="slist"><div class="loading">RECEIVING…</div></div>
@@ -119,8 +126,8 @@ body.day .srow:hover{background:rgba(110,74,130,.07)}
 <section class="panel">
   <div class="col">
     <div class="sec-head">
-      <div><div class="sec-no">ARCHIVE</div><h2 class="sec-title"><small>SONG VOD</small>노래 다시보기</h2></div>
-      <div class="sec-note">SOOP VOD</div>
+      <div><div class="sec-no">ARCHIVE</div><h2 class="sec-title"><small>SONG VOD</small><span data-t="t-song-2">노래 다시보기</span></h2></div>
+      <div class="sec-note" data-t="t-song-3">SOOP VOD</div>
     </div>
     <div class="vodgrid" id="ovod-grid"><div class="loading" style="grid-column:1/-1">RECEIVING…</div></div>
   </div>
@@ -188,11 +195,10 @@ function render(){
       var d = Math.max(1, Math.min(5, s.difficulty || 3));
       var dots = '';
       for (var k=1;k<=5;k++) dots += '<i class="' + (k<=d?'on':'') + '"></i>';
-      return '<div class="srow" data-t="' + esc(s.title) + '" data-a="' + esc(s.artist||'') + '">'
+      return '<div class="srow" data-song="' + esc(s.title) + '" data-artist="' + esc(s.artist||'') + '">'
         + '<div class="no">' + ('0'+(i+1)).slice(-2) + '</div>'
         + '<div class="t">' + esc(s.title) + (s.memo ? '<small>' + esc(s.memo) + '</small>' : '') + '</div>'
         + '<div class="a">' + esc(s.artist || '—') + '</div>'
-        + '<div class="g">' + esc(s.genre || '기타') + '</div>'
         + '<div class="d">' + dots + '</div></div>';
     }).join('');
   }
@@ -204,7 +210,10 @@ function genres(){
   var m = {};
   SONGS.forEach(function(s){ m[s.genre || '기타'] = (m[s.genre || '기타'] || 0) + 1; });
   var ks = Object.keys(m).sort();
-  document.getElementById('gf').innerHTML =
+  /* 장르가 한 종류뿐이면 필터가 의미 없으니 아예 감춘다 */
+  var gf = document.getElementById('gf');
+  gf.style.display = ks.length > 1 ? '' : 'none';
+  gf.innerHTML =
     '<span class="tag ' + (G==='ALL'?'on':'') + '" data-g="ALL">ALL ' + SONGS.length + '</span>'
     + ks.map(function(k){ return '<span class="tag ' + (G===k?'on':'') + '" data-g="' + esc(k) + '">' + esc(k) + ' ' + m[k] + '</span>'; }).join('');
 }
@@ -214,7 +223,7 @@ document.addEventListener('click', function(e){
   if (g){ G = g.dataset.g; genres(); render(); return; }
   var r = e.target.closest && e.target.closest('.srow');
   if (r){
-    var s = r.dataset.t + (r.dataset.a ? ' - ' + r.dataset.a : '');
+    var s = r.dataset.song + (r.dataset.artist ? ' - ' + r.dataset.artist : '');
     if (navigator.clipboard) navigator.clipboard.writeText(s).then(function(){ toast('복사했어요 — ' + s); }, function(){ toast(s); });
     else toast(s);
   }
@@ -222,13 +231,53 @@ document.addEventListener('click', function(e){
 document.getElementById('q').addEventListener('input', function(){ Q = this.value; render(); });
 document.getElementById('sort').addEventListener('change', function(){ SORT = this.value; render(); });
 
-document.getElementById('pickBtn').addEventListener('click', function(){
+/* ── 랜덤 선곡 — 후보가 촤르륵 지나가다 멈춘다 ── 지금 걸러진 목록(검색·장르 필터 적용분) 안에서만 뽑는다. */
+var PICKED = null, rolling = false;
+function showPick(s, isFinal){
+  PICKED = s;
+  document.getElementById('pickT').textContent = s.title || '—';
+  document.getElementById('pickA').textContent = s.artist || '아티스트 미상';
+  var card = document.getElementById('pickCard');
+  card.classList.toggle('rolling', !isFinal);
+  if (isFinal){
+    card.classList.remove('hit');
+    void card.offsetWidth;      /* 애니메이션 재시작 */
+    card.classList.add('hit');
+  }
+}
+function rollPick(){
+  if (rolling) return;
   var arr = view();
   if (!arr.length){ toast('고를 곡이 없어요'); return; }
-  var s = arr[Math.floor(Math.random() * arr.length)];
-  document.getElementById('pickT').textContent = s.title;
-  document.getElementById('pickA').textContent = (s.artist || '아티스트 미상') + ' · ' + (s.genre || '기타');
   document.getElementById('pickBox').style.display = '';
+  if (arr.length === 1){ showPick(arr[0], true); return; }
+
+  rolling = true;
+  var n = 0, ticks = 14 + Math.floor(Math.random() * 6);
+  (function tick(){
+    showPick(arr[Math.floor(Math.random() * arr.length)], false);
+    n++;
+    if (n < ticks){
+      /* 뒤로 갈수록 느려지게 */
+      setTimeout(tick, 45 + Math.pow(n / ticks, 3) * 210);
+    } else {
+      var final = arr[Math.floor(Math.random() * arr.length)];
+      showPick(final, true);
+      rolling = false;
+      if (typeof fxHearts === 'function'){
+        var r = document.getElementById('pickCard').getBoundingClientRect();
+        fxHearts(r.left + r.width / 2, r.top + r.height / 2, 8);
+      }
+    }
+  })();
+}
+document.getElementById('pickBtn').addEventListener('click', rollPick);
+document.getElementById('pickBtn2').addEventListener('click', rollPick);
+document.getElementById('pickCopy').addEventListener('click', function(){
+  if (!PICKED) return;
+  var t = PICKED.title + (PICKED.artist ? ' - ' + PICKED.artist : '');
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ toast('복사했어요 — ' + t); }, function(){ toast(t); });
+  else toast(t);
 });
 
 /* 오리지널 / 다시보기 */

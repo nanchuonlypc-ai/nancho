@@ -86,6 +86,20 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
   padding:8px 13px;font:inherit;font-size:11.5px;text-decoration:none;cursor:pointer}
 .topact a:hover,.topact button:hover{border-color:var(--main);color:var(--ink)}
 .dirty{color:#E8C46A}
+/* 글자 크기 조절 */
+.tsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.tsgrid .t{border:1px solid var(--line);padding:14px 16px}
+.tsgrid .t .n{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--main)}
+.tsgrid .t .u{font-size:11.5px;color:var(--ink-dim);margin:5px 0 11px;line-height:1.6}
+.tsgrid .t .ctl{display:flex;align-items:center;gap:10px}
+.tsgrid .t input[type=range]{flex:1;accent-color:var(--main)}
+.tsgrid .t .v{font-family:var(--ff-serif);font-size:15px;min-width:44px;text-align:right;color:var(--ink)}
+.tsprev{margin-top:16px;border:1px solid var(--line);padding:22px 20px;background:rgba(255,255,255,.02)}
+.tsprev .p-disp{font-family:var(--ff-disp);font-weight:900;letter-spacing:-.05em;line-height:1;
+  font-size:calc(44px * var(--pv-display,1))}
+.tsprev .p-lbl{font-size:calc(10px * var(--pv-label,1));font-weight:900;letter-spacing:.22em;color:var(--main);margin-top:14px}
+.tsprev .p-title{font-size:calc(24px * var(--pv-title,1));font-weight:900;margin-top:4px}
+.tsprev .p-body{font-size:calc(14px * var(--pv-body,1));color:var(--ink-soft);margin-top:8px;line-height:1.7}
 /* 자가진단 배너 (문제 있을 때만 표시) */
 #selfcheck{display:none;border:1px solid #E88A9A;background:rgba(232,138,154,.09);padding:14px 16px;margin:0 0 16px;font-size:12.5px;line-height:1.8}
 #selfcheck.on{display:block}
@@ -120,10 +134,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <body>
 <script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
 
-<!-- ══════════════════════════════════════════════════════════════
-     비상 진단 — 화면이 까맣게만 나올 때 원인을 글자로 띄운다.
-     여기서 쓰는 스타일은 전부 인라인이라 style.css 가 죽어도 보인다.
-     ══════════════════════════════════════════════════════════════ -->
+<!-- 비상 진단 — 화면이 까맣게만 나올 때 원인을 글자로 띄운다. 여기서 쓰는 스타일은 전부 인라인이라 style.css 가 죽어도 보인다. -->
 <script>
 (function(){
   var LOG = [];
@@ -164,8 +175,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     add('처리되지 않은 오류: ' + ((e.reason && (e.reason.message || e.reason)) || e));
   });
 
-  /* 감시견 — 로그인 상자가 안 그려지면 "왜 안 그려졌는지"를 숫자로 보여주고,
-     같은 상자 안에 비상 로그인을 넣는다(다른 요소가 덮지 못하도록). */
+  /* 감시견 — 로그인 상자가 안 그려지면 "왜 안 그려졌는지"를 숫자로 보여주고, 같은 상자 안에 비상 로그인을 넣는다(다른 요소가 덮지 못하도록). */
   function measure(el){
     if (!el) return 'element 없음';
     var r = el.getBoundingClientRect(), st = getComputedStyle(el);
@@ -201,44 +211,54 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     var d = panel();
     var box = document.createElement('div');
     box.setAttribute('style','margin-top:14px;padding:14px;border:1px solid #E8506E;background:#0e0810;max-width:380px');
+    var inp = 'width:100%;padding:10px;background:#0b0810;color:#fff;border:1px solid #666;'
+             + 'box-sizing:border-box;font:inherit;margin-bottom:8px';
     box.innerHTML = '<div style="margin-bottom:9px;color:#fff">비상 로그인</div>'
-      + '<input id="sospw" type="password" placeholder="비밀번호" style="width:100%;padding:10px;'
-      + 'background:#0b0810;color:#fff;border:1px solid #666;box-sizing:border-box;font:inherit">'
-      + '<button style="margin-top:9px;width:100%;padding:10px;background:#E8506E;color:#fff;border:0;'
+      + '<input id="sosem" type="email" placeholder="이메일" style="' + inp + '">'
+      + '<input id="sospw" type="password" placeholder="비밀번호" style="' + inp + '">'
+      + '<button style="margin-top:2px;width:100%;padding:10px;background:#E8506E;color:#fff;border:0;'
       + 'cursor:pointer;font:inherit">들어가기</button>';
     box.querySelector('button').onclick = function(){
-      try{
-        if (document.getElementById('sospw').value !== ADMIN_PW){ alert('비밀번호가 달라요'); return; }
+      var em = (document.getElementById('sosem').value || '').trim();
+      var pw = document.getElementById('sospw').value || '';
+      if (typeof db === 'undefined' || !db){ add('Supabase 주소·키가 설정되지 않아 로그인할 수 없습니다.'); return; }
+      db.auth.signInWithPassword({ email: em, password: pw }).then(function(r){
+        if (r.error){ alert('로그인 실패 — 이메일·비밀번호를 확인하세요'); return; }
         if (g) forceHide(g);
         var app = document.getElementById('ncApp');
         app.classList.remove('nc-off');
         forceShow(app);
         if (typeof boot === 'function') boot();
         d.remove();
-      }catch(err){ add('비상 로그인 실패: ' + err.message); }
+      }).catch(function(err){ add('비상 로그인 실패: ' + (err && err.message)); });
     };
     d.appendChild(box);
   }, 2500);
 })();
 </script>
 
-<!-- ══ 로그인 ══ -->
+<!-- 로그인 -->
 <div class="nc-gate" id="ncGate">
   <h1>ADMIN</h1>
   <p>THE MIDNIGHT LOG · 관리자</p>
+  <label class="field"><span>이메일</span>
+    <input class="input" id="pwEmail" type="email" autocomplete="username" placeholder="admin@example.com">
+  </label>
   <label class="field"><span>비밀번호</span>
-    <input class="input" id="pw" type="password" placeholder="••••">
+    <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
   </label>
   <button class="btn solid" id="pwBtn" style="width:100%">들어가기</button>
-  <p class="note">⚠️ 임시 비밀번호는 <b>1234</b> 입니다. 배포 전에 이 파일의 <code>ADMIN_PW</code> 값을 꼭 바꿔주세요. (소스에 노출되니 다른 곳에서 쓰지 않는 비밀번호로)</p>
+  <p class="note">계정은 Supabase → Authentication → Users 에서 만듭니다.
+    비밀번호는 소스에 들어있지 않고 Supabase가 확인합니다.</p>
 </div>
 
-<!-- ══ 본체 ══ -->
+<!-- 본체 -->
 <div class="nc-shell nc-off" id="ncApp">
   <div class="nc-bar">
     <div class="b">난초<small>ADMIN</small></div>
     <div class="sp">
       <button class="tbtn" data-mode>DAY</button>
+      <button class="tbtn" id="btnOut">로그아웃</button>
       <a class="tbtn" href="../index.html" target="_blank">사이트 보기 ↗</a>
     </div>
   </div>
@@ -263,10 +283,11 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     <button data-t="song">🎵 노래·VOD</button>
     <button data-t="dress">👗 옷장</button>
     <button data-t="inquiry">✉️ 문의</button>
+    <button data-t="words">✏️ 문구</button>
     <button data-t="theme">🎨 테마</button>
   </div>
 
-  <!-- ─────── 메인 ─────── -->
+  <!-- 메인 -->
   <div class="tab-panel active" id="tab-main">
     <div class="warn">여기서 저장하면 <b>메인·프로필</b> 페이지가 함께 바뀝니다. 저장 후 사이트에서 <b>Ctrl+Shift+R</b>로 새로고침하세요.</div>
 
@@ -275,16 +296,16 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
       <div class="row r2">
         <label class="field"><span>SOOP 아이디</span>
           <input class="input" id="f-soop-id" type="text" placeholder="blackchu">
-          <em class="hint">아이디만 넣으면 SOOP 프사를 자동으로 가져옵니다.</em>
+          <em class="hint">아이디만 넣으면 SOOP 프사를 가져옵니다.</em>
         </label>
         <label class="field"><span>직접 이미지 주소 (선택)</span>
           <input class="input" id="f-avatar" type="text" placeholder="https://... .jpg / .gif">
-          <em class="hint">넣으면 SOOP 프사보다 <b>우선</b> 적용. 움짤은 200px 안팎으로 줄여서 올리세요(로딩 무거워짐).</em>
+          <em class="hint">넣으면 SOOP 프사보다 우선 적용. 움짤은 200px 안팎으로 줄여서.</em>
         </label>
       </div>
       <label class="field"><span>프로필 페이지 대표 일러스트 (선택)</span>
         <input class="input" id="f-hero-art" type="text" placeholder="https://... (세로 4:5 권장)">
-        <em class="hint">비우면 프사가 대신 들어갑니다. 세로 4:5(예 900×1125) 이미지가 가장 예쁘게 잘립니다.</em>
+        <em class="hint">비우면 프사가 들어갑니다. 세로 4:5 (예 900×1125).</em>
       </label>
     </div>
 
@@ -297,12 +318,12 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         </label>
         <label class="field"><span>☀️ 낮(라이트) 배경</span>
           <input class="input" id="f-bg-day" type="text" placeholder="assets/nancho-day.webp">
-          <em class="hint">DAY 모드일 때 깔리는 배경. 같은 규격(16:9). 글자가 얹히니 <b>너무 쨍한 이미지는 피하세요</b>.</em>
+          <em class="hint">DAY 모드일 때 깔리는 배경. 같은 규격(16:9). 글자가 얹히므로 대비가 강한 이미지는 피할 것.</em>
         </label>
       </div>
       <label class="field"><span>메인 히어로 사진</span>
         <input class="input" id="f-main-photo" type="text" placeholder="비우면 밤 배경과 같은 이미지 사용">
-        <em class="hint">메인 첫 화면을 꽉 채우는 사진. 가로 16:9, 인물이 <b>오른쪽</b>에 오는 구도가 제일 잘 맞습니다(왼쪽에 이름·문구가 얹혀요).</em>
+        <em class="hint">메인 첫 화면을 꽉 채우는 사진. 가로 16:9, 인물이 오른쪽에 오는 구도. 왼쪽에 이름·문구가 얹힙니다.</em>
       </label>
 
     <details class="why">
@@ -370,7 +391,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         <label class="field"><span>생일</span><input class="input" id="f-info-birth" type="text" placeholder="12월 16일">
           <em class="hint">"12월 16일" 또는 "12-16". 생일 D-Day 자동 계산.</em></label>
         <label class="field"><span>한 줄 소개(캐치프레이즈)</span><input class="input" id="f-info-catchphrase" type="text" placeholder="밤하늘 속에 피어난">
-          <em class="hint">메인 첫 화면 큰 글씨 한 줄. <b>15자 안팎</b>이 제일 예쁩니다.</em></label>
+          <em class="hint">메인 첫 화면 큰 글씨 한 줄. 15자 안팎.</em></label>
       </div>
       <label class="field"><span>특징 태그</span>
         <textarea class="input" id="f-info-tags" placeholder="개구쟁이, 밝음, 짱구, 별, 달, 밤하늘" style="min-height:70px"></textarea>
@@ -449,29 +470,29 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 
     <div class="card">
       <div class="card-title"><div><small>PAGE INTRO</small>페이지별 소개문</div><button class="btn sm" data-save="profile">저장</button></div>
-      <em class="hint">각 페이지 큰 제목 아래에 들어가는 설명 한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em>
+      <em class="hint">각 페이지 큰 제목 아래에 들어가는 설명 한두 줄. 비우면 기본 문구.</em>
       <div class="row r2">
         <label class="field"><span>프로필</span><input class="input" id="f-sub-profile" type="text" placeholder="밤하늘 속에 피어난 사람. …">
           <em class="hint">페이지 큰 제목 아래 설명. <b>한두 줄(60자 안팎)</b>이 적당합니다.</em></label>
         <label class="field"><span>공지</span><input class="input" id="f-sub-notice" type="text" placeholder="전파를 타기 전에 먼저 알려두는 것들. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>일정</span><input class="input" id="f-sub-schedule" type="text" placeholder="이번 달 전파 편성표. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>업보</span><input class="input" id="f-sub-work" type="text" placeholder="방송에서 쌓인 것들은 사라지지 않고 …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>일기</span><input class="input" id="f-sub-diary" type="text" placeholder="방송이 끝나고 남는 이야기들. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>노래책</span><input class="input" id="f-sub-song" type="text" placeholder="KPOP 위주로 쌓아둔 목록. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>옷장</span><input class="input" id="f-sub-dress" type="text" placeholder="난초가 걸쳤던 것들을 한 장의 컨택트 시트로. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
         <label class="field"><span>미니게임</span><input class="input" id="f-sub-game" type="text" placeholder="방송이 끝난 뒤에도 불이 꺼지지 않는 구역. …">
-          <em class="hint">한두 줄. 비우면 기본 문구가 그대로 나옵니다.</em></label>
+          <em class="hint">한두 줄. 비우면 기본 문구.</em></label>
       </div>
     </div>
   </div>
 
-  <!-- ─────── 프로필 ─────── -->
+  <!-- 프로필 -->
   <div class="tab-panel" id="tab-profile">
     <div class="card">
       <div class="card-title"><div><small>VOICE</small>한마디 · 소개 · 진행중</div><button class="btn sm" data-save="profile">저장</button></div>
@@ -522,7 +543,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 공지 ─────── -->
+  <!-- 공지 -->
   <div class="tab-panel" id="tab-notice">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>공지 작성</div></div>
@@ -544,13 +565,16 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 일정 ─────── -->
+  <!-- 일정 -->
   <div class="tab-panel" id="tab-schedule">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>일정 추가</div></div>
       <div class="row r4">
         <label class="field"><span>날짜</span><input class="input" id="sc-date" type="date">
           <em class="hint">달력에서 날짜를 고르세요. 형식은 자동(<b>2026-07-26</b>)입니다.</em></label>
+        <label class="field"><span>종료일 (선택)</span><input class="input" id="sc-end" type="date">
+          <em class="hint"><b>비워두면 하루짜리</b> 일정입니다. 채우면 시작일부터 그날까지 달력에
+            <b>하나의 띠로 쭉 이어져</b> 표시돼요 (예: 여름 이벤트 주간, 장기 휴방).</em></label>
         <label class="field"><span>1부 시간</span><input class="input" id="sc-time" type="text" placeholder="17:00">
           <em class="hint"><b>24시간</b> 형식으로 <b>17:00</b> 처럼. 미정이면 비워두세요.</em></label>
         <label class="field"><span>1부 제목</span><input class="input" id="sc-title" type="text" placeholder="저챗">
@@ -581,11 +605,11 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 일정</div></div>
-      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>1부</th><th>2부</th><th>종류</th><th>색</th><th>삭제</th></tr></thead><tbody id="sc-list"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>기간</th><th>1부</th><th>2부</th><th>종류</th><th>색</th><th>삭제</th></tr></thead><tbody id="sc-list"></tbody></table></div>
     </div>
   </div>
 
-  <!-- ─────── 업보 ─────── -->
+  <!-- 업보 -->
   <div class="tab-panel" id="tab-work">
     <div class="row r2">
       <div class="card">
@@ -615,7 +639,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 일기 ─────── -->
+  <!-- 일기 -->
   <div class="tab-panel" id="tab-diary">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>일기 작성</div></div>
@@ -625,12 +649,12 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         <label class="field"><span>날짜</span><input class="input" id="dy-date" type="date">
           <em class="hint">달력에서 고르세요. 최신 날짜가 맨 앞에 옵니다.</em></label>
         <label class="field"><span>기분 (선택)</span><input class="input" id="dy-mood" type="text" placeholder="예: 잔잔함">
-          <em class="hint">짧은 단어일수록 예쁘게 붙습니다.</em></label>
+          <em class="hint">짧은 단어 권장.</em></label>
       </div>
       <label class="field"><span>내용</span><textarea class="input" id="dy-content" style="min-height:170px"></textarea>
           <em class="hint">줄바꿈 그대로 살아납니다. 길이 제한 없어요.</em></label>
       <label class="field"><span>이미지 주소 (선택)</span><input class="input" id="dy-img" type="text" placeholder="https://...">
-        <em class="hint">가로 16:9 이미지가 목록 썸네일로 예쁘게 들어갑니다.</em></label>
+        <em class="hint">가로 16:9. 목록 썸네일로 잘립니다.</em></label>
       <button class="btn solid" id="dy-add">일기 올리기</button>
     </div>
     <div class="card">
@@ -643,7 +667,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 노래 · VOD ─────── -->
+  <!-- 노래 · VOD -->
   <div class="tab-panel" id="tab-song">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>노래 추가</div></div>
@@ -665,6 +689,13 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
           <textarea class="input" id="sg-bulk" style="min-height:120px" placeholder="한 줄에 한 곡: 제목 - 아티스트 - 장르"></textarea>
           <em class="hint">예) 헤비 Be I - 아이유 - KPOP  /  장르를 빼면 "기타"로 들어갑니다.</em></label>
         <button class="btn" id="sg-bulkadd">한 번에 추가</button>
+      </div>
+
+      <div style="border-top:1px solid var(--line);margin-top:20px;padding-top:16px">
+        <label class="field"><span>제목 ↔ 아티스트 바꾸기</span>
+          <em class="hint">등록된 <b>모든 곡</b>의 제목과 아티스트를 서로 맞바꿉니다.
+            입력할 때 순서를 반대로 넣었을 때 한 번에 되돌리는 용도예요. 되돌리려면 한 번 더 누르면 됩니다.</em></label>
+        <button class="btn" id="sg-swap">전체 제목↔아티스트 바꾸기</button>
       </div>
     </div>
     <div class="card">
@@ -697,7 +728,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 옷장 ─────── -->
+  <!-- 옷장 -->
   <div class="tab-panel" id="tab-dress">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>옷장 등록</div></div>
@@ -750,7 +781,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 문의 ─────── -->
+  <!-- 문의 -->
   <div class="tab-panel" id="tab-inquiry">
     <div class="card">
       <div class="card-title"><div><small>INBOX</small>받은 문의</div><button class="btn sm" id="iq-load">새로고침</button></div>
@@ -758,7 +789,214 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- ─────── 테마 ─────── -->
+  <!-- 테마 -->
+  <div class="tab-panel" id="tab-words">
+    <div class="warn">화면에 보이는 <b>고정 문구</b>를 전부 바꿀 수 있어요 — 섹션 제목·항목 이름·라벨·메뉴까지. 비우면 기본 문구가 그대로 나옵니다.</div>
+
+    <label class="field" style="max-width:340px;margin:0 0 18px">
+      <span>문구 찾기</span>
+      <input class="input" id="wordFind" type="text" placeholder="예: 기본 기록, MILESTONES, 옷장">
+      <em class="hint">기본 문구나 항목 이름으로 검색.</em>
+    </label>
+
+    <div class="card">
+      <div class="card-title"><div><small>공통(메뉴)</small>공통(메뉴)</div><button class="btn sm" data-save="profile">저장</button></div>
+      <em class="hint">메뉴 이름은 <b>모든 페이지에 동시에</b> 반영됩니다.</em>
+      <div class="row r2">
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-1" type="text" placeholder="메인">
+          <em class="hint">기본값: 메인</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-2" type="text" placeholder="프로필">
+          <em class="hint">기본값: 프로필</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-3" type="text" placeholder="공지">
+          <em class="hint">기본값: 공지</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-4" type="text" placeholder="일정">
+          <em class="hint">기본값: 일정</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-5" type="text" placeholder="업보">
+          <em class="hint">기본값: 업보</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-6" type="text" placeholder="일기">
+          <em class="hint">기본값: 일기</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-7" type="text" placeholder="노래책">
+          <em class="hint">기본값: 노래책</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-8" type="text" placeholder="옷장">
+          <em class="hint">기본값: 옷장</em></label>
+        <label class="field"><span>메뉴</span><input class="input" id="f-txt-nav-9" type="text" placeholder="미니게임">
+          <em class="hint">기본값: 미니게임</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>메인</small>메인 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-index-1" type="text" placeholder="NEXT TRANSMISSION">
+          <em class="hint">기본값: NEXT TRANSMISSION</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>프로필</small>프로필 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>RECORD</span><input class="input" id="f-txt-t-profile-1" type="text" placeholder="기본 기록">
+          <em class="hint">기본값: 기본 기록</em></label>
+        <label class="field"><span>TRANSMISSION</span><input class="input" id="f-txt-t-profile-2" type="text" placeholder="주간 전파">
+          <em class="hint">기본값: 주간 전파</em></label>
+        <label class="field"><span>ABOUT</span><input class="input" id="f-txt-t-profile-3" type="text" placeholder="난초에 대하여">
+          <em class="hint">기본값: 난초에 대하여</em></label>
+        <label class="field"><span>PREFERENCE</span><input class="input" id="f-txt-t-profile-4" type="text" placeholder="좋아 · 싫어 · TMI">
+          <em class="hint">기본값: 좋아 · 싫어 · TMI</em></label>
+        <label class="field"><span>LOGBOOK</span><input class="input" id="f-txt-t-profile-5" type="text" placeholder="기록과 규칙">
+          <em class="hint">기본값: 기록과 규칙</em></label>
+        <label class="field"><span>ARCHIVE</span><input class="input" id="f-txt-t-profile-6" type="text" placeholder="다시보기">
+          <em class="hint">기본값: 다시보기</em></label>
+        <label class="field"><span>MASCOT</span><input class="input" id="f-txt-t-profile-7" type="text" placeholder="팬 캐릭터">
+          <em class="hint">기본값: 팬 캐릭터</em></label>
+        <label class="field"><span>CHANNELS</span><input class="input" id="f-txt-t-profile-8" type="text" placeholder="전파가 닿는 곳">
+          <em class="hint">기본값: 전파가 닿는 곳</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-profile-9" type="text" placeholder="난초를 이루는 항목들">
+          <em class="hint">기본값: 난초를 이루는 항목들</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-profile-10" type="text" placeholder="SOOP VOD · 관리자에서 VOD ID만 넣으면 자동 임베드">
+          <em class="hint">기본값: SOOP VOD · 관리자에서 VOD ID만 넣으면 자동 임베드</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-11" type="text" placeholder="OPERATOR">
+          <em class="hint">기본값: OPERATOR</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-12" type="text" placeholder="LONG SIGNAL">
+          <em class="hint">기본값: LONG SIGNAL</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-13" type="text" placeholder="SIGNAL LEVELS">
+          <em class="hint">기본값: SIGNAL LEVELS</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-14" type="text" placeholder="TMI">
+          <em class="hint">기본값: TMI</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-15" type="text" placeholder="MILESTONES">
+          <em class="hint">기본값: MILESTONES</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-16" type="text" placeholder="CHAT PROTOCOL · 채팅 규칙">
+          <em class="hint">기본값: CHAT PROTOCOL · 채팅 규칙</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-profile-17" type="text" placeholder="RABBIT">
+          <em class="hint">기본값: RABBIT</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-18" type="text" placeholder="이름">
+          <em class="hint">기본값: 이름</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-19" type="text" placeholder="리딩">
+          <em class="hint">기본값: 리딩</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-20" type="text" placeholder="성별">
+          <em class="hint">기본값: 성별</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-21" type="text" placeholder="소속">
+          <em class="hint">기본값: 소속</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-22" type="text" placeholder="MBTI">
+          <em class="hint">기본값: MBTI</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-23" type="text" placeholder="컨텐츠">
+          <em class="hint">기본값: 컨텐츠</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-24" type="text" placeholder="방송 시간">
+          <em class="hint">기본값: 방송 시간</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-25" type="text" placeholder="주력 게임">
+          <em class="hint">기본값: 주력 게임</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-26" type="text" placeholder="노래">
+          <em class="hint">기본값: 노래</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-27" type="text" placeholder="모티브">
+          <em class="hint">기본값: 모티브</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-28" type="text" placeholder="음식">
+          <em class="hint">기본값: 음식</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-29" type="text" placeholder="노래">
+          <em class="hint">기본값: 노래</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-30" type="text" placeholder="게임">
+          <em class="hint">기본값: 게임</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-profile-31" type="text" placeholder="기타">
+          <em class="hint">기본값: 기타</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>공지</small>공지 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>ALL NOTICES</span><input class="input" id="f-txt-t-notice-1" type="text" placeholder="전체 공지">
+          <em class="hint">기본값: 전체 공지</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>일정</small>일정 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>UPCOMING</span><input class="input" id="f-txt-t-schedule-1" type="text" placeholder="다가오는 전파">
+          <em class="hint">기본값: 다가오는 전파</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-schedule-2" type="text" placeholder="가까운 순 6건">
+          <em class="hint">기본값: 가까운 순 6건</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-schedule-3" type="text" placeholder="1부">
+          <em class="hint">기본값: 1부</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-schedule-4" type="text" placeholder="2부">
+          <em class="hint">기본값: 2부</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-schedule-5" type="text" placeholder="NOTE">
+          <em class="hint">기본값: NOTE</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>업보</small>업보 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>KARMA LIST</span><input class="input" id="f-txt-t-work-1" type="text" placeholder="업보 장부">
+          <em class="hint">기본값: 업보 장부</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>일기</small>일기 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>ALL DIARIES</span><input class="input" id="f-txt-t-diary-1" type="text" placeholder="밤에 적어둔 것들">
+          <em class="hint">기본값: 밤에 적어둔 것들</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-diary-2" type="text" placeholder="REPLIES · 초단들의 답장">
+          <em class="hint">기본값: REPLIES · 초단들의 답장</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>노래책</small>노래책 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>SONG BOOK</span><input class="input" id="f-txt-t-song-1" type="text" placeholder="부를 수 있는 곡">
+          <em class="hint">기본값: 부를 수 있는 곡</em></label>
+        <label class="field"><span>SONG VOD</span><input class="input" id="f-txt-t-song-2" type="text" placeholder="노래 다시보기">
+          <em class="hint">기본값: 노래 다시보기</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-song-3" type="text" placeholder="SOOP VOD">
+          <em class="hint">기본값: SOOP VOD</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-song-4" type="text" placeholder="TONIGHT'S FREQUENCY">
+          <em class="hint">기본값: TONIGHT'S FREQUENCY</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>옷장</small>옷장 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>WARDROBE</span><input class="input" id="f-txt-t-dress-1" type="text" placeholder="의상 · 헤어 · 렌즈 기록">
+          <em class="hint">기본값: 의상 · 헤어 · 렌즈 기록</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>미니게임</small>미니게임 문구</div><button class="btn sm" data-save="profile">저장</button></div>
+      
+      <div class="row r2">
+        <label class="field"><span>LADDER</span><input class="input" id="f-txt-t-game-1" type="text" placeholder="사다리타기">
+          <em class="hint">기본값: 사다리타기</em></label>
+        <label class="field"><span>ROULETTE</span><input class="input" id="f-txt-t-game-2" type="text" placeholder="미드나잇 룰렛">
+          <em class="hint">기본값: 미드나잇 룰렛</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-game-3" type="text" placeholder="가로줄은 숨겨져 있어요 — 눌러야 어디로 가는지 드러납니다">
+          <em class="hint">기본값: 가로줄은 숨겨져 있어요 — 눌러야 어디로 가는지 드러납니다</em></label>
+        <label class="field"><span>note</span><input class="input" id="f-txt-t-game-4" type="text" placeholder="이름을 넣고 굴리면 · 먼저 도착한 구슬이 당첨">
+          <em class="hint">기본값: 이름을 넣고 굴리면 · 먼저 도착한 구슬이 당첨</em></label>
+        <label class="field"><span>라벨</span><input class="input" id="f-txt-t-game-5" type="text" placeholder="RANKING · 도착 순서">
+          <em class="hint">기본값: RANKING · 도착 순서</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-game-6" type="text" placeholder="인원">
+          <em class="hint">기본값: 인원</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-game-7" type="text" placeholder="당첨 인원">
+          <em class="hint">기본값: 당첨 인원</em></label>
+        <label class="field"><span>항목명</span><input class="input" id="f-txt-t-game-8" type="text" placeholder="속도">
+          <em class="hint">기본값: 속도</em></label>
+      </div>
+    </div>
+
+  </div>
+
   <div class="tab-panel" id="tab-theme">
     <div class="card">
       <div class="card-title"><div><small>PALETTE</small>사이트 색 팔레트</div>
@@ -767,6 +1005,24 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
       <div class="presets" id="presets"></div>
       <div class="pal" id="pal"></div>
       <div class="contrast" id="contrast"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div><small>TYPE SCALE</small>글자 크기</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn sm" id="ts-reset">기본값으로</button>
+          <button class="btn sm solid" data-save="profile">저장</button>
+        </div>
+      </div>
+      <p class="note" style="margin:0 0 16px">배율입니다. <b>1.0 이 기본</b>이고 1.2 면 20% 크게, 0.9 면 10% 작게 나옵니다.
+        저장하면 <b>모든 페이지</b>에 한 번에 적용돼요.</p>
+      <div class="tsgrid" id="tsgrid"></div>
+      <div class="tsprev" id="tsprev">
+        <div class="p-disp">난초 NANCHO</div>
+        <div class="p-lbl">FILE 01 · DOSSIER</div>
+        <div class="p-title">기본 기록</div>
+        <div class="p-body">밤하늘 속에 피어난 사람. 이 문장 크기가 본문 크기입니다.</div>
+      </div>
       <div class="prev">
         <div class="sw" id="pv1"></div><div class="sw" id="pv2"></div><div class="sw" id="pv3"></div>
         <button class="btn solid">버튼 미리보기</button>
@@ -781,10 +1037,8 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <script src="../supabase.js"></script>
 <script src="../site.js"></script>
 <script>
-/* ══════════ 로그인 ══════════ */
-var ADMIN_PW = '1234';   /* ⚠️ 배포 전에 반드시 바꾸세요 */
-/* 확장 프로그램이 #app · #gate 같은 흔한 이름을 display:none 으로 숨겨버리는 사례가 있어
-   (광고차단 필터 목록의 일반 규칙), 클래스 토글만 믿지 않고 인라인 !important 로 못 박는다. */
+/* 로그인 — 비밀번호는 코드에 두지 않고 Supabase Auth 가 확인한다. 계정: Supabase → Authentication → Users (Auto Confirm User 켜기) */
+/* 확장 프로그램이 #app · #gate 같은 흔한 이름을 display:none 으로 숨겨버리는 사례가 있어 (광고차단 필터 목록의 일반 규칙), 클래스 토글만 믿지 않고 인라인 !important 로 못 박는다. */
 function forceShow(el){
   if (!el) return;
   el.style.setProperty('display','block','important');
@@ -795,16 +1049,14 @@ function forceHide(el){
   if (!el) return;
   el.style.setProperty('display','none','important');
 }
-function enter(){
-  if (document.getElementById('pw').value !== ADMIN_PW){ toast('비밀번호가 달라요'); return; }
+function openApp(){
   document.getElementById('ncGate').classList.add('nc-off');
   document.getElementById('ncApp').classList.remove('nc-off');
   forceHide(document.getElementById('ncGate'));
   forceShow(document.getElementById('ncApp'));
   try { boot(); } catch (e) { console.error('[admin] boot 오류:', e); runSelfCheck(); }
 
-  /* 확장 프로그램이 뒤늦게 숨기는 경우가 있어 몇 초간 표시를 재확인한다.
-     (광고차단 필터가 클래스 이름을 보고 display:none 을 걸어버리는 사례) */
+  /* 확장 프로그램이 뒤늦게 숨기는 경우가 있어 몇 초간 표시를 재확인한다. (광고차단 필터가 클래스 이름을 보고 display:none 을 걸어버리는 사례) */
   var recheck = 0;
   var iv = setInterval(function(){
     var app = document.getElementById('ncApp');
@@ -813,9 +1065,34 @@ function enter(){
     if (++recheck > 20) clearInterval(iv);
   }, 400);
 }
-/* ⚠️ 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어
-   여기서 ReferenceError 가 나고, 그 뒤 줄이 통째로 안 돌아 화면이 캄캄해진다.
-   → 없으면 대체품을 만들고, 초기화 전체를 try/catch 로 감싼다. */
+
+function enter(){
+  var email = (document.getElementById('pwEmail').value || '').trim();
+  var pass  = document.getElementById('pw').value || '';
+  if (!email || !pass){ toast('이메일과 비밀번호를 입력하세요'); return; }
+  if (typeof db === 'undefined' || !db){ toast('Supabase 주소·키가 설정되지 않았어요'); return; }
+  var btn = document.getElementById('pwBtn');
+  btn.disabled = true;
+  db.auth.signInWithPassword({ email: email, password: pass }).then(function(r){
+    btn.disabled = false;
+    if (r.error){ toast('로그인 실패 — 이메일·비밀번호를 확인하세요'); return; }
+    openApp();
+  }).catch(function(){ btn.disabled = false; toast('로그인 중 문제가 생겼어요'); });
+}
+
+/* 새로고침해도 로그인 유지 — 세션은 Supabase 가 보관한다 */
+function restoreSession(){
+  if (typeof db === 'undefined' || !db) return;
+  db.auth.getSession().then(function(r){
+    if (r && r.data && r.data.session) openApp();
+  }).catch(function(){});
+}
+
+function signOut(){
+  if (typeof db !== 'undefined' && db) db.auth.signOut().catch(function(){});
+  location.reload();
+}
+/* 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어 여기서 ReferenceError 가 나고, 그 뒤 줄이 통째로 안 돌아 화면이 캄캄해진다. → 없으면 대체품을 만들고, 초기화 전체를 try/catch 로 감싼다. */
 if (typeof toast !== 'function'){ window.toast = function(m){ try{ console.log(m); }catch(e){} }; }
 /* supabase.js 가 안 실려도 화면은 끝까지 그려지도록 CRUD 헬퍼 대체품을 둔다 */
 if (typeof fetchAll   !== 'function'){ window.fetchAll   = function(){ return Promise.resolve([]); }; }
@@ -837,9 +1114,12 @@ if (typeof toggleMode !== 'function'){
 
 try {
   forceShow(document.getElementById('ncGate'));
+  restoreSession();
   document.getElementById('pwBtn').addEventListener('click', enter);
+  document.getElementById('pwEmail').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
   document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') enter(); });
   document.querySelectorAll('[data-mode]').forEach(function(b){ b.addEventListener('click', toggleMode); });
+  document.getElementById('btnOut').addEventListener('click', signOut);
   applyMode(document.body.classList.contains('day') ? 'light' : 'dark');
 } catch (e) {
   console.error('[admin] 초기화 중 오류:', e);
@@ -848,10 +1128,8 @@ document.body.classList.add('ready');
 
 /* (옛 전체화면 안전망은 제거 — 아래 통합 진단기가 대신한다) */
 
-/* ══════════ 자가진단 — 공유 파일이 안 불러와졌을 때 원인을 화면에 띄운다 ══════════ */
-/* 관리자는 ../supabase.js · ../site.js · ../style.css 3개에 기대고 있다.
-   하나라도 404 면 "열리긴 하는데 저장이 안 되는" 상태가 되어 원인을 찾기 어렵다.
-   그래서 로그인 직후 무엇이 빠졌는지 빨간 배너로 알려준다. */
+/* 자가진단 — 공유 파일이 안 불러와졌을 때 원인을 화면에 띄운다 */
+/* 관리자는 ../supabase.js · ../site.js · ../style.css 3개에 기대고 있다. 하나라도 404 면 "열리긴 하는데 저장이 안 되는" 상태가 되어 원인을 찾기 어렵다. 그래서 로그인 직후 무엇이 빠졌는지 빨간 배너로 알려준다. */
 function runSelfCheck(){
   var bad = [];
   if (typeof fetchAll !== 'function')
@@ -879,19 +1157,18 @@ function runSelfCheck(){
   return false;
 }
 
-/* ══════════ DB 연결 가드 ══════════ */
-/* supabase.js 의 URL/KEY 가 아직 자리표시자면 db 는 null 이다.
-   이 경우에도 관리자 화면이 죽지 않게 안내만 띄우고 넘어간다. */
+/* DB 연결 가드 */
+/* supabase.js 의 URL/KEY 가 아직 자리표시자면 db 는 null 이다. 이 경우에도 관리자 화면이 죽지 않게 안내만 띄우고 넘어간다. */
 function needDb(){
   if (typeof db !== 'undefined' && db) return true;
   toast('Supabase 주소·키가 아직 설정되지 않았어요 (supabase.js 상단 2줄)');
   return false;
 }
 
-/* ══════════ 탭 ══════════ */
+/* 탭 */
 var TAB_PAGE = { main:'../index.html', profile:'../profile/', notice:'../notice/', schedule:'../schedule/',
                  work:'../work/', diary:'../diary/', song:'../song/', dress:'../dress/',
-                 inquiry:'../index.html', theme:'../index.html' };
+                 inquiry:'../index.html', words:'../profile/', theme:'../index.html' };
 document.getElementById('tabs').addEventListener('click', function(e){
   var b = e.target.closest('button[data-t]'); if (!b) return;
   this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
@@ -901,7 +1178,7 @@ document.getElementById('tabs').addEventListener('click', function(e){
   document.getElementById('act-view').href = TAB_PAGE[b.dataset.t] || '../index.html';
 });
 
-/* ══════════ 미저장 표시 ══════════ */
+/* 미저장 표시 */
 var DIRTY = false;
 function markDirty(){
   DIRTY = true;
@@ -916,7 +1193,7 @@ window.addEventListener('beforeunload', function(e){
   e.preventDefault(); e.returnValue = '';
 });
 
-/* ══════════ 이미지 미리보기 ══════════ */
+/* 이미지 미리보기 */
 /* 이미지 주소 칸 아래에 실제 그림을 띄워 준다 — 주소를 잘못 넣으면 바로 알 수 있게. */
 var IMG_FIELDS = ['avatar','hero-art','fan-char','main-photo','bg-night','bg-day'];
 function setupThumbs(){
@@ -952,7 +1229,7 @@ function refreshThumbs(){
   });
 }
 
-/* ══════════ 백업 / 복원 ══════════ */
+/* 백업 / 복원 */
 function doBackup(){
   var data = {};
   profileKeys.forEach(function(k){
@@ -994,7 +1271,7 @@ document.getElementById('act-file').addEventListener('change', function(){
   this.value = '';
 });
 
-/* ══════════ 프로필 키 (⚠️ 페이지가 읽는 키와 반드시 일치) ══════════ */
+/* 프로필 키 ( 페이지가 읽는 키와 반드시 일치) */
 var profileKeys = [
   'avatar','soop-id','hero-art','fan-char','main-photo','bg-night','bg-day',
   'site-tagline','main-story','info-motif','fandom-note',
@@ -1006,7 +1283,71 @@ var profileKeys = [
   'days','main-time',
   'week-0','week-1','week-2','week-3','week-4','week-5','week-6',
   'link-soop','link-youtube','link-cafe','link-melo','link-x',
-  'theme-main','theme-main-dark','theme-main-deep','theme-main-light','theme-bg','theme-logo'
+  'theme-main','theme-main-dark','theme-main-deep','theme-main-light','theme-bg','theme-logo',
+  'type-display','type-title','type-body','type-label',
+  'txt-t-profile-1',
+  'txt-t-profile-2',
+  'txt-t-profile-3',
+  'txt-t-profile-4',
+  'txt-t-profile-5',
+  'txt-t-profile-6',
+  'txt-t-profile-7',
+  'txt-t-profile-8',
+  'txt-t-profile-9',
+  'txt-t-profile-10',
+  'txt-t-notice-1',
+  'txt-t-schedule-1',
+  'txt-t-schedule-2',
+  'txt-t-work-1',
+  'txt-t-diary-1',
+  'txt-t-song-1',
+  'txt-t-song-2',
+  'txt-t-song-3',
+  'txt-t-dress-1',
+  'txt-t-game-1',
+  'txt-t-game-2',
+  'txt-t-game-3',
+  'txt-t-game-4',
+  'txt-t-index-1',
+  'txt-t-profile-11',
+  'txt-t-profile-12',
+  'txt-t-profile-13',
+  'txt-t-profile-14',
+  'txt-t-profile-15',
+  'txt-t-profile-16',
+  'txt-t-profile-17',
+  'txt-t-profile-18',
+  'txt-t-profile-19',
+  'txt-t-profile-20',
+  'txt-t-profile-21',
+  'txt-t-profile-22',
+  'txt-t-profile-23',
+  'txt-t-profile-24',
+  'txt-t-profile-25',
+  'txt-t-profile-26',
+  'txt-t-profile-27',
+  'txt-t-profile-28',
+  'txt-t-profile-29',
+  'txt-t-profile-30',
+  'txt-t-profile-31',
+  'txt-t-schedule-3',
+  'txt-t-schedule-4',
+  'txt-t-schedule-5',
+  'txt-t-diary-2',
+  'txt-t-song-4',
+  'txt-t-game-5',
+  'txt-t-game-6',
+  'txt-t-game-7',
+  'txt-t-game-8',
+  'txt-nav-1',
+  'txt-nav-2',
+  'txt-nav-3',
+  'txt-nav-4',
+  'txt-nav-5',
+  'txt-nav-6',
+  'txt-nav-7',
+  'txt-nav-8',
+  'txt-nav-9'
 ];
 
 /* 요일 체크박스 (0=월 … 6=일) */
@@ -1025,7 +1366,7 @@ function inputToDays(v){
 }
 document.getElementById('daysBox').addEventListener('change', daysToInput);
 
-/* ══════════ 팔레트 ══════════ */
+/* 팔레트 */
 var PAL = [
   ['theme-main','MAIN','#C79BD8','포인트 색 — 라벨·강조·버튼 테두리'],
   ['theme-main-light','MAIN LIGHT','#E4CDF0','밝은 강조 — 제목 아웃라인·활성 글자'],
@@ -1055,8 +1396,57 @@ function livePreview(){
   document.getElementById('pv2').style.background = document.getElementById('f-theme-main-deep').value;
   document.getElementById('pv3').style.background = document.getElementById('f-theme-bg').value;
   drawContrast();
+  tsPreview();
 }
-/* ── 팔레트 프리셋 ── */
+/* 문구 찾기 */
+document.getElementById('wordFind').addEventListener('input', function(){
+  var q = this.value.trim().toLowerCase();
+  var cards = document.querySelectorAll('#tab-words .card');
+  cards.forEach(function(card){
+    var any = false;
+    card.querySelectorAll('.field').forEach(function(fd){
+      var hay = fd.textContent + ' ' + (fd.querySelector('input') ? fd.querySelector('input').placeholder : '');
+      var ok = !q || hay.toLowerCase().indexOf(q) >= 0;
+      fd.style.display = ok ? '' : 'none';
+      if (ok) any = true;
+    });
+    card.style.display = any ? '' : 'none';
+  });
+});
+
+/* 글자 크기 배율 */
+var TS = [
+  ['type-display','디스플레이','페이지 맨 위 초대형 제목 (난초 / DOSSIER)'],
+  ['type-title',  '섹션 제목',  '각 구획 제목 (기본 기록, 주간 전파 …)'],
+  ['type-body',   '본문',      '설명·값·목록 등 읽는 글 전부'],
+  ['type-label',  '작은 라벨',  '영문 마이크로 라벨, 캡션, 보조 문구']
+];
+document.getElementById('tsgrid').innerHTML = TS.map(function(t){
+  return '<div class="t"><div class="n">' + t[1] + '</div><div class="u">' + t[2] + '</div>'
+    + '<div class="ctl"><input type="range" id="r-' + t[0] + '" min="0.8" max="1.4" step="0.05" value="1">'
+    + '<span class="v" id="v-' + t[0] + '">1.00</span></div>'
+    + '<input type="hidden" id="f-' + t[0] + '" value="1"></div>';
+}).join('');
+function tsPreview(){
+  TS.forEach(function(t){
+    var v = parseFloat(document.getElementById('f-' + t[0]).value) || 1;
+    document.getElementById('r-' + t[0]).value = v;
+    document.getElementById('v-' + t[0]).textContent = v.toFixed(2);
+    document.getElementById('tsprev').style.setProperty('--pv-' + t[0].replace('type-',''), v);
+  });
+}
+document.getElementById('tsgrid').addEventListener('input', function(e){
+  var r = e.target.closest('input[type=range]'); if (!r) return;
+  var key = r.id.slice(2);
+  document.getElementById('f-' + key).value = r.value;
+  tsPreview(); markDirty();
+});
+document.getElementById('ts-reset').addEventListener('click', function(){
+  TS.forEach(function(t){ document.getElementById('f-' + t[0]).value = '1'; });
+  tsPreview(); markDirty(); toast('글자 크기를 기본값으로 되돌렸어요 — 저장을 눌러주세요');
+});
+
+/* 팔레트 프리셋 */
 var PRESETS = [
   ['미드나잇 (기본)', ['#C79BD8','#E4CDF0','#9D77A6','#50315D','#09070D','#F3EAFA']],
   ['체리 나이트',     ['#E8A8BE','#F6D6E1','#B87A93','#5C2F42','#0C0709','#FBEDF2']],
@@ -1080,7 +1470,7 @@ document.getElementById('presets').addEventListener('click', function(e){
   toast(PRESETS[+b.dataset.ps][0] + ' 적용 — 저장을 눌러야 사이트에 반영됩니다');
 });
 
-/* ── 대비 진단 (WCAG) ── */
+/* 대비 진단 (WCAG) */
 function _lum(hex){
   var m = /^#([0-9a-fA-F]{6})$/.exec(hex || ''); if (!m) return null;
   var n = parseInt(m[1],16), f = [(n>>16)&255,(n>>8)&255,n&255].map(function(v){
@@ -1118,7 +1508,7 @@ document.getElementById('th-reset').addEventListener('click', function(){
   livePreview(); toast('기본 팔레트로 되돌렸어요 — 저장을 눌러야 반영됩니다');
 });
 
-/* ══════════ 프로필 로드/저장 ══════════ */
+/* 프로필 로드/저장 */
 function fillDefaults(){
   profileKeys.forEach(function(k){
     var el = document.getElementById('f-' + k);
@@ -1171,7 +1561,7 @@ function saveProfile(){
 }
 document.querySelectorAll('[data-save="profile"]').forEach(function(b){ b.addEventListener('click', saveProfile); });
 
-/* ══════════ 공용 CRUD 도우미 ══════════ */
+/* 공용 CRUD 도우미 */
 function val(id){ var e = document.getElementById(id); return e ? String(e.value||'').trim() : ''; }
 function chk(id){ var e = document.getElementById(id); return !!(e && e.checked); }
 function clr(ids){ ids.forEach(function(i){ var e = document.getElementById(i); if (!e) return; if (e.type === 'checkbox') e.checked = false; else e.value = ''; }); }
@@ -1186,7 +1576,7 @@ document.addEventListener('click', function(e){
 });
 var RELOAD = {};
 
-/* ── 공지 ── */
+/* 공지 */
 RELOAD.notice = function(){
   fetchAll('notice', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('nt-list').innerHTML = (rows||[]).map(function(r){
@@ -1200,26 +1590,29 @@ document.getElementById('nt-add').addEventListener('click', function(){
     .then(function(ok){ if (ok){ clr(['nt-title','nt-content','nt-img','nt-pin']); toast('올렸어요'); RELOAD.notice(); } else toast('실패'); });
 });
 
-/* ── 일정 ── */
+/* 일정 */
 RELOAD.schedule = function(){
   fetchAll('schedule', { order:'date', asc:false }).then(function(rows){
     document.getElementById('sc-list').innerHTML = (rows||[]).map(function(r){
-      return '<tr><td>' + fmtDate(r.date) + '</td><td>' + esc([r.time, r.title].filter(Boolean).join(' ')) + '</td><td>'
+      var span = (r.end_date && r.end_date !== r.date) ? ('~ ' + fmtDate(r.end_date)) : '—';
+      return '<tr><td>' + fmtDate(r.date) + '</td><td>' + span + '</td><td>' + esc([r.time, r.title].filter(Boolean).join(' ')) + '</td><td>'
         + esc([r.time2, r.title2].filter(Boolean).join(' ')) + '</td><td>' + esc(r.type||'') + '</td><td>' + esc(r.color||'') + '</td><td>'
         + delBtn('schedule', r.id) + '</td></tr>';
-    }).join('') || '<tr><td colspan="6" style="color:var(--ink-dim)">없음</td></tr>';
+    }).join('') || '<tr><td colspan="7" style="color:var(--ink-dim)">없음</td></tr>';
   });
 };
 document.getElementById('sc-add').addEventListener('click', function(){
   if (!val('sc-date') || !val('sc-title')){ toast('날짜와 1부 제목은 필수예요'); return; }
+  if (val('sc-end') && val('sc-end') < val('sc-date')){ toast('종료일이 시작일보다 앞설 수 없어요'); return; }
   insertRow('schedule', {
-    date:val('sc-date'), time:val('sc-time'), title:val('sc-title'), type:val('sc-type'),
+    date:val('sc-date'), end_date:val('sc-end') || null,
+    time:val('sc-time'), title:val('sc-title'), type:val('sc-type'),
     time2:val('sc-time2') || null, title2:val('sc-title2') || null, type2:val('sc-type2') || null,
     color:val('sc-color'), highlight:chk('sc-hl'), description:val('sc-desc')
-  }).then(function(ok){ if (ok){ clr(['sc-time','sc-title','sc-time2','sc-title2','sc-desc','sc-hl']); toast('추가했어요'); RELOAD.schedule(); } else toast('실패'); });
+  }).then(function(ok){ if (ok){ clr(['sc-time','sc-title','sc-time2','sc-title2','sc-desc','sc-hl','sc-end']); toast('추가했어요'); RELOAD.schedule(); } else toast('실패'); });
 });
 
-/* ── 업보 ── */
+/* 업보 */
 var VW = [], TP = [], CT = {};
 RELOAD.viewers = function(){ return loadWork(); };
 RELOAD.upbo_types = function(){ return loadWork(); };
@@ -1268,7 +1661,7 @@ document.getElementById('ct-save').addEventListener('click', function(){
   });
 });
 
-/* ── 일기 ── */
+/* 일기 */
 RELOAD.diary = function(){
   fetchAll('diary', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('dy-list').innerHTML = (rows||[]).map(function(r){
@@ -1294,7 +1687,7 @@ RELOAD.comments = function(){
 };
 document.getElementById('cm-load').addEventListener('click', RELOAD.comments);
 
-/* ── 노래 · VOD ── */
+/* 노래 · VOD */
 RELOAD.songs = function(){
   fetchAll('songs', { order:'title', asc:true }).then(function(rows){
     rows = rows || [];
@@ -1310,6 +1703,22 @@ document.getElementById('sg-add').addEventListener('click', function(){
     difficulty:parseInt(val('sg-diff'),10) || 3, memo:val('sg-memo') })
     .then(function(ok){ if (ok){ clr(['sg-title','sg-artist','sg-memo']); toast('추가했어요'); RELOAD.songs(); } else toast('실패'); });
 });
+document.getElementById('sg-swap').addEventListener('click', function(){
+  if (!needDb()) return;
+  if (!confirm('등록된 모든 곡의 제목과 아티스트를 서로 바꿉니다.\n계속할까요?')) return;
+  var btn = this; btn.disabled = true;
+  fetchAll('songs', { order:'id', asc:true }).then(function(rows){
+    if (!rows || !rows.length){ btn.disabled = false; toast('등록된 곡이 없어요'); return; }
+    return Promise.all(rows.map(function(r){
+      return updateRow('songs', r.id, { title: r.artist || '', artist: r.title || '' });
+    })).then(function(){
+      btn.disabled = false;
+      toast(rows.length + '곡의 제목·아티스트를 바꿨어요');
+      RELOAD.songs();
+    });
+  }).catch(function(){ btn.disabled = false; toast('바꾸는 중 문제가 생겼어요'); });
+});
+
 document.getElementById('sg-bulkadd').addEventListener('click', function(){
   var ls = val('sg-bulk').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
   if (!ls.length){ toast('내용이 비어있어요'); return; }
@@ -1336,7 +1745,7 @@ document.getElementById('vd-add').addEventListener('click', function(){
     .then(function(ok){ if (ok){ clr(['vd-title','vd-id']); toast('추가했어요'); RELOAD.original_songs(); } else toast('실패'); });
 });
 
-/* ── 옷장 ── */
+/* 옷장 */
 RELOAD.dress_items = function(){
   fetchAll('dress_items', { order:'created_at', asc:false }).then(function(rows){
     var L = { hair:'헤어', outfit:'의상', lens:'렌즈', event:'이벤트' };
@@ -1359,7 +1768,7 @@ document.getElementById('dr-add').addEventListener('click', function(){
   }).then(function(ok){ if (ok){ clr(['dr-name','dr-img','dr-desc','dr-new']); toast('올렸어요'); RELOAD.dress_items(); } else toast('실패'); });
 });
 
-/* ── OBS 오버레이 ── */
+/* OBS 오버레이 */
 function loadOverlay(){
   if (!(typeof db !== 'undefined' && db)) return;
   db.from('overlay_state').select('*').eq('id',1).single().then(function(r){
@@ -1378,7 +1787,7 @@ document.getElementById('ov-save').addEventListener('click', function(){
   });
 });
 
-/* ── 문의 ── */
+/* 문의 */
 RELOAD.inquiries = function(){
   fetchAll('inquiries', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('iq-list').innerHTML = (rows||[]).map(function(r){
@@ -1389,12 +1798,13 @@ RELOAD.inquiries = function(){
 };
 document.getElementById('iq-load').addEventListener('click', RELOAD.inquiries);
 
-/* ══════════ 부팅 ══════════ */
+/* 부팅 */
 function boot(){
   runSelfCheck();
   setupThumbs();
   document.getElementById('ncApp').addEventListener('input', function(e){
-    if (e.target.closest('#tab-main, #tab-profile, #tab-theme')) markDirty();
+    if (e.target.closest('#tab-main, #tab-profile, #tab-theme, #tab-words')
+        && e.target.id !== 'wordFind') markDirty();
   });
   loadProfile().then(function(){ refreshThumbs(); clearDirty(); });
   RELOAD.notice(); RELOAD.schedule(); loadWork(); RELOAD.diary();

@@ -1,7 +1,4 @@
-/* =============================================
-   supabase.js — Supabase 연동 공통 스크립트
-   ✅ 이 파일 상단 두 줄만 본인 값으로 교체!
-   ============================================= */
+/* ============================================= supabase.js — Supabase 연동 공통 스크립트 이 파일 상단 두 줄만 본인 값으로 교체! ============================================= */
 
 const SUPABASE_URL  = 'https://wtwibpchtbjwiuvzaybh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0d2licGNodGJqd2l1dnpheWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjk1NDQsImV4cCI6MjEwMDYwNTU0NH0.f8GJFmOuR61Jt7bZJL3lr1rhUeVIsEcCUZj4dC3sRpM';
@@ -21,13 +18,10 @@ try {
 }
 function dbReady(){ return !!db; }
 
-/* =============================================
-   CRUD 헬퍼 함수
-   ============================================= */
+/* ============================================= CRUD 헬퍼 함수 ============================================= */
 
-/** 전체 조회 (최신순)
- *  예) const rows = await fetchAll('schedule');
- */
+/* * 전체 조회 (최신순)
+ *  예) const rows = await fetchAll('schedule'); */
 async function fetchAll(table, options = {}) {
   if (!db) return [];
   let query = db.from(table).select('*');
@@ -39,9 +33,8 @@ async function fetchAll(table, options = {}) {
   return data;
 }
 
-/** 단건 삽입
- *  예) await insertRow('song', { title: '봄날', artist: 'BTS' });
- */
+/* * 단건 삽입
+ *  예) await insertRow('song', { title: '봄날', artist: 'BTS' }); */
 async function insertRow(table, row) {
   if (!db) return false;
   const { error } = await db.from(table).insert(row);
@@ -49,9 +42,8 @@ async function insertRow(table, row) {
   return true;
 }
 
-/** 단건 삭제
- *  예) await deleteRow('work', 3);
- */
+/* * 단건 삭제
+ *  예) await deleteRow('work', 3); */
 async function deleteRow(table, id) {
   if (!db) return false;
   const { error } = await db.from(table).delete().eq('id', id);
@@ -59,9 +51,8 @@ async function deleteRow(table, id) {
   return true;
 }
 
-/** 단건 수정
- *  예) await updateRow('schedule', 2, { title: '변경된 제목' });
- */
+/* * 단건 수정
+ *  예) await updateRow('schedule', 2, { title: '변경된 제목' }); */
 async function updateRow(table, id, updates) {
   if (!db) return false;
   const { error } = await db.from(table).update(updates).eq('id', id);
@@ -69,13 +60,10 @@ async function updateRow(table, id, updates) {
   return true;
 }
 
-/* =============================================
-   이미지 압축 & 업로드 헬퍼
-   ============================================= */
+/* ============================================= 이미지 압축 & 업로드 헬퍼 ============================================= */
 
-/** 이미지를 가로 maxW px 이하로 줄이고 JPEG로 압축 → Blob 반환
- *  원본이 10MB여도 보통 0.3~0.8MB로 줄어듦
- */
+/* * 이미지를 가로 maxW px 이하로 줄이고 JPEG로 압축 → Blob 반환
+ *  원본이 10MB여도 보통 0.3~0.8MB로 줄어듦 */
 async function compressImage(file, maxW = 1200, quality = 0.8) {
   // GIF(움짤)는 압축하면 정지화면 되니 원본 유지
   if (file.type === 'image/gif') return file;
@@ -101,9 +89,8 @@ async function compressImage(file, maxW = 1200, quality = 0.8) {
   }
 }
 
-/** 이미지 압축 후 버킷에 업로드 → 공개 URL 반환 (실패 시 null)
- *  folder 예: 'notice', 'diary'
- */
+/* * 이미지 압축 후 버킷에 업로드 → 공개 URL 반환 (실패 시 null)
+ *  folder 예: 'notice', 'diary' */
 async function uploadImage(file, folder = 'uploads') {
   try {
     const blob = await compressImage(file);
@@ -142,16 +129,10 @@ function initIframeResize() {
   new ResizeObserver(send).observe(document.body);
 }
 
-/* ─ 호환용 별칭 ─
-   일정/노래/일기/업보 페이지는 enableIframeAutoHeight() 라는 이름으로 호출합니다.
-   이 별칭이 없으면 그 페이지들에서 "함수 없음" 에러가 나고 iframe 높이가 자동조절되지 않습니다. */
+/* ─ 호환용 별칭 ─ 일정/노래/일기/업보 페이지는 enableIframeAutoHeight() 라는 이름으로 호출합니다. 이 별칭이 없으면 그 페이지들에서 "함수 없음" 에러가 나고 iframe 높이가 자동조절되지 않습니다. */
 function enableIframeAutoHeight() { initIframeResize(); }
 
-
-/* =============================================
-   🎨 색상 팔레트 자동 적용 (전 페이지 공통)
-   admin > 🎨 테마 탭에서 저장한 색을 모든 페이지에 반영
-   ============================================= */
+/* ============================================= 색상 팔레트 자동 적용 (전 페이지 공통) admin > 테마 탭에서 저장한 색을 모든 페이지에 반영 ============================================= */
 async function applyTheme(){
   if (!db) return;
   try{
@@ -163,7 +144,12 @@ async function applyTheme(){
       'theme-main-deep': '--main-deep',
       'theme-main-light':'--main-light',
       'theme-bg':        '--bg',
-      'theme-logo':      '--logo'
+      'theme-logo':      '--logo',
+      /* 글자 크기 배율 (1 = 기본) */
+      'type-display':    '--fs-display',
+      'type-title':      '--fs-title',
+      'type-body':       '--fs-body',
+      'type-label':      '--fs-label'
     };
     Object.keys(map).forEach(function(k){
       if(p[k]) document.documentElement.style.setProperty(map[k], p[k]);
