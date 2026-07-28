@@ -15,7 +15,9 @@
 html,body{height:100%}
 body{overflow:hidden}
 .stage{position:relative;width:100vw;height:100svh;overflow:hidden}
-/* fx.js 등장 애니가 .wrap 에 transform 을 남기면 .wrap 이 absolute 자식의 기준 박스가 된다. .wrap 은 높이 0이라 bottom:% 가 0으로 계산돼 하단 요소가 화면 위로 사라진다. → .wrap 자체를 스테이지 크기로 고정해 기준 박스를 명확히 한다. */
+
+/* fx.js leaves a transform on .wrap, which makes it the containing block
+   for absolute children. Give it a real box or bottom:% collapses to 0. */
 .stage > .wrap{position:absolute;inset:0;z-index:5}
 .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:67% 48%;
   filter:saturate(.75) brightness(.67) contrast(1.08);transform:scale(1.02)}
@@ -29,7 +31,6 @@ body.day .stage-shade{background:
   linear-gradient(0deg,rgba(247,243,248,.82),transparent 46%),
   linear-gradient(135deg,rgba(157,119,166,.20),transparent 52%)}
 
-/* 상단바 : 시안 그대로 (로고 / 중앙 THE MIDNIGHT LOG / 우측 인덱스) */
 .stage .topbar{position:absolute;top:0;left:0;right:0;z-index:20;height:9%;padding:0 3.5%;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
   border-bottom:1px solid rgba(255,255,255,.30);background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -39,7 +40,7 @@ body.day .stage .topbar{border-bottom-color:rgba(28,16,36,.24)}
 .stage .topbar .brand .en{font-size:calc(clamp(6px,.45vw,9px) * var(--fs-label));font-weight:900;letter-spacing:.27em}
 .tb-center{justify-self:center;font-size:calc(clamp(5px,.46vw,9px) * var(--fs-label));font-weight:700;letter-spacing:.18em;color:var(--ink)}
 .tb-right{justify-self:end;display:flex;align-items:center;gap:clamp(9px,1.05vw,17px)}
-/* 상단 인라인 메뉴 — 서브 페이지와 같은 항목을, 메인의 마이크로 타이포로 */
+
 .tb-nav{display:flex;align-items:center;gap:clamp(9px,1.05vw,17px)}
 .tb-nav a{color:var(--ink);text-decoration:none;font-size:calc(clamp(5px,.46vw,9px) * var(--fs-label));
   font-weight:700;letter-spacing:.18em;white-space:nowrap;transition:color .18s;opacity:.86}
@@ -60,7 +61,6 @@ body.day .tb-right .tbtn{border-color:rgba(28,16,36,.3)}
 .tb-right button:hover{color:var(--main-light)}
 body.day .tb-right button:hover{color:var(--main-deep)}
 
-/* 워드마크 */
 .hero{position:absolute;top:29%;left:4%;z-index:1;pointer-events:none}
 .hero .out{white-space:nowrap;font-family:var(--ff-disp);font-size:calc(clamp(82px,13vw,250px) * var(--fs-display));font-weight:950;
   line-height:.8;letter-spacing:-.09em;color:transparent;-webkit-text-fill-color:transparent;
@@ -68,7 +68,6 @@ body.day .tb-right button:hover{color:var(--main-deep)}
   filter:drop-shadow(0 0 2px rgba(197,119,232,.44)) drop-shadow(0 0 7px rgba(164,77,207,.20))}
 body.day .hero .out{-webkit-text-stroke:1px rgba(80,49,93,.66);filter:none}
 
-/* 주간 편성 */
 .log{position:absolute;bottom:5%;left:4%;z-index:3;width:56%;
   display:grid;grid-template-columns:repeat(7,minmax(0,1fr));height:clamp(108px,15vh,164px);
   border:1px solid rgba(255,255,255,.29);background:rgba(8,5,12,.42);
@@ -91,7 +90,6 @@ body.day .log strong{color:var(--main-deep)}
   font-size:calc(clamp(6px,.55vw,11px) * var(--fs-label));font-style:normal}
 body.day .log em{color:rgba(28,16,36,.72)}
 
-/* 다음 방송 */
 .bcast{position:absolute;right:4%;bottom:6%;z-index:3;width:29%;padding:14px 16px;
   display:grid;grid-template-columns:8px 1fr;gap:2px 9px;
   border-top:1px solid #D6A8EA;border-bottom:1px solid rgba(255,255,255,.38);
@@ -105,7 +103,6 @@ body.day .bcast .k{color:var(--main-deep)}
 .bcast p{grid-column:2;margin:6px 0 0;color:rgba(255,255,255,.66);font-size:calc(clamp(6px,.52vw,10px) * var(--fs-label))}
 body.day .bcast p{color:rgba(28,16,36,.70)}
 
-/* 세로 링크 레일 */
 .rail{position:absolute;top:14%;right:2.3%;z-index:3;display:flex;flex-direction:column;align-items:flex-end;gap:18px}
 .rail a,.rail span{font-size:calc(clamp(5px,.43vw,8px) * var(--fs-label));font-weight:800;letter-spacing:.14em;
   writing-mode:vertical-rl;color:var(--ink);transition:color .18s}
@@ -114,12 +111,11 @@ body.day .rail a:hover{color:var(--main-deep)}
 .rail span{margin-top:8px;color:rgba(255,255,255,.40)}
 body.day .rail span{color:rgba(28,16,36,.45)}
 
-/* 전체화면 메뉴 (상단바 모양을 지키려고 오버레이로 뺌) */
 .sheet{position:fixed;inset:0;z-index:60;display:none;background:rgba(6,4,9,.93);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:11vh 6% 5vh}
 body.day .sheet{background:rgba(247,243,248,.95)}
 .sheet.on{display:grid;align-content:center;gap:2px;overflow-y:auto;overscroll-behavior:contain}
-/* 항목 크기를 화면 높이에도 묶어야 8개 + 버튼이 한 화면에 들어간다 */
+
 .sheet a{display:block;padding:clamp(4px,.9vh,12px) 0;font-family:var(--ff-disp);
   font-size:calc(clamp(20px,min(4.2vw,4.4vh),56px) * var(--fs-display));font-weight:900;letter-spacing:-.03em;color:var(--ink);
   border-bottom:1px solid var(--line);transition:color .16s,padding-left .16s}
@@ -201,7 +197,7 @@ body.day .sheet a:hover{color:var(--main-deep)}
     </nav>
   </div>
 
-  <!-- 전체화면 메뉴 : 시안 상단바 모양을 지키려고 오버레이로 분리 -->
+  
   <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="메뉴">
     <button class="x" type="button" id="sheetClose" aria-label="닫기">CLOSE ×</button>
     <a href="profile/">프로필<small>PROFILE</small></a>
@@ -244,7 +240,6 @@ body.day .sheet a:hover{color:var(--main-deep)}
 var DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
 var DAYKO = ['월','화','수','목','금','토','일'];
 
-/* 요일 한 칸 = "라벨|시간" (예: CHAT|21:00). 비우면 휴방(REST). week-0~6 이 하나도 없으면 예전 방식(days 체크 + 공통 시간)으로 자동 폴백한다. */
 function dayCell(p, i){
   var raw = txt(p['week-' + i] || '');
   if (raw){
@@ -267,14 +262,14 @@ function renderLog(p, liveIdx){
   var html = '<small>WEEKLY TRANSMISSION</small>';
   var onCount = 0;
   for (var i=0;i<7;i++){
-    /* 요일별 편성을 쓰는 중이면 빈 칸 = 휴방. 체크박스 방식으로 되돌아가면 안 된다. */
+    
     var c = useWeek ? (dayCell(p, i) || { on:false, label:'REST', time:'—' }) : null;
     if (!c){
       var on = free || set.indexOf(String(i)) >= 0;
       c = { on:on, label: on ? 'ON AIR' : 'REST', time: on ? time : '—' };
     }
     if (c.on) onCount++;
-    /* 강조는 "다음 전파" 한 칸만 — 시안에서 FRI 한 칸만 밝은 이유 */
+    
     html += '<div class="' + (i === liveIdx ? 'on' : '') + '">'
       + '<span class="n">' + ('0'+(i+1)) + '</span>'
       + '<b>' + DAYS[i] + '</b>'
@@ -299,7 +294,7 @@ function nextTransmission(p){
   var now = new Date();
   var todayIdx = (now.getDay() + 6) % 7; // 0=월
 
-  /* 요일별 편성(week-0~6)이 있으면 그걸 우선해서 다음 방송을 찾는다 */
+  
   var hasWeek = false;
   for (var w=0;w<7;w++){ if (txt(p['week-' + w] || '')) { hasWeek = true; break; } }
   if (hasWeek){
@@ -323,7 +318,7 @@ function boot(){
   bootSite();
   getProfile().then(function(raw){
     var p = mergeP(raw);
-    /* 메인 히어로 사진 — 없으면 밤 배경, 그것도 없으면 기본 파일 유지 */
+    
     var photo = txt(p['main-photo']) || txt(p['bg-night']);
     if (photo){
       var sb = document.getElementById('stageBg');
@@ -334,7 +329,7 @@ function boot(){
     var nt = nextTransmission(p);
     renderLog(p, nt.idx);
     document.getElementById('nextD').textContent = nt.d + ' · ' + nt.t + ' KST';
-    /* 시안과 동일하게 한 줄만 — 문구를 덧붙이면 카드 높이가 달라진다 */
+    
     document.getElementById('nextN').textContent = txt(p['main-story']) || '게임과 이야기 사이, 밤의 주파수를 맞춰요.';
 
     ['soop','youtube','x'].forEach(function(k){
@@ -346,7 +341,7 @@ function boot(){
     ready();
   });
 }
-/* 전체화면 메뉴 */
+
 (function(){
   var sh = document.getElementById('sheet');
   function open(){ sh.classList.add('on'); document.body.style.overflow = 'hidden'; }
@@ -355,7 +350,7 @@ function boot(){
   document.getElementById('sheetClose').addEventListener('click', close);
   sh.addEventListener('click', function(e){ if (e.target === sh) close(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
-  /* 메뉴 안의 문의 버튼을 누르면 메뉴는 닫고 모달만 남긴다 */
+  
   sh.querySelector('[data-ask]').addEventListener('click', close);
 })();
 

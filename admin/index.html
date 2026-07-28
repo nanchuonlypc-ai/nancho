@@ -52,7 +52,6 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
 .days input:checked + span{color:var(--main-light);font-weight:700}
 .days label:has(input:checked){border-color:var(--main);background:rgba(199,155,216,.14)}
 
-/* 팔레트 */
 .pal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 @media (max-width:820px){.pal{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.pal{grid-template-columns:minmax(0,1fr)}}
@@ -63,30 +62,30 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
 .pal .p input[type=color]{width:46px;height:40px;padding:2px;border:1px solid var(--line);background:transparent;cursor:pointer}
 .pal .p input[type=text]{box-sizing:border-box}
 .prev{border:1px solid var(--line);padding:18px;margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-/* 팔레트 프리셋 */
+
 .presets{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 .presets button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;
   color:var(--ink-soft);padding:8px 12px;cursor:pointer;font:inherit;font-size:11.5px;letter-spacing:.02em}
 .presets button:hover{border-color:var(--main);color:var(--ink)}
 .presets .chips{display:flex}
 .presets .chips i{width:13px;height:13px;display:block;border:1px solid rgba(0,0,0,.25)}
-/* 대비 진단 */
+
 .contrast{margin-top:14px;border:1px solid var(--line);padding:14px}
 .contrast .row2{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12px}
 .contrast .row2:last-child{border-bottom:0}
 .contrast b.ok{color:#7FD6A6}.contrast b.warn{color:#E8C46A}.contrast b.bad{color:#E88A9A}
-/* 이미지 미리보기 */
+
 .thumb{margin-top:10px;border:1px solid var(--line);height:104px;display:none;
   background:rgba(0,0,0,.25) center/contain no-repeat}
 .thumb.on{display:block}
 .thumb.err{display:flex;align-items:center;justify-content:center;color:#E88A9A;font-size:11.5px;background-image:none}
-/* 상단 액션 */
+
 .topact{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
 .topact a,.topact button{border:1px solid var(--line);background:transparent;color:var(--ink-soft);
   padding:8px 13px;font:inherit;font-size:11.5px;text-decoration:none;cursor:pointer}
 .topact a:hover,.topact button:hover{border-color:var(--main);color:var(--ink)}
 .dirty{color:#E8C46A}
-/* 글자 크기 조절 */
+
 .tsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 .tsgrid .t{border:1px solid var(--line);padding:14px 16px}
 .tsgrid .t .n{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--main)}
@@ -100,13 +99,13 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
 .tsprev .p-lbl{font-size:calc(10px * var(--pv-label,1));font-weight:900;letter-spacing:.22em;color:var(--main);margin-top:14px}
 .tsprev .p-title{font-size:calc(24px * var(--pv-title,1));font-weight:900;margin-top:4px}
 .tsprev .p-body{font-size:calc(14px * var(--pv-body,1));color:var(--ink-soft);margin-top:8px;line-height:1.7}
-/* 자가진단 배너 (문제 있을 때만 표시) */
+
 #selfcheck{display:none;border:1px solid #E88A9A;background:rgba(232,138,154,.09);padding:14px 16px;margin:0 0 16px;font-size:12.5px;line-height:1.8}
 #selfcheck.on{display:block}
 #selfcheck b{color:#E88A9A}
 #selfcheck ul{margin:8px 0 0;padding-left:18px}
 #selfcheck code{background:rgba(0,0,0,.35);padding:1px 5px;font-size:11.5px}
-/* 왜 링크 방식인지 · 규격 안내 */
+
 details.why{border:1px solid var(--line);margin:14px 0 0;background:rgba(199,155,216,.04)}
 details.why summary{cursor:pointer;padding:11px 14px;font-size:12px;color:var(--main);font-weight:700;list-style:none}
 details.why summary::-webkit-details-marker{display:none}
@@ -134,7 +133,6 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <body>
 <script>try{if(localStorage.getItem('theme')==='light')document.body.classList.add('day');}catch(e){}</script>
 
-<!-- 비상 진단 — 화면이 까맣게만 나올 때 원인을 글자로 띄운다. 여기서 쓰는 스타일은 전부 인라인이라 style.css 가 죽어도 보인다. -->
 <script>
 (function(){
   var LOG = [];
@@ -175,7 +173,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     add('처리되지 않은 오류: ' + ((e.reason && (e.reason.message || e.reason)) || e));
   });
 
-  /* 감시견 — 로그인 상자가 안 그려지면 "왜 안 그려졌는지"를 숫자로 보여주고, 같은 상자 안에 비상 로그인을 넣는다(다른 요소가 덮지 못하도록). */
+  
   function measure(el){
     if (!el) return 'element 없음';
     var r = el.getBoundingClientRect(), st = getComputedStyle(el);
@@ -200,14 +198,14 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         + ' / supabase.js: ' + (typeof fetchAll === 'function' ? 'O' : 'X')
         + ' / 라이브러리: ' + (typeof supabase !== 'undefined' ? 'O' : 'X'));
 
-    /* 게이트를 강제로 되살려 본다 */
+    
     if (g){
       g.className = 'nc-gate';
       g.setAttribute('style','display:block!important;opacity:1!important;visibility:visible!important;'
         + 'max-width:380px;margin:40px auto;padding:28px;border:1px solid #888;background:#15101c;color:#fff');
     }
 
-    /* 진단 상자 안에 비상 로그인을 넣는다 — 무엇도 덮을 수 없게 */
+    
     var d = panel();
     var box = document.createElement('div');
     box.setAttribute('style','margin-top:14px;padding:14px;border:1px solid #E8506E;background:#0e0810;max-width:380px');
@@ -237,7 +235,6 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 })();
 </script>
 
-<!-- 로그인 -->
 <div class="nc-gate" id="ncGate">
   <h1>ADMIN</h1>
   <p>THE MIDNIGHT LOG · 관리자</p>
@@ -252,7 +249,6 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     비밀번호는 소스에 들어있지 않고 Supabase가 확인합니다.</p>
 </div>
 
-<!-- 본체 -->
 <div class="nc-shell nc-off" id="ncApp">
   <div class="nc-bar">
     <div class="b">난초<small>ADMIN</small></div>
@@ -287,7 +283,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     <button data-t="theme">🎨 테마</button>
   </div>
 
-  <!-- 메인 -->
+  
   <div class="tab-panel active" id="tab-main">
     <div class="warn">여기서 저장하면 <b>메인·프로필</b> 페이지가 함께 바뀝니다. 저장 후 사이트에서 <b>Ctrl+Shift+R</b>로 새로고침하세요.</div>
 
@@ -492,7 +488,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 프로필 -->
+  
   <div class="tab-panel" id="tab-profile">
     <div class="card">
       <div class="card-title"><div><small>VOICE</small>한마디 · 소개 · 진행중</div><button class="btn sm" data-save="profile">저장</button></div>
@@ -543,7 +539,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 공지 -->
+  
   <div class="tab-panel" id="tab-notice">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>공지 작성</div></div>
@@ -565,7 +561,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 일정 -->
+  
   <div class="tab-panel" id="tab-schedule">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>일정 추가</div></div>
@@ -609,7 +605,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 업보 -->
+  
   <div class="tab-panel" id="tab-work">
     <div class="row r2">
       <div class="card">
@@ -639,7 +635,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 일기 -->
+  
   <div class="tab-panel" id="tab-diary">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>일기 작성</div></div>
@@ -667,7 +663,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 노래 · VOD -->
+  
   <div class="tab-panel" id="tab-song">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>노래 추가</div></div>
@@ -728,7 +724,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 옷장 -->
+  
   <div class="tab-panel" id="tab-dress">
     <div class="card">
       <div class="card-title"><div><small>NEW</small>옷장 등록</div></div>
@@ -781,7 +777,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 문의 -->
+  
   <div class="tab-panel" id="tab-inquiry">
     <div class="card">
       <div class="card-title"><div><small>INBOX</small>받은 문의</div><button class="btn sm" id="iq-load">새로고침</button></div>
@@ -789,7 +785,7 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     </div>
   </div>
 
-  <!-- 테마 -->
+  
   <div class="tab-panel" id="tab-words">
     <div class="warn">화면에 보이는 <b>고정 문구</b>를 전부 바꿀 수 있어요 — 섹션 제목·항목 이름·라벨·메뉴까지. 비우면 기본 문구가 그대로 나옵니다.</div>
 
@@ -1037,8 +1033,9 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
 <script src="../supabase.js"></script>
 <script src="../site.js"></script>
 <script>
-/* 로그인 — 비밀번호는 코드에 두지 않고 Supabase Auth 가 확인한다. 계정: Supabase → Authentication → Users (Auto Confirm User 켜기) */
-/* 확장 프로그램이 #app · #gate 같은 흔한 이름을 display:none 으로 숨겨버리는 사례가 있어 (광고차단 필터 목록의 일반 규칙), 클래스 토글만 믿지 않고 인라인 !important 로 못 박는다. */
+
+/* Ad-blocker filters hide class names starting with 'ad'. Names use an nc- prefix
+   and visibility is pinned inline so an injected stylesheet cannot win. */
 function forceShow(el){
   if (!el) return;
   el.style.setProperty('display','block','important');
@@ -1056,7 +1053,7 @@ function openApp(){
   forceShow(document.getElementById('ncApp'));
   try { boot(); } catch (e) { console.error('[admin] boot 오류:', e); runSelfCheck(); }
 
-  /* 확장 프로그램이 뒤늦게 숨기는 경우가 있어 몇 초간 표시를 재확인한다. (광고차단 필터가 클래스 이름을 보고 display:none 을 걸어버리는 사례) */
+  
   var recheck = 0;
   var iv = setInterval(function(){
     var app = document.getElementById('ncApp');
@@ -1080,7 +1077,6 @@ function enter(){
   }).catch(function(){ btn.disabled = false; toast('로그인 중 문제가 생겼어요'); });
 }
 
-/* 새로고침해도 로그인 유지 — 세션은 Supabase 가 보관한다 */
 function restoreSession(){
   if (typeof db === 'undefined' || !db) return;
   db.auth.getSession().then(function(r){
@@ -1092,9 +1088,9 @@ function signOut(){
   if (typeof db !== 'undefined' && db) db.auth.signOut().catch(function(){});
   location.reload();
 }
-/* 공유 파일(../site.js 등)이 안 불러와지면 toast·applyMode·toggleMode 가 없어 여기서 ReferenceError 가 나고, 그 뒤 줄이 통째로 안 돌아 화면이 캄캄해진다. → 없으면 대체품을 만들고, 초기화 전체를 try/catch 로 감싼다. */
+
 if (typeof toast !== 'function'){ window.toast = function(m){ try{ console.log(m); }catch(e){} }; }
-/* supabase.js 가 안 실려도 화면은 끝까지 그려지도록 CRUD 헬퍼 대체품을 둔다 */
+
 if (typeof fetchAll   !== 'function'){ window.fetchAll   = function(){ return Promise.resolve([]); }; }
 if (typeof insertRow  !== 'function'){ window.insertRow  = function(){ return Promise.resolve(null); }; }
 if (typeof updateRow  !== 'function'){ window.updateRow  = function(){ return Promise.resolve(null); }; }
@@ -1126,10 +1122,6 @@ try {
 }
 document.body.classList.add('ready');
 
-/* (옛 전체화면 안전망은 제거 — 아래 통합 진단기가 대신한다) */
-
-/* 자가진단 — 공유 파일이 안 불러와졌을 때 원인을 화면에 띄운다 */
-/* 관리자는 ../supabase.js · ../site.js · ../style.css 3개에 기대고 있다. 하나라도 404 면 "열리긴 하는데 저장이 안 되는" 상태가 되어 원인을 찾기 어렵다. 그래서 로그인 직후 무엇이 빠졌는지 빨간 배너로 알려준다. */
 function runSelfCheck(){
   var bad = [];
   if (typeof fetchAll !== 'function')
@@ -1157,15 +1149,12 @@ function runSelfCheck(){
   return false;
 }
 
-/* DB 연결 가드 */
-/* supabase.js 의 URL/KEY 가 아직 자리표시자면 db 는 null 이다. 이 경우에도 관리자 화면이 죽지 않게 안내만 띄우고 넘어간다. */
 function needDb(){
   if (typeof db !== 'undefined' && db) return true;
   toast('Supabase 주소·키가 아직 설정되지 않았어요 (supabase.js 상단 2줄)');
   return false;
 }
 
-/* 탭 */
 var TAB_PAGE = { main:'../index.html', profile:'../profile/', notice:'../notice/', schedule:'../schedule/',
                  work:'../work/', diary:'../diary/', song:'../song/', dress:'../dress/',
                  inquiry:'../index.html', words:'../profile/', theme:'../index.html' };
@@ -1178,7 +1167,6 @@ document.getElementById('tabs').addEventListener('click', function(e){
   document.getElementById('act-view').href = TAB_PAGE[b.dataset.t] || '../index.html';
 });
 
-/* 미저장 표시 */
 var DIRTY = false;
 function markDirty(){
   DIRTY = true;
@@ -1193,8 +1181,6 @@ window.addEventListener('beforeunload', function(e){
   e.preventDefault(); e.returnValue = '';
 });
 
-/* 이미지 미리보기 */
-/* 이미지 주소 칸 아래에 실제 그림을 띄워 준다 — 주소를 잘못 넣으면 바로 알 수 있게. */
 var IMG_FIELDS = ['avatar','hero-art','fan-char','main-photo','bg-night','bg-day'];
 function setupThumbs(){
   IMG_FIELDS.forEach(function(k){
@@ -1229,7 +1215,6 @@ function refreshThumbs(){
   });
 }
 
-/* 백업 / 복원 */
 function doBackup(){
   var data = {};
   profileKeys.forEach(function(k){
@@ -1271,7 +1256,6 @@ document.getElementById('act-file').addEventListener('change', function(){
   this.value = '';
 });
 
-/* 프로필 키 ( 페이지가 읽는 키와 반드시 일치) */
 var profileKeys = [
   'avatar','soop-id','hero-art','fan-char','main-photo','bg-night','bg-day',
   'site-tagline','main-story','info-motif','fandom-note',
@@ -1350,7 +1334,6 @@ var profileKeys = [
   'txt-nav-9'
 ];
 
-/* 요일 체크박스 (0=월 … 6=일) */
 var DAYKO = ['월','화','수','목','금','토','일'];
 document.getElementById('daysBox').innerHTML = DAYKO.map(function(d,i){
   return '<label><input type="checkbox" class="dchk" value="' + i + '"><span>' + d + '</span></label>';
@@ -1366,7 +1349,6 @@ function inputToDays(v){
 }
 document.getElementById('daysBox').addEventListener('change', daysToInput);
 
-/* 팔레트 */
 var PAL = [
   ['theme-main','MAIN','#C79BD8','포인트 색 — 라벨·강조·버튼 테두리'],
   ['theme-main-light','MAIN LIGHT','#E4CDF0','밝은 강조 — 제목 아웃라인·활성 글자'],
@@ -1398,7 +1380,7 @@ function livePreview(){
   drawContrast();
   tsPreview();
 }
-/* 문구 찾기 */
+
 document.getElementById('wordFind').addEventListener('input', function(){
   var q = this.value.trim().toLowerCase();
   var cards = document.querySelectorAll('#tab-words .card');
@@ -1414,7 +1396,6 @@ document.getElementById('wordFind').addEventListener('input', function(){
   });
 });
 
-/* 글자 크기 배율 */
 var TS = [
   ['type-display','디스플레이','페이지 맨 위 초대형 제목 (난초 / DOSSIER)'],
   ['type-title',  '섹션 제목',  '각 구획 제목 (기본 기록, 주간 전파 …)'],
@@ -1446,7 +1427,6 @@ document.getElementById('ts-reset').addEventListener('click', function(){
   tsPreview(); markDirty(); toast('글자 크기를 기본값으로 되돌렸어요 — 저장을 눌러주세요');
 });
 
-/* 팔레트 프리셋 */
 var PRESETS = [
   ['미드나잇 (기본)', ['#C79BD8','#E4CDF0','#9D77A6','#50315D','#09070D','#F3EAFA']],
   ['체리 나이트',     ['#E8A8BE','#F6D6E1','#B87A93','#5C2F42','#0C0709','#FBEDF2']],
@@ -1470,7 +1450,6 @@ document.getElementById('presets').addEventListener('click', function(e){
   toast(PRESETS[+b.dataset.ps][0] + ' 적용 — 저장을 눌러야 사이트에 반영됩니다');
 });
 
-/* 대비 진단 (WCAG) */
 function _lum(hex){
   var m = /^#([0-9a-fA-F]{6})$/.exec(hex || ''); if (!m) return null;
   var n = parseInt(m[1],16), f = [(n>>16)&255,(n>>8)&255,n&255].map(function(v){
@@ -1508,7 +1487,6 @@ document.getElementById('th-reset').addEventListener('click', function(){
   livePreview(); toast('기본 팔레트로 되돌렸어요 — 저장을 눌러야 반영됩니다');
 });
 
-/* 프로필 로드/저장 */
 function fillDefaults(){
   profileKeys.forEach(function(k){
     var el = document.getElementById('f-' + k);
@@ -1561,7 +1539,6 @@ function saveProfile(){
 }
 document.querySelectorAll('[data-save="profile"]').forEach(function(b){ b.addEventListener('click', saveProfile); });
 
-/* 공용 CRUD 도우미 */
 function val(id){ var e = document.getElementById(id); return e ? String(e.value||'').trim() : ''; }
 function chk(id){ var e = document.getElementById(id); return !!(e && e.checked); }
 function clr(ids){ ids.forEach(function(i){ var e = document.getElementById(i); if (!e) return; if (e.type === 'checkbox') e.checked = false; else e.value = ''; }); }
@@ -1576,7 +1553,6 @@ document.addEventListener('click', function(e){
 });
 var RELOAD = {};
 
-/* 공지 */
 RELOAD.notice = function(){
   fetchAll('notice', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('nt-list').innerHTML = (rows||[]).map(function(r){
@@ -1590,7 +1566,6 @@ document.getElementById('nt-add').addEventListener('click', function(){
     .then(function(ok){ if (ok){ clr(['nt-title','nt-content','nt-img','nt-pin']); toast('올렸어요'); RELOAD.notice(); } else toast('실패'); });
 });
 
-/* 일정 */
 RELOAD.schedule = function(){
   fetchAll('schedule', { order:'date', asc:false }).then(function(rows){
     document.getElementById('sc-list').innerHTML = (rows||[]).map(function(r){
@@ -1612,7 +1587,6 @@ document.getElementById('sc-add').addEventListener('click', function(){
   }).then(function(ok){ if (ok){ clr(['sc-time','sc-title','sc-time2','sc-title2','sc-desc','sc-hl','sc-end']); toast('추가했어요'); RELOAD.schedule(); } else toast('실패'); });
 });
 
-/* 업보 */
 var VW = [], TP = [], CT = {};
 RELOAD.viewers = function(){ return loadWork(); };
 RELOAD.upbo_types = function(){ return loadWork(); };
@@ -1661,7 +1635,6 @@ document.getElementById('ct-save').addEventListener('click', function(){
   });
 });
 
-/* 일기 */
 RELOAD.diary = function(){
   fetchAll('diary', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('dy-list').innerHTML = (rows||[]).map(function(r){
@@ -1687,7 +1660,6 @@ RELOAD.comments = function(){
 };
 document.getElementById('cm-load').addEventListener('click', RELOAD.comments);
 
-/* 노래 · VOD */
 RELOAD.songs = function(){
   fetchAll('songs', { order:'title', asc:true }).then(function(rows){
     rows = rows || [];
@@ -1745,7 +1717,6 @@ document.getElementById('vd-add').addEventListener('click', function(){
     .then(function(ok){ if (ok){ clr(['vd-title','vd-id']); toast('추가했어요'); RELOAD.original_songs(); } else toast('실패'); });
 });
 
-/* 옷장 */
 RELOAD.dress_items = function(){
   fetchAll('dress_items', { order:'created_at', asc:false }).then(function(rows){
     var L = { hair:'헤어', outfit:'의상', lens:'렌즈', event:'이벤트' };
@@ -1768,7 +1739,6 @@ document.getElementById('dr-add').addEventListener('click', function(){
   }).then(function(ok){ if (ok){ clr(['dr-name','dr-img','dr-desc','dr-new']); toast('올렸어요'); RELOAD.dress_items(); } else toast('실패'); });
 });
 
-/* OBS 오버레이 */
 function loadOverlay(){
   if (!(typeof db !== 'undefined' && db)) return;
   db.from('overlay_state').select('*').eq('id',1).single().then(function(r){
@@ -1787,7 +1757,6 @@ document.getElementById('ov-save').addEventListener('click', function(){
   });
 });
 
-/* 문의 */
 RELOAD.inquiries = function(){
   fetchAll('inquiries', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('iq-list').innerHTML = (rows||[]).map(function(r){
@@ -1798,7 +1767,6 @@ RELOAD.inquiries = function(){
 };
 document.getElementById('iq-load').addEventListener('click', RELOAD.inquiries);
 
-/* 부팅 */
 function boot(){
   runSelfCheck();
   setupThumbs();

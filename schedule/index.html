@@ -27,8 +27,10 @@
 .cal .cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);
   min-height:112px;padding:8px 7px;position:relative;overflow:hidden}
 .cal .cell.out{opacity:.32}
-/* ── 기간 일정 띠 — 셀 경계를 넘어 쭉 이어진다 ── 좌우 음수 마진으로 이웃 칸까지 늘리고, 시작/끝 칸에서만 막는다. 난초 기하에 맞춰 둥근 캡 대신 각진 끝 + 끝선으로 마감. */
+
 .cal .cell.hasband{overflow:visible}
+/* Band spans across cells. Negative margin must equal cell padding + border
+   (7px + 1px here) or a gap shows at the seam. */
 .cal .band{position:relative;display:block;height:19px;margin:4px -8px 0 -7px;
   background:color-mix(in srgb, var(--c) 26%, transparent);
   border-top:1px solid var(--c);border-bottom:1px solid var(--c);
@@ -39,14 +41,14 @@
 .cal .band.b-end{margin-right:0;border-right:2px solid var(--c)}
 .cal .band.off{opacity:.55}
 .cal .band:hover{background:color-mix(in srgb, var(--c) 42%, transparent)}
-/* 주 시작/끝 칸에서 밖으로 삐지지 않게 */
+
 .cal .wk > .cell:first-child .band{margin-left:0}
 .cal .wk > .cell:last-child  .band{margin-right:0}
 .cal .cell.today{background:rgba(199,155,216,.12);box-shadow:inset 0 0 0 1px var(--main)}
 .cal .cell .n{font-family:var(--ff-serif);font-size:calc(13px * var(--fs-body));color:var(--ink-soft)}
 .cal .cell.sun .n{color:#E08AA8}
 .cal .cell.sat .n{color:#8FB6E8}
-/* 주간(라이트) 모드에선 밝은 배경이라 한 톤 진하게 — 안 그러면 대비 2:1 대로 안 읽힘 */
+
 body.day .cal .cell.sun .n{color:#B23A63}
 body.day .cal .cell.sat .n{color:#2C5E9E}
 .chip{display:block;margin-top:5px;padding:4px 7px;font-size:calc(10.5px * var(--fs-label));line-height:1.35;cursor:pointer;
@@ -203,7 +205,7 @@ function draw(){
   var first = new Date(VY, VM, 1);
   var start = new Date(VY, VM, 1 - ((first.getDay()+6)%7)); // 월요일 시작
   var today = keyOf(new Date());
-  /* 기간 일정(end_date)이 있으면 그 사이 모든 날짜에 걸친다 */
+  
   function evOn(k){
     return ROWS.filter(function(r){
       var e = r.end_date || r.date;
@@ -228,7 +230,7 @@ function draw(){
         var ranged = r.end_date && r.end_date !== r.date;
 
         if (ranged && !bandUsed){
-          /* 기간 일정 = 띠. 좌우로 셀 밖까지 늘려 이웃 칸과 이어 붙는다. 글자는 시작일에만, 양 끝만 막아 캡슐처럼 보이게. */
+          
           bandUsed = true;
           var caps = (k === r.date ? ' b-start' : '') + (k === r.end_date ? ' b-end' : '');
           var btxt = (r.time ? r.time + ' ' : '') + (r.title || (isOff(r) ? '휴방' : '방송'));
@@ -237,7 +239,7 @@ function draw(){
                 +  (k === r.date ? '<b>' + esc(btxt) + '</b>' : '') + '</span>';
           return;
         }
-        if (ranged) return;   /* 한 칸에 띠는 하나만 */
+        if (ranged) return;   
 
         inner += '<span class="chip ' + (r.highlight ? 'hl' : '') + (isOff(r) ? ' off' : '') + '" data-i="' + idx + '" style="--c:' + colorOf(r) + '">'
           + (r.time ? '<span class="tm">' + esc(r.time) + '</span>' : '') + esc(r.title || '') + '</span>';
@@ -298,7 +300,7 @@ document.addEventListener('click', function(e){
 document.getElementById('vMask').addEventListener('click', function(e){
   if (e.target === this || (e.target.closest && e.target.closest('[data-close]'))) this.classList.remove('on');
 });
-/* ESC 로도 닫히게 */
+
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') document.getElementById('vMask').classList.remove('on');
 });
@@ -307,7 +309,6 @@ document.getElementById('prev').addEventListener('click', function(){ VM--; if (
 document.getElementById('next').addEventListener('click', function(){ VM++; if (VM>11){ VM=0; VY++; } draw(); });
 document.getElementById('todayB').addEventListener('click', function(){ var n=new Date(); VY=n.getFullYear(); VM=n.getMonth(); draw(); });
 
-/* 범례 */
 (function(){
   var L = [['일반','purple'],['특별','pink'],['콜라보','blue'],['노래','teal'],['게임','green'],['휴방','gray']];
   document.getElementById('legend').innerHTML = L.map(function(x){

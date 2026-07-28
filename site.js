@@ -1,4 +1,4 @@
-/* ============================================================ site.js — NANCHO 공통 런타임 테마(다크/주간) · 모바일 메뉴 · 문의 모달 · 프로필 로드 · 유틸 supabase.js 뒤, fx.js 앞에 로드 ============================================================ */
+
 
 var NANCHO = {
   soop: 'blackchu',
@@ -10,13 +10,12 @@ var NANCHO = {
   debut: '2018-11-22'
 };
 
-/* ─ 유틸 ─ */
 function esc(t){
   return String(t == null ? '' : t)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
 }
-/* DB 값 타입 방어 — 배열/객체가 와도 [object Object] 안 나오게 */
+
 function txt(v){
   if (v == null) return '';
   if (typeof v === 'string') return v;
@@ -29,7 +28,7 @@ function txt(v){
   }
   return String(v);
 }
-/* 줄 단위 리스트 (문자열/배열 둘 다 허용) */
+
 function lines(v){
   if (v == null) return [];
   if (Array.isArray(v)) return v.map(txt).filter(Boolean);
@@ -51,7 +50,6 @@ function toast(msg){
 }
 function ready(){ document.body.classList.add('ready'); }
 
-/* ─ 생일 D-Day / 데뷔 D+ (fx.js 보다 먼저 필요하므로 여기 정의) ─ */
 function fxDday(mmdd){
   if (!mmdd) return null;
   var m = String(mmdd).match(/(\d{1,2})\D+(\d{1,2})/);
@@ -70,8 +68,6 @@ function fxDsince(ymd){
 }
 window.fxDday = fxDday; window.fxDsince = fxDsince;
 
-/* ─ 테마 (다크 = 기본 / day = 주간 벚꽃) ─ */
-/* 관리자에서 넣은 배경 이미지 (없으면 style.css 기본값 사용) */
 var BG = { night:'', day:'' };
 function applyShot(){
   var day = document.body.classList.contains('day');
@@ -91,7 +87,6 @@ function toggleMode(){
   applyMode(document.body.classList.contains('day') ? 'dark' : 'light');
 }
 
-/* ─ 프로필 기본값 (DB 비어있어도 페이지가 완성돼 보이게) ─ */
 var PF_DEFAULT = {
   'avatar':'', 'soop-id':'blackchu',
   'hero-art':'', 'fan-char':'',
@@ -232,7 +227,7 @@ function mergeP(raw){
   });
   return p;
 }
-/* data-hook="키" 요소에 값 채우기 */
+
 function fillHooks(p){
   var els = document.querySelectorAll('[data-hook]');
   for (var i=0;i<els.length;i++){
@@ -242,7 +237,6 @@ function fillHooks(p){
   }
 }
 
-/* ─ 프로필 (한 번만 읽고 캐시) ─ */
 var _pf = null;
 function getProfile(){
   if (_pf) return _pf;
@@ -255,7 +249,6 @@ function getProfile(){
   return _pf;
 }
 
-/* ─ 프사 (직접 URL > SOOP 자동) ─ */
 function avatarUrl(p){
   p = p || {};
   if (p.avatar) return p.avatar;
@@ -263,8 +256,9 @@ function avatarUrl(p){
   return 'https://profile.img.sooplive.co.kr/LOGO/' + id.slice(0,2) + '/' + id + '/' + id + '.jpg';
 }
 
-/* ─ 고정 문구 덮어쓰기 ─ */
 var TXT = null, _txtObs = null;
+/* data-t is reserved for this text-override system.
+   Use data-song / data-artist style names for per-page data. */
 function applyTexts(root){
   if (!TXT || !root) return;
   var list = [];
@@ -279,7 +273,6 @@ function applyTexts(root){
   }
 }
 
-/* ─ 문의 모달 ─ */
 function bindInquiry(){
   var mask = document.getElementById('askMask');
   if (!mask) return;
@@ -289,7 +282,7 @@ function bindInquiry(){
   mask.addEventListener('click', function(e){
     if (e.target === mask || (e.target.closest && e.target.closest('[data-close]'))) mask.classList.remove('on');
   });
-  /* ESC 로도 닫히게 (안 그러면 배경을 정확히 눌러야만 닫혀서 갇힌 느낌이 난다) */
+  
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') mask.classList.remove('on');
   });
@@ -311,13 +304,11 @@ function bindInquiry(){
   });
 }
 
-/* ─ 모바일 메뉴 ─ */
 function bindMenu(){
   var b = document.getElementById('moBtn'), m = document.getElementById('menu');
   if (b && m) b.addEventListener('click', function(){ m.classList.toggle('open'); });
 }
 
-/* ─ 공통 부팅 ─ */
 function bootSite(){
   bindMenu();
   bindInquiry();
@@ -326,7 +317,7 @@ function bootSite(){
   applyMode(document.body.classList.contains('day') ? 'light' : 'dark');
   setTimeout(ready, 1400); // FOUC 폴백
   window.addEventListener('load', ready);
-  /* 상단 프사/이름 */
+  
   getProfile().then(function(p){
     var av = document.querySelectorAll('[data-avatar]');
     for (var i=0;i<av.length;i++){
@@ -338,18 +329,18 @@ function bootSite(){
     var n2 = document.querySelectorAll('[data-name]');
     for (var j=0;j<n2.length;j++) n2[j].textContent = nm;
 
-    /* 배경 이미지 (다크/라이트 각각) */
+    
     BG.night = txt(p['bg-night']); BG.day = txt(p['bg-day']);
     applyShot();
 
-    /* 사이트 태그라인 */
+    
     var tg = txt(p['site-tagline']);
     if (tg){
       var te = document.querySelectorAll('[data-tagline]');
       for (var k=0;k<te.length;k++) te[k].textContent = tg;
     }
 
-    /* 섹션 제목·라벨·메뉴 문구 — data-t="키" 요소를 관리자 값으로 덮어쓴다. 모달·탭처럼 나중에 그려지는 부분도 있어서, 한 번 적용한 뒤 감시자를 붙여 새로 생기는 [data-t] 요소에도 자동으로 적용한다. */
+    
     TXT = p;
     applyTexts(document);
     if (window.MutationObserver && !_txtObs){
@@ -361,10 +352,11 @@ function bootSite(){
           }
         }
       });
+      /* Needed for late-rendered nodes (modals, tabs). */
       _txtObs.observe(document.body, { childList:true, subtree:true });
     }
 
-    /* 페이지별 소개문 — <p class="fh-sub" data-sub="notice"> 식으로 표시 */
+    
     var subs = document.querySelectorAll('[data-sub]');
     for (var m=0;m<subs.length;m++){
       var v = txt(p['sub-' + subs[m].getAttribute('data-sub')]);

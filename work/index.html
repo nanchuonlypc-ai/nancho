@@ -12,7 +12,7 @@
 <link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
 <link rel="stylesheet" href="../style.css">
 <style>
-/* 요약 줄 */
+
 .wksum{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);margin-bottom:18px}
 .wksum span{flex:1 1 0;min-width:140px;padding:16px 18px;border-right:1px solid var(--line);
   display:flex;flex-direction:column;gap:6px}
@@ -22,7 +22,6 @@
 
 .wksearch{max-width:320px;margin-bottom:20px}
 
-/* 시청자 카드 그리드 */
 .wkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
   border-left:1px solid var(--line);border-top:1px solid var(--line)}
 .wkcard{border-right:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -44,7 +43,6 @@ body.day .wkfb{color:var(--main-deep)}
 body.day .wktot{color:var(--main-deep)}
 .wktot.zero{border-color:var(--line);color:var(--ink-dim)}
 
-/* 상세 모달 */
 .wkmodal{max-width:420px;width:100%}
 .wkmtop{display:flex;align-items:center;gap:14px;padding-bottom:16px;
   border-bottom:1px solid var(--line);margin-bottom:4px}
@@ -156,7 +154,7 @@ body.day .wkrow .ev{color:var(--main-deep)}
 <script src="../supabase.js"></script>
 <script src="../site.js"></script>
 <script>
-/* FILE 04 · 업보 장부 — 시청자 카드 그리드 + 상세 모달 */
+
 (function(){
   var V = [], T = [], C = {}, Q = '';
 

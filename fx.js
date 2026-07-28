@@ -1,6 +1,5 @@
-/* ============================================================ fx.js — NANCHO / THE MIDNIGHT LOG 공통 연출 · 클릭 톡(입자) · 프사 톡 + 바운스 · 페이지 전환 + 로딩 커버 · 생일 D-Day 도우미(fxDday) · iframe 높이 보고(postMessage) 이 사이트는 "플로팅 없음" 규칙 — 떠다니는 입자·카드 틸트 전부 OFF. ============================================================ */
 
-/* 설정 */
+
 var FX_FLOAT = [];        // 떠다니는 입자 (플로팅 금지 → 비움)
 var FX_COUNT = 0;         // 개수 0
 var FX_CLICK = '✦';       // 클릭/프사톡 모양
@@ -22,7 +21,7 @@ var FX_TRANS_MS    = 720;
   +   '100%{opacity:0;transform:translate(calc(-50% + var(--hx,0px)),calc(-50% - 66px)) scale(1.1) rotate(120deg)}}'
   + '.fx-avpop{animation:fxAv .52s cubic-bezier(.34,1.56,.64,1)}'
   + '@keyframes fxAv{0%{transform:scale(1)}38%{transform:scale(1.11)}70%{transform:scale(.97)}100%{transform:scale(1)}}'
-  /* 로딩 커버 — 각진 미드나잇 스타일 (원형/그림자 없음) */
+  
   + '#fxload{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;'
   +   'gap:20px;background:var(--bg,#09070D);transition:opacity .32s ease}'
   + '#fxload.fx-hide{opacity:0;pointer-events:none}'
@@ -41,7 +40,7 @@ var FX_TRANS_MS    = 720;
   var st = document.createElement('style'); st.id = 'fx-style'; st.textContent = css;
   document.head.appendChild(st);
 
-  /* 로딩 커버 + 페이지 전환 */
+  
   var loaderOn = FX_LOADER && !reduce;
   function faviconUrl(){
     var l = document.querySelector('link[rel~="icon"]');
@@ -90,7 +89,7 @@ var FX_TRANS_MS    = 720;
     });
   }
 
-  /* 클릭 톡 */
+  
   window.fxHearts = function (x, y, n) {
     if (reduce) return;
     n = n || 5;
@@ -122,7 +121,7 @@ var FX_TRANS_MS    = 720;
     window.fxHearts(e.clientX, e.clientY, 4);
   });
 
-  /* 프사 톡 + 바운스 */
+  
   document.addEventListener('click', function (e) {
     var av = e.target.closest && e.target.closest('#avatarWrap,.avatar');
     if (!av) return;
@@ -132,9 +131,9 @@ var FX_TRANS_MS    = 720;
     av.classList.add('fx-avpop');
   });
 
-  /* D-Day 헬퍼는 site.js 에 있습니다 (fxDday / fxDsince) */
+  
 
-  /* SOOP 게시글 iframe 높이 자동 보고 */
+  
   function report(){
     try {
       if (window.parent === window) return;

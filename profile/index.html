@@ -341,16 +341,16 @@ var DAYS=['MON','TUE','WED','THU','FRI','SAT','SUN'], DAYKO=['월','화','수','
 function render(p){
   fillHooks(p);
 
-  /* 프사 / 일러 */
+  
   var art = txt(p['hero-art']) || avatarUrl(p);
   var im = document.getElementById('pfArt');
   im.referrerPolicy = 'no-referrer';
-  /* 이미지가 깨지면 alt 글자가 뜨지 않게 감춘다 (핫링크 차단·주소 오타 대비) */
+  
   im.onerror = function(){ this.style.display = 'none'; };
   im.alt = '';
   im.src = art;
 
-  /* 이름 */
+  
   document.getElementById('nmEn').innerHTML = '<em>' + esc((txt(p['info-reading']) || 'NANCHO').toUpperCase()) + '</em>';
 
   /* D-day / D+ */
@@ -361,13 +361,13 @@ function render(p){
   document.getElementById('sinceV').textContent = since === null ? '—' : 'D+' + since.toLocaleString();
   document.getElementById('sinceI').textContent = fmtDate(txt(p['info-debut']));
 
-  /* 태그 */
+  
   var tg = lines(p['info-tags']);
   document.getElementById('tags').innerHTML = tg.length
     ? tg.map(function(t){ return '<span class="tag">#' + esc(t) + '</span>'; }).join('')
     : '<span class="tag">#밤하늘</span>';
 
-  /* 주간 전파 */
+  
   var set = String(txt(p.days)||'').split(',').map(function(s){return s.trim();}).filter(function(s){return s!=='';});
   var free = set.length === 0;
   var time = txt(p['main-time']) || '17:00';
@@ -380,7 +380,7 @@ function render(p){
     ? '요일 고정 없음 — 전파는 대체로 ' + time + ' 언저리에 열려요.'
     : '점등 요일 ' + set.map(function(d){ return DAYKO[+d]; }).join(' · ') + ' / ' + time;
 
-  /* 능력치 */
+  
   var st = parseStats(p.stats);
   document.getElementById('bars').innerHTML = st.length ? st.map(function(s){
     return '<div><div class="k">' + esc(s.k) + '</div><div class="g"><i data-w="' + s.v + '"></i></div><div class="v">' + s.v + '</div></div>';
@@ -390,7 +390,7 @@ function render(p){
     for (var i=0;i<gs.length;i++) gs[i].style.width = gs[i].getAttribute('data-w') + '%';
   }, 240);
 
-  /* 좋아 / 싫어 */
+  
   function ul(arr, host){
     document.getElementById(host).innerHTML = arr.length
       ? arr.map(function(t,i){ return '<li><span>' + ('0'+(i+1)).slice(-2) + '</span>' + esc(t) + '</li>'; }).join('')
@@ -400,7 +400,7 @@ function render(p){
   ul(lines(p['dislike-list']), 'dislikes');
   ul(lines(p['rules']), 'rules');
 
-  /* 마일스톤 */
+  
   var mi = parseMile(p.milestones);
   document.getElementById('mile').innerHTML = mi.length ? mi.map(function(m){
     return '<li><div class="w">' + esc(m.w) + '</div><div class="c">' + esc(m.c) + '</div></li>';
@@ -412,13 +412,13 @@ function render(p){
   if (now) { document.getElementById('nowTx').textContent = now; nc.style.display = ''; }
   else nc.style.display = 'none';
 
-  /* 팬캐릭터 */
+  
   var fc = txt(p['fan-char']);
   var fcc = document.getElementById('fanCard');
   if (fc) { document.getElementById('fanImg').src = fc; fcc.style.display = ''; }
   else fcc.style.display = 'none';
 
-  /* 링크 */
+  
   var LK = [
     ['soop','SOOP','방송국'],
     ['youtube','YOUTUBE','다시보기·클립'],

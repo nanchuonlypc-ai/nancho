@@ -210,7 +210,7 @@ function genres(){
   var m = {};
   SONGS.forEach(function(s){ m[s.genre || '기타'] = (m[s.genre || '기타'] || 0) + 1; });
   var ks = Object.keys(m).sort();
-  /* 장르가 한 종류뿐이면 필터가 의미 없으니 아예 감춘다 */
+  
   var gf = document.getElementById('gf');
   gf.style.display = ks.length > 1 ? '' : 'none';
   gf.innerHTML =
@@ -231,7 +231,6 @@ document.addEventListener('click', function(e){
 document.getElementById('q').addEventListener('input', function(){ Q = this.value; render(); });
 document.getElementById('sort').addEventListener('change', function(){ SORT = this.value; render(); });
 
-/* ── 랜덤 선곡 — 후보가 촤르륵 지나가다 멈춘다 ── 지금 걸러진 목록(검색·장르 필터 적용분) 안에서만 뽑는다. */
 var PICKED = null, rolling = false;
 function showPick(s, isFinal){
   PICKED = s;
@@ -241,7 +240,7 @@ function showPick(s, isFinal){
   card.classList.toggle('rolling', !isFinal);
   if (isFinal){
     card.classList.remove('hit');
-    void card.offsetWidth;      /* 애니메이션 재시작 */
+    void card.offsetWidth;      
     card.classList.add('hit');
   }
 }
@@ -258,7 +257,7 @@ function rollPick(){
     showPick(arr[Math.floor(Math.random() * arr.length)], false);
     n++;
     if (n < ticks){
-      /* 뒤로 갈수록 느려지게 */
+      
       setTimeout(tick, 45 + Math.pow(n / ticks, 3) * 210);
     } else {
       var final = arr[Math.floor(Math.random() * arr.length)];
@@ -280,7 +279,6 @@ document.getElementById('pickCopy').addEventListener('click', function(){
   else toast(t);
 });
 
-/* 오리지널 / 다시보기 */
 function loadVod(){
   var host = document.getElementById('ovod-grid');
   if (typeof fetchAll !== 'function'){ host.innerHTML = ''; return; }

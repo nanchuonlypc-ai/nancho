@@ -12,7 +12,7 @@
 <link rel="icon" type="image/jpeg" href="https://profile.img.sooplive.co.kr/LOGO/bl/blackchu/blackchu.jpg">
 <link rel="stylesheet" href="../style.css">
 <style>
-/* 컨택트 시트 — 각진 헤어라인 격자 (기존 포스터/토글 프레임 폐기) */
+
 .sheet{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-left:1px solid var(--line);border-top:1px solid var(--line)}
 .cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;cursor:pointer;
   background:rgba(0,0,0,.28);transition:background .18s}
@@ -43,7 +43,6 @@ body.day .cell .cap .k{color:var(--main-deep)}
 .filt button:hover{color:var(--ink);background:rgba(199,155,216,.08)}
 .filt button.on{background:var(--main-deep);color:#fff}
 
-/* 라이트박스 */
 .lb{position:fixed;inset:0;z-index:300;background:rgba(4,2,7,.94);display:none;
   grid-template-columns:minmax(0,1fr) 320px}
 body.day .lb{background:rgba(240,235,243,.96)}
