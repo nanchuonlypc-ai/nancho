@@ -53,11 +53,15 @@ body.day .stage .topbar{border-bottom-color:rgba(28,16,36,.24)}
 .stage .topbar .brand{display:flex;align-items:baseline;gap:7px;width:max-content;line-height:1}
 .stage .topbar .brand .ko{font-family:var(--ff-serif);font-size:calc(1.5cqw * var(--fs-title));font-weight:700;letter-spacing:-.1em}
 .stage .topbar .brand .en{font-size:calc(0.45cqw * var(--fs-label));font-weight:900;letter-spacing:.27em}
-.tb-center{justify-self:center;font-size:calc(0.46cqw * var(--fs-label));font-weight:700;letter-spacing:.18em;color:var(--ink)}
+.tb-center{justify-self:center;font-size:calc(max(8px,0.46cqw) * var(--fs-label));font-weight:700;letter-spacing:.18em;color:var(--ink);white-space:nowrap}
 .tb-right{justify-self:end;display:flex;align-items:center;gap:1.05cqw}
 
+/* Korean labels look cramped with wide tracking, so keep it gentle.
+   max() puts a readability floor on narrow embeds without capping growth. */
 .tb-nav{display:flex;align-items:center;gap:1.05cqw}
-.tb-nav a{color:var(--ink);text-decoration:none;font-size:calc(0.46cqw * var(--fs-label));
+/* max() only sets a readability floor. Without it the label is ~4.7px inside a
+   1017px-wide SOOP embed; it does not cap growth on wide screens. */
+.tb-nav a{color:var(--ink);text-decoration:none;font-size:calc(max(8px,0.46cqw) * var(--fs-label));
   font-weight:700;letter-spacing:.18em;white-space:nowrap;transition:color .18s;opacity:.86}
 .tb-nav a:hover,.tb-nav a.on{color:var(--main-light);opacity:1}
 body.day .tb-nav a:hover,body.day .tb-nav a.on{color:var(--main-deep)}
@@ -67,12 +71,12 @@ body.day .tb-right .sep{background:rgba(28,16,36,.26)}
 body.day .tb-right .tbtn{border-color:rgba(28,16,36,.3)}
 .tb-right .tbtn.solid{background:var(--main-deep);border-color:var(--main-deep);color:#fff}
 #sheetOpen{display:none}
-@media (max-width:1080px){
+@media (max-width:959px){
   .tb-nav{display:none}
   #sheetOpen{display:inline-block}
 }
 .tb-right button{background:none;border:0;padding:0;cursor:pointer;color:var(--ink);font:inherit;
-  font-size:calc(0.46cqw * var(--fs-label));font-weight:700;letter-spacing:.18em;transition:color .18s}
+  font-size:calc(max(8px,0.46cqw) * var(--fs-label));font-weight:700;letter-spacing:.18em;transition:color .18s}
 .tb-right button:hover{color:var(--main-light)}
 body.day .tb-right button:hover{color:var(--main-deep)}
 
