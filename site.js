@@ -259,6 +259,23 @@ function avatarUrl(p){
 var TXT = null, _txtObs = null;
 /* data-t is reserved for this text-override system.
    Use data-song / data-artist style names for per-page data. */
+/* Broken content images (expired host links, deleted posts) must not show the
+   browser's broken-image icon. Swap them for a placeholder tile that keeps the
+   same box so the grid does not collapse. */
+function markBroken(img){
+  if (!img || img.dataset.broken) return;
+  img.dataset.broken = '1';
+  img.removeAttribute('src');
+  img.classList.add('imgdead');
+  img.alt = '';
+  img.setAttribute('role', 'img');
+  img.setAttribute('aria-label', '이미지를 불러올 수 없습니다');
+}
+document.addEventListener('error', function(e){
+  var t = e.target;
+  if (t && t.tagName === 'IMG' && !(t.closest && t.closest('#fxload'))) markBroken(t);
+}, true);
+
 function applyTexts(root){
   if (!TXT || !root) return;
   var list = [];

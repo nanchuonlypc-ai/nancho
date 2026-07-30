@@ -53,6 +53,13 @@ html{background:var(--bg)}
 
 :root{ --fs-display:1; --fs-title:1; --fs-body:1; --fs-label:1; }
 /* Mascot cutout. fx.js loader reads this; empty states use it as a watermark. */
+/* Placeholder for images that failed to load (expired host link, deleted post).
+   Keeps the original box so grids do not collapse. No pseudo-element text here:
+   img::after is unreliable and would collide with card captions. */
+img.imgdead{background:rgba(255,255,255,.04) center/52px no-repeat var(--char);
+  border:1px dashed var(--line);min-height:120px;box-sizing:border-box}
+body.day img.imgdead{background-color:rgba(0,0,0,.03)}
+
 /* Root-absolute: CSS url() resolves against the stylesheet, fx.js against the document.
    A leading / keeps both correct from any page depth. */
 :root{ --char:url('/assets/nancho-bunny.png'); }
