@@ -13,7 +13,11 @@
 <link rel="stylesheet" href="style.css">
 <style>
 html,body{height:100%}
-body{overflow:hidden}
+/* The stage carries the cover photo. style.css also paints the photo on body,
+   which would show through the letterbox bands, so flatten it here.
+   place-content centres the stage so the band splits evenly top and bottom. */
+body,body.day{overflow:hidden;background-image:none;background-color:var(--bg);
+  min-height:100svh;display:flex;align-items:center;justify-content:center}
 /* SOOP embeds give the iframe an arbitrary height. Sizing the cover with vh
    makes it stretch and background-size:cover then blows the photo up.
    Lock the ratio with aspect-ratio and size everything from the container width
