@@ -85,6 +85,12 @@ body.day .table-wrap th{background:rgba(38,20,54,.06)}
   padding:8px 13px;font:inherit;font-size:11.5px;text-decoration:none;cursor:pointer}
 .topact a:hover,.topact button:hover{border-color:var(--main);color:var(--ink)}
 .dirty{color:#E8C46A}
+.imgchk{border:1px solid var(--line);padding:16px 18px;margin-top:16px;font-size:12.5px;line-height:1.8}
+.imgchk .hd{font-weight:900;letter-spacing:.14em;font-size:10px;color:var(--main);margin-bottom:10px}
+.imgchk ul{margin:8px 0 0;padding-left:18px}
+.imgchk li{margin:4px 0;word-break:break-all}
+.imgchk .ok{color:#7FD6A6}.imgchk .bad{color:#E88A9A}
+.imgchk .exp{color:#E8C46A}
 
 .tsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 .tsgrid .t{border:1px solid var(--line);padding:14px 16px}
@@ -162,9 +168,23 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
   }
   function add(msg){ if (LOG.indexOf(msg) < 0) { LOG.push(msg); show(); } }
 
+  /* Only core files matter here. A broken content image (wardrobe, notice, diary)
+     is a data problem, not a setup problem, and must not raise the setup banner. */
+  function isCore(el){
+    var tag = (el.tagName || '').toUpperCase();
+    if (tag === 'SCRIPT' || tag === 'LINK') return true;
+    var u = el.src || el.href || '';
+    return /(style\.css|site\.js|supabase\.js|fx\.js)(\?|$)/.test(u);
+  }
+  var deadImgs = [];
   window.addEventListener('error', function(e){
     if (e.target && e.target !== window && (e.target.src || e.target.href)){
-      add('파일을 못 불러왔습니다 (404 등): ' + (e.target.src || e.target.href));
+      if (isCore(e.target)){
+        add('파일을 못 불러왔습니다 (404 등): ' + (e.target.src || e.target.href));
+      } else {
+        var u = e.target.src || e.target.href;
+        if (deadImgs.indexOf(u) < 0) deadImgs.push(u);
+      }
     } else {
       add('스크립트 오류: ' + (e.message || e) + (e.filename ? ' @ ' + e.filename + ':' + e.lineno : ''));
     }
@@ -266,8 +286,10 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
     <button type="button" id="act-backup">💾 전체 내용 백업(.json)</button>
     <button type="button" id="act-restore">📂 백업 불러오기</button>
     <input type="file" id="act-file" accept="application/json" style="display:none">
+    <button type="button" id="act-imgchk">🔎 이미지 주소 점검</button>
     <span id="act-dirty" class="dirty" style="align-self:center;font-size:11.5px"></span>
   </div>
+  <div class="imgchk" id="imgchk" style="display:none"></div>
 
   <div class="tabs" id="tabs">
     <button class="on" data-t="main">🏠 메인</button>
@@ -340,7 +362,9 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         </ul>
         <div class="warn2">
           ⚠️ 주소는 <b>.jpg / .png / .webp / .gif 로 끝나는 이미지 주소</b>여야 합니다 — 글 주소(…/post/123)는 안 됩니다.<br>
-          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.
+          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.<br>
+          ⚠️ <b>디스코드 주소는 쓰지 마세요.</b> <code>media.discordapp.net/…?ex=…&amp;hm=…</code> 형태는
+          만료 시각이 붙어 있어 <b>며칠 뒤 전부 404</b>가 됩니다. 트위터·카카오톡 링크도 같은 이유로 불안정합니다.
         </div>
       </div>
     </details>
@@ -746,7 +770,8 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
           <em class="hint">숫자가 클수록 앞에 옵니다. 같으면 최신순.</em></label>
       </div>
       <label class="field"><span>이미지 주소</span><input class="input" id="dr-img" type="text" placeholder="https://stimg.sooplive.com/...">
-        <em class="hint">세로 <b>3:4</b> (예 900×1200) 이미지를 권장합니다. SOOP 비공개 게시판 → 이미지 주소 복사.</em></label>
+        <em class="hint">세로 <b>3:4</b> (예 900×1200) 권장. SOOP 비공개 게시판 → 이미지 주소 복사.
+          <b>디스코드 주소는 만료되어 며칠 뒤 깨집니다.</b></em></label>
     <details class="why">
       <summary>이미지는 왜 "주소(링크)"로 넣나요? — 꼭 한 번 읽어주세요</summary>
       <div class="in">
@@ -765,7 +790,9 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
         </ul>
         <div class="warn2">
           ⚠️ 주소는 <b>.jpg / .png / .webp / .gif 로 끝나는 이미지 주소</b>여야 합니다 — 글 주소(…/post/123)는 안 됩니다.<br>
-          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.
+          ⚠️ <b>원본 글을 지우면 사이트에서도 사진이 사라집니다.</b> 올린 글은 지우지 말고 그대로 두세요.<br>
+          ⚠️ <b>디스코드 주소는 쓰지 마세요.</b> <code>media.discordapp.net/…?ex=…&amp;hm=…</code> 형태는
+          만료 시각이 붙어 있어 <b>며칠 뒤 전부 404</b>가 됩니다. 트위터·카카오톡 링크도 같은 이유로 불안정합니다.
         </div>
       </div>
     </details>
@@ -1235,6 +1262,72 @@ function doBackup(){
   setTimeout(function(){ URL.revokeObjectURL(a2.href); }, 2000);
   toast('현재 입력값을 파일로 내려받았어요');
 }
+/* Checks every image URL stored in the DB. Discord attachment links carry an
+   expiry (ex=) and stop working after it passes, so they get flagged separately. */
+document.getElementById('act-imgchk').addEventListener('click', function(){
+  var box = document.getElementById('imgchk');
+  box.style.display = '';
+  box.innerHTML = '<div class="hd">IMAGE CHECK</div>확인하는 중…';
+  if (!(typeof db !== 'undefined' && db)){ box.innerHTML = '<div class="hd">IMAGE CHECK</div>Supabase 주소·키가 설정되지 않았습니다.'; return; }
+
+  var jobs = [
+    ['옷장',   'dress_items', 'image_url', 'title'],
+    ['공지',   'notice',      'image_url', 'title'],
+    ['일기',   'diary',       'image_url', 'title']
+  ];
+  var items = [];
+  Promise.all(jobs.map(function(j){
+    return fetchAll(j[1], { order:'id', asc:true }).then(function(rows){
+      (rows||[]).forEach(function(r){
+        if (r[j[2]]) items.push({ area:j[0], name:r[j[3]] || ('#' + r.id), url:r[j[2]] });
+      });
+    }).catch(function(){});
+  })).then(function(){
+    /* profile 의 이미지 칸도 같이 */
+    ['avatar','hero-art','fan-char','main-photo','bg-night','bg-day'].forEach(function(k){
+      var el = document.getElementById('f-' + k);
+      if (el && el.value.trim()) items.push({ area:'프로필', name:k, url:el.value.trim() });
+    });
+    if (!items.length){ box.innerHTML = '<div class="hd">IMAGE CHECK</div>등록된 이미지 주소가 없습니다.'; return; }
+
+    var done = 0, bad = [], expiring = [];
+    items.forEach(function(it){
+      /* Discord 링크는 ex= 에 만료 시각이 16진수 초 단위로 들어 있다 */
+      var m = /[?&]ex=([0-9a-f]+)/i.exec(it.url);
+      if (m){
+        var t = parseInt(m[1], 16) * 1000;
+        expiring.push({ it:it, when:new Date(t), past:t < Date.now() });
+      }
+      var img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.onload = function(){ if (++done === items.length) report(); };
+      img.onerror = function(){ bad.push(it); if (++done === items.length) report(); };
+      img.src = it.url;
+    });
+    setTimeout(function(){ if (done < items.length) report(); }, 9000);
+
+    var reported = false;
+    function report(){
+      if (reported) return; reported = true;
+      var h = '<div class="hd">IMAGE CHECK · ' + items.length + '개 확인</div>';
+      if (!bad.length) h += '<span class="ok">모두 정상입니다.</span>';
+      else {
+        h += '<span class="bad">' + bad.length + '개가 열리지 않습니다.</span><ul>'
+          + bad.map(function(x){ return '<li><b>[' + x.area + ']</b> ' + esc(x.name) + '<br>' + esc(x.url.slice(0,110)) + '</li>'; }).join('')
+          + '</ul>';
+      }
+      if (expiring.length){
+        var past = expiring.filter(function(x){ return x.past; }).length;
+        h += '<div class="exp" style="margin-top:12px">디스코드 링크 ' + expiring.length + '개'
+           + (past ? ' (이미 만료된 것 ' + past + '개)' : '')
+           + ' — 디스코드 주소는 만료 시각이 정해져 있어 시간이 지나면 열리지 않습니다.'
+           + ' SOOP 비공개 게시판에 올린 이미지 주소로 바꿔주세요.</div>';
+      }
+      document.getElementById('imgchk').innerHTML = h;
+    }
+  });
+});
+
 document.getElementById('act-backup').addEventListener('click', doBackup);
 document.getElementById('act-restore').addEventListener('click', function(){
   document.getElementById('act-file').click();
