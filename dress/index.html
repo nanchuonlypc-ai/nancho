@@ -55,8 +55,12 @@ body.day .lb{background:rgba(240,235,243,.96)}
 .lb .side p{margin:0;color:var(--ink-soft);font-size:calc(13.5px * var(--fs-body));line-height:1.85;white-space:pre-wrap}
 .lb .side .meta{font-family:var(--ff-serif);font-size:calc(12px * var(--fs-body));color:var(--ink-dim);letter-spacing:.08em}
 .lb .navs{display:flex;gap:8px;margin-top:auto;padding-top:18px}
-.lb .close{position:absolute;top:18px;right:18px;z-index:5;width:36px;height:36px;border:1px solid var(--line);
-  background:transparent;color:var(--ink);font-size:calc(17px * var(--fs-title));cursor:pointer}
+.lb .close{position:fixed;top:18px;right:18px;z-index:320;width:44px;height:44px;border:1px solid var(--line);
+  background:rgba(4,2,7,.72);color:var(--ink);font-size:calc(17px * var(--fs-title));cursor:pointer;
+  display:flex;align-items:center;justify-content:center;line-height:1}
+.lb .close:hover{border-color:var(--main);color:var(--main-light)}
+body.day .lb .close{background:rgba(255,255,255,.72)}
+body.day .lb .close:hover{color:var(--main-deep)}
 .lb .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:1px solid var(--line);
   background:rgba(0,0,0,.3);color:var(--ink);cursor:pointer;font-size:calc(16px * var(--fs-body))}
 body.day .lb .arrow{background:rgba(255,255,255,.5)}
@@ -116,8 +120,8 @@ body.day .lb .arrow{background:rgba(255,255,255,.5)}
 </section>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true">
+  <button class="close" id="lbX" aria-label="닫기 (ESC)" title="닫기 (ESC)">✕</button>
   <div class="view">
-    <button class="close" id="lbX" aria-label="닫기">×</button>
     <button class="arrow l" id="lbL" aria-label="이전">‹</button>
     <img id="lbImg" src="" alt="" referrerpolicy="no-referrer">
     <button class="arrow r" id="lbR" aria-label="다음">›</button>

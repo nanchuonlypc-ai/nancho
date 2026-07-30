@@ -17,8 +17,11 @@ body{overflow:hidden}
 .stage{position:relative;width:100vw;height:100svh;overflow:hidden}
 
 /* fx.js leaves a transform on .wrap, which makes it the containing block
-   for absolute children. Give it a real box or bottom:% collapses to 0. */
-.stage > .wrap{position:absolute;inset:0;z-index:5}
+   for absolute children. Give it a real box or bottom:% collapses to 0.
+   Width is capped to the same value sub-pages use so the composition does not
+   spread apart on wide screens. Centering uses margin:auto, not transform. */
+.stage > .wrap{position:absolute;top:0;bottom:0;left:0;right:0;margin:0 auto;
+  max-width:calc(var(--col, 1320px) + 80px);z-index:5}
 .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:67% 48%;
   filter:saturate(.75) brightness(.67) contrast(1.08);transform:scale(1.02)}
 body.day .stage-bg{filter:saturate(1.02) brightness(1.02) contrast(1.02);object-position:52% 40%}
@@ -31,9 +34,12 @@ body.day .stage-shade{background:
   linear-gradient(0deg,rgba(247,243,248,.82),transparent 46%),
   linear-gradient(135deg,rgba(157,119,166,.20),transparent 52%)}
 
-.stage .topbar{position:absolute;top:0;left:0;right:0;z-index:20;height:9%;padding:0 3.5%;
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+/* The hairline spans the full width, the row inside is capped to the same
+   width as the content below so the logo lines up with it. */
+.stage .topbar{position:absolute;top:0;left:0;right:0;z-index:20;height:9%;
   border-bottom:1px solid rgba(255,255,255,.30);background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.stage .topbar > .tbrow{height:100%;max-width:calc(var(--col, 1320px) + 80px);margin:0 auto;padding:0 3.5%;
+  box-sizing:border-box;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
 body.day .stage .topbar{border-bottom-color:rgba(28,16,36,.24)}
 .stage .topbar .brand{display:flex;align-items:baseline;gap:7px;width:max-content;line-height:1}
 .stage .topbar .brand .ko{font-family:var(--ff-serif);font-size:calc(clamp(18px,1.5vw,29px) * var(--fs-title));font-weight:700;letter-spacing:-.1em}
@@ -62,7 +68,7 @@ body.day .tb-right .tbtn{border-color:rgba(28,16,36,.3)}
 body.day .tb-right button:hover{color:var(--main-deep)}
 
 .hero{position:absolute;top:29%;left:4%;z-index:1;pointer-events:none}
-.hero .out{white-space:nowrap;font-family:var(--ff-disp);font-size:calc(clamp(82px,13vw,250px) * var(--fs-display));font-weight:950;
+.hero .out{white-space:nowrap;font-family:var(--ff-disp);font-size:calc(clamp(82px,13vw,196px) * var(--fs-display));font-weight:950;
   line-height:.8;letter-spacing:-.09em;color:transparent;-webkit-text-fill-color:transparent;
   -webkit-text-stroke:1px rgba(222,185,239,.66);user-select:none;
   filter:drop-shadow(0 0 2px rgba(197,119,232,.44)) drop-shadow(0 0 7px rgba(164,77,207,.20))}
@@ -131,7 +137,8 @@ body.day .sheet a:hover{color:var(--main-deep)}
   background:none;border:0;color:var(--ink);font:inherit;font-size:calc(11px * var(--fs-label));font-weight:900;letter-spacing:.18em;cursor:pointer}
 
 @media (max-width:700px){
-  .stage .topbar{height:7%;padding:0 4%}
+  .stage .topbar{height:7%}
+  .stage .topbar > .tbrow{padding:0 4%}
   .tb-center{display:none}
   .hero{top:18%;left:4%}
   .hero .out{font-size:calc(clamp(62px,20vw,110px) * var(--fs-display))}
@@ -152,6 +159,7 @@ body.day .sheet a:hover{color:var(--main-deep)}
   <img class="stage-bg" id="stageBg" src="assets/nancho-purple-night.webp" alt="">
   <div class="stage-shade" aria-hidden="true"></div>
 <header class="topbar">
+  <div class="tbrow">
   <a class="brand" href="index.html" aria-label="난초 메인">
     <span class="ko" data-name>난초</span><span class="en">NANCHO</span>
   </a>
@@ -172,6 +180,7 @@ body.day .sheet a:hover{color:var(--main-deep)}
     <button type="button" class="tbtn" data-mode>DAY</button>
     <button type="button" class="tbtn solid" data-ask>문의</button>
     <button type="button" id="sheetOpen" aria-label="메뉴 열기">MENU +</button>
+  </div>
   </div>
 </header>
   <div class="wrap">

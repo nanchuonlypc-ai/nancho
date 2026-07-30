@@ -239,9 +239,9 @@ body.day .keys{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
           <div class="rlopt">
             <span class="k" data-t="t-game-8">속도</span>
             <div class="rlseg" id="rlSpeed">
-              <button data-s="1">1x</button>
-              <button class="on" data-s="2">2x</button>
-              <button data-s="4">4x</button>
+              <button class="on" data-s="1">보통</button>
+              <button data-s="2">빠르게</button>
+              <button data-s="4">아주 빠르게</button>
             </div>
           </div>
 
@@ -589,10 +589,10 @@ var RL = (function(){
   var SCALE = W / VW;                
   var GOAL_Y = 0;                    
   var R = 0.62;                      
-  var GRAV = 0.028, AIR = 0.999, REST = 0.42, FRIC = 0.986;
+  var GRAV = 0.017, AIR = 0.999, REST = 0.42, FRIC = 0.986;
   var cv, ctx, raf = null, running = false;
   var marbles = [], walls = [], pegs = [], bars = [], finished = [], t = 0;
-  var camY = 0, speed = 2, winnerRank = 1, done = false;
+  var camY = 0, speed = 1, winnerRank = 1, done = false;
   var L_EDGE = 1.82, R_EDGE = 28.18;
 
   
@@ -701,6 +701,12 @@ var RL = (function(){
         alive: true, rank: 0
       };
     });
+    /* Shuffle the array too. Spawn slots and per-frame order are already
+       randomised; this removes any residual effect of array position. */
+    for (var mi = marbles.length - 1; mi > 0; mi--){
+      var rj = Math.floor(Math.random() * (mi + 1));
+      var tm = marbles[mi]; marbles[mi] = marbles[rj]; marbles[rj] = tm;
+    }
     renderList(); render();
     document.getElementById('rlWin').className = 'rlwin';
     document.getElementById('rlStart').textContent = '굴리기';
@@ -789,7 +795,7 @@ var RL = (function(){
       }
 
       var sp = Math.hypot(m.vx, m.vy);
-      if (sp > 1.5){ m.vx *= 1.5/sp; m.vy *= 1.5/sp; }
+      if (sp > 1.15){ m.vx *= 1.15/sp; m.vy *= 1.15/sp; }
 
       
       if (m.y - (m.lastY === undefined ? -99 : m.lastY) < 0.15){ m.stall = (m.stall||0) + 1; }

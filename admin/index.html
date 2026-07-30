@@ -651,11 +651,16 @@ details.why .in .warn2{margin-top:10px;padding:9px 12px;border-left:2px solid #E
           <em class="hint">줄바꿈 그대로 살아납니다. 길이 제한 없어요.</em></label>
       <label class="field"><span>이미지 주소 (선택)</span><input class="input" id="dy-img" type="text" placeholder="https://...">
         <em class="hint">가로 16:9. 목록 썸네일로 잘립니다.</em></label>
-      <button class="btn solid" id="dy-add">일기 올리기</button>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn solid" id="dy-add">일기 올리기</button>
+        <button class="btn" id="dy-cancel" style="display:none">수정 취소</button>
+        <span class="note" id="dy-editing" style="display:none"></span>
+      </div>
+      <input type="hidden" id="dy-id">
     </div>
     <div class="card">
       <div class="card-title"><div><small>LIST</small>등록된 일기</div></div>
-      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>제목</th><th>기분</th><th>삭제</th></tr></thead><tbody id="dy-list"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>날짜</th><th>제목</th><th>기분</th><th>수정</th><th>삭제</th></tr></thead><tbody id="dy-list"></tbody></table></div>
     </div>
     <div class="card">
       <div class="card-title"><div><small>REPLIES</small>일기 댓글 관리</div><button class="btn sm" id="cm-load">불러오기</button></div>
@@ -1638,15 +1643,51 @@ document.getElementById('ct-save').addEventListener('click', function(){
 RELOAD.diary = function(){
   fetchAll('diary', { order:'created_at', asc:false }).then(function(rows){
     document.getElementById('dy-list').innerHTML = (rows||[]).map(function(r){
-      return '<tr><td>' + fmtDate(r.diary_date || r.created_at) + '</td><td>' + esc(r.title) + '</td><td>' + esc(r.mood||'') + '</td><td>' + delBtn('diary', r.id) + '</td></tr>';
-    }).join('') || '<tr><td colspan="4" style="color:var(--ink-dim)">없음</td></tr>';
+      return '<tr><td>' + fmtDate(r.diary_date || r.created_at) + '</td><td>' + esc(r.title) + '</td><td>' + esc(r.mood||'')
+        + '</td><td><button class="btn sm" data-dyedit="' + r.id + '">수정</button></td><td>' + delBtn('diary', r.id) + '</td></tr>';
+    }).join('') || '<tr><td colspan="5" style="color:var(--ink-dim)">없음</td></tr>';
   });
 };
+function dyClear(){
+  clr(['dy-title','dy-content','dy-mood','dy-img','dy-date']);
+  document.getElementById('dy-id').value = '';
+  document.getElementById('dy-add').textContent = '일기 올리기';
+  document.getElementById('dy-cancel').style.display = 'none';
+  document.getElementById('dy-editing').style.display = 'none';
+}
+document.getElementById('dy-cancel').addEventListener('click', dyClear);
+
 document.getElementById('dy-add').addEventListener('click', function(){
   if (!val('dy-title')){ toast('제목을 적어주세요'); return; }
-  insertRow('diary', { title:val('dy-title'), content:val('dy-content'), mood:val('dy-mood') || null,
-    diary_date:val('dy-date') || null, image_url:val('dy-img') || null })
-    .then(function(ok){ if (ok){ clr(['dy-title','dy-content','dy-mood','dy-img']); toast('올렸어요'); RELOAD.diary(); } else toast('실패'); });
+  var row = { title:val('dy-title'), content:val('dy-content'), mood:val('dy-mood') || null,
+              diary_date:val('dy-date') || null, image_url:val('dy-img') || null };
+  var id = document.getElementById('dy-id').value;
+  var job = id ? updateRow('diary', id, row) : insertRow('diary', row);
+  job.then(function(ok){
+    if (!ok){ toast('실패'); return; }
+    toast(id ? '수정했어요' : '올렸어요');
+    dyClear(); RELOAD.diary();
+  });
+});
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-dyedit]');
+  if (!b) return;
+  fetchAll('diary', { order:'id', asc:true }).then(function(rows){
+    var r = (rows||[]).filter(function(x){ return String(x.id) === String(b.dataset.dyedit); })[0];
+    if (!r) return;
+    document.getElementById('dy-id').value      = r.id;
+    document.getElementById('dy-title').value   = r.title || '';
+    document.getElementById('dy-content').value = r.content || '';
+    document.getElementById('dy-mood').value    = r.mood || '';
+    document.getElementById('dy-img').value     = r.image_url || '';
+    document.getElementById('dy-date').value    = (r.diary_date || '').slice(0,10);
+    document.getElementById('dy-add').textContent = '수정 저장';
+    document.getElementById('dy-cancel').style.display = '';
+    var tag = document.getElementById('dy-editing');
+    tag.style.display = ''; tag.textContent = '수정 중: ' + (r.title || '');
+    document.getElementById('dy-title').scrollIntoView({ behavior:'smooth', block:'center' });
+  });
 });
 RELOAD.comments = function(){
   Promise.all([fetchAll('comments', { order:'created_at', asc:false }), fetchAll('diary', { order:'id', asc:true })])

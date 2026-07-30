@@ -2,7 +2,7 @@
 
 var FX_FLOAT = [];        // 떠다니는 입자 (플로팅 금지 → 비움)
 var FX_COUNT = 0;         // 개수 0
-var FX_CLICK = '✦';       // 클릭/프사톡 모양
+var FX_CLICK = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMTUuNiAzLjJBOSA5IDAgMSAwIDIwLjggMTQgNy4yIDcuMiAwIDAgMSAxNS42IDMuMloiIGZpbGw9IiNGMkQ4QTAiIHN0cm9rZT0iI0I3OUJEOCIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=';       // 클릭/프사톡 모양
 var FX_TILT  = false;     // 카드 기울기 OFF (플로팅 금지)
 var FX_LOADER      = true;
 var FX_LOADER_IMG  = '';  // 비우면 자동: 파비콘(SOOP 프사) → 글자
@@ -26,6 +26,10 @@ var FX_TRANS_MS    = 720;
   +   'gap:20px;background:var(--bg,#09070D);transition:opacity .32s ease}'
   + '#fxload.fx-hide{opacity:0;pointer-events:none}'
   + '#fxload .fxload-av{width:108px;height:108px;border:1px solid var(--line,rgba(255,255,255,.22));'
+  + '#fxload .fxload-av.mascot{border:0;background:none;width:150px;height:150px;'
+  +   'background-size:contain;background-repeat:no-repeat;background-position:center;filter:none;'
+  +   'animation:fxBob 2.2s ease-in-out infinite}'
+  + '@keyframes fxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}'
   +   'background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;'
   +   'font-family:Arial Black,Arial,sans-serif;font-size:40px;color:var(--main,#C79BD8);'
   +   'filter:grayscale(.25) contrast(1.05)}'
@@ -49,7 +53,10 @@ var FX_TRANS_MS    = 720;
   function buildCover(){
     var c = document.createElement('div'); c.id = 'fxload';
     var av = document.createElement('div'); av.className = 'fxload-av';
-    var img = FX_LOADER_IMG || faviconUrl();
+    /* --char (mascot cutout) wins over the favicon, and renders without a frame. */
+    var mascot = getComputedStyle(document.documentElement).getPropertyValue('--char').trim();
+    var img = FX_LOADER_IMG || (mascot ? mascot.replace(/^url\(["']?|["']?\)$/g, '') : '') || faviconUrl();
+    if (mascot && !FX_LOADER_IMG) av.className = 'fxload-av mascot';
     if (img && /^(data:|https?:|\.|\/)/.test(img)) av.style.backgroundImage = 'url("' + img + '")';
     else av.textContent = (FX_LOADER_TEXT || 'N').charAt(0);
     var nm = document.createElement('div'); nm.className = 'fxload-name';
@@ -67,7 +74,19 @@ var FX_TRANS_MS    = 720;
       setTimeout(function(){
         cover.classList.add('fx-hide');
         var main = document.querySelector('.wrap') || document.querySelector('main');
-        if (main) main.classList.add('fx-enter');
+        if (main) {
+          main.classList.add('fx-enter');
+          /* A leftover transform makes this element the containing block for
+             position:fixed and absolute descendants, which throws modals and
+             bottom-anchored boxes out of place. Clear it once the animation ends. */
+          var clearTf = function(){
+            main.classList.remove('fx-enter');
+            main.style.transform = 'none';
+            main.removeEventListener('animationend', clearTf);
+          };
+          main.addEventListener('animationend', clearTf);
+          setTimeout(clearTf, FX_TRANS_MS + 300);
+        }
         setTimeout(function(){ if (cover.parentNode) cover.parentNode.removeChild(cover); }, 420);
       }, 210);
     };

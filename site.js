@@ -89,7 +89,7 @@ function toggleMode(){
 
 var PF_DEFAULT = {
   'avatar':'', 'soop-id':'blackchu',
-  'hero-art':'', 'fan-char':'',
+  'hero-art':'', 'fan-char':'/assets/nancho-bunny.png',
   'main-photo':'', 'bg-night':'', 'bg-day':'',
   'site-tagline':'THE MIDNIGHT LOG · 자정의 기록실',
   'main-story':'게임과 이야기 사이, 밤의 주파수를 맞춰요.',
@@ -210,7 +210,7 @@ var PF_DEFAULT = {
   'type-display':'1', 'type-title':'1', 'type-body':'1', 'type-label':'1',
   'week-0':'', 'week-1':'', 'week-2':'', 'week-3':'', 'week-4':'', 'week-5':'', 'week-6':'',
   'days':'', 'main-time':'17:00',
-  'fan-char':'', 'hero-art':'',
+  'fan-char':'/assets/nancho-bunny.png', 'hero-art':'',
   'rules':'욕설·과한 드립은 살짝만 접어두기\n타 방송·타 스트리머 이야기는 자제\n서로 초단끼리 예의는 지키기\n방송 내용 무단 편집·재업로드 금지',
   'link-soop':'https://www.sooplive.com/station/blackchu',
   'link-youtube':'https://www.youtube.com/@blackchu',
